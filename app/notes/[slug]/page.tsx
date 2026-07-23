@@ -1,7 +1,11 @@
 import { notFound } from "next/navigation";
 import { loadNotes } from "@/lib/content/loaders";
+import { getPrevNext, getRelated, getPublished } from "@/lib/content/queries";
 import type { NoteItem } from "@/lib/content/types";
 import type { Metadata } from "next";
+import { Toc, extractToc } from "@/components/content/Toc";
+import { PrevNextNav } from "@/components/content/PrevNextNav";
+import { RelatedArticles } from "@/components/content/RelatedArticles";
 
 export const dynamicParams = false;
 
@@ -31,8 +35,8 @@ export default async function NotePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const notes = loadNotes();
-  const note = notes.find(
+  const allNotes = loadNotes();
+  const note = allNotes.find(
     (n): n is NoteItem => n.slug === slug && !n.meta.draft
   );
 
@@ -41,6 +45,11 @@ export default async function NotePage({
   const { default: Content } = await import(
     `@/content/notes/${slug}.mdx`
   );
+
+  const toc = extractToc(note.body);
+  const published = getPublished(allNotes);
+  const { prev, next } = getPrevNext(allNotes, slug);
+  const related = getRelated(allNotes, note);
 
   return (
     <main className="max-w-3xl mx-auto px-4 py-8">
@@ -69,9 +78,20 @@ export default async function NotePage({
             </div>
           )}
         </header>
+
+        {toc.length > 0 && (
+          <aside className="mb-8">
+            <Toc items={toc} />
+          </aside>
+        )}
+
         <div className="prose prose-gray max-w-none">
           <Content />
         </div>
+
+        <PrevNextNav prev={prev} next={next} basePath="/notes" />
+
+        <RelatedArticles items={related} />
       </article>
     </main>
   );

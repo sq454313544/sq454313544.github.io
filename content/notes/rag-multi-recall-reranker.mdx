@@ -1,0 +1,66 @@
+---
+title: "RAG 多路召回与 Reranker 的作用"
+description: "深入解析 RAG 系统中的多路召回策略和 Reranker 重排序技术，理解如何提升检索质量。"
+publishedAt: "2026-07-05"
+updatedAt: "2026-07-05"
+category: "rag"
+tags: ["rag", "retrieval", "reranker"]
+draft: false
+featured: false
+---
+
+## 什么是多路召回
+
+在 RAG 系统中，单一检索方式往往无法覆盖所有相关文档。多路召回通过**并行使用多种检索策略**来提高召回率：
+
+- **向量检索（Dense）**：基于语义相似度
+- **关键词检索（Sparse）**：基于 BM25 等算法
+- **混合检索**：结合两者优势
+
+```python
+def multi_recall(query: str) -> list:
+    dense_results = vector_search(query, top_k=20)
+    sparse_results = bm25_search(query, top_k=20)
+    combined = merge_and_deduplicate(dense_results, sparse_results)
+    return combined
+```
+
+## Reranker 的核心作用
+
+召回阶段得到大量候选文档后，Reranker 负责**精细化排序**，将最相关的文档排在前面：
+
+### Cross-Encoder 方式
+
+```python
+from sentence_transformers import CrossEncoder
+
+reranker = CrossEncoder("BAAI/bge-reranker-v2-m3")
+
+pairs = [[query, doc] for doc in candidate_docs]
+scores = reranker.predict(pairs)
+ranked = sorted(zip(candidate_docs, scores), key=lambda x: x[1], reverse=True)
+```
+
+## 完整流程
+
+<MermaidDiagram chart={`graph LR
+    A[Query] --> B[Dense Recall]
+    A --> C[Sparse Recall]
+    B --> D[Merge & Dedup]
+    C --> D
+    D --> E[Reranker]
+    E --> F[Top-K Results]`} />
+
+## 召回策略对比
+
+| 策略 | 优势 | 劣势 | 适用场景 |
+|------|------|------|----------|
+| Dense | 语义理解强 | 计算成本高 | 长文问答 |
+| Sparse | 精确匹配好 | 缺乏语义 | 专业术语查询 |
+| Hybrid | 兼顾两者 | 实现复杂 | 通用场景 |
+
+## 关键要点
+
+1. **多路互补**：Dense 和 Sparse 检索的结果常互补，合并后往往优于单一方法
+2. **Reranker 是质量关键**：Cross-Encoder 比 Bi-Encoder 更精确，但速度较慢
+3. **Top-K 截断**：召回阶段取较多结果，Reranker 后再截断到较小的 Top-K

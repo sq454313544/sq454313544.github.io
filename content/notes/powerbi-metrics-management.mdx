@@ -1,0 +1,71 @@
+---
+title: "Power BI 指标口径管理实践"
+description: "探讨在大型组织中如何通过 Power BI 实施指标口径统一管理，确保数据一致性和可信度。"
+publishedAt: "2026-07-10"
+updatedAt: "2026-07-12"
+category: "powerbi"
+tags: ["powerbi", "metrics", "governance"]
+draft: false
+featured: true
+---
+
+## 问题背景
+
+在大型组织中，不同部门对同一业务指标常有不同理解。例如"销售额"可能包含或不包含退货、税费、运费等，导致同一个指标名称下有多种计算口径。
+
+## 核心挑战
+
+1. **口径分散**：各部门使用不同 SQL 或 DAX 公式
+2. **版本混乱**：指标修改后旧报表未同步
+3. **缺乏文档**：新人难以理解指标计算逻辑
+
+## 解决方案
+
+### 1. 建立指标字典
+
+```yaml
+metric: 净销售额
+definition: 总销售额 - 退货金额 - 折扣金额
+owner: 数据平台组
+granularity: 日
+dimensions: [时间, 产品, 区域, 渠道]
+```
+
+### 2. 使用 Tabular Editor 管理度量值
+
+```dax
+-- 通过 Tabular Editor 批量管理 DAX 度量值
+Net Sales =
+CALCULATE(
+    SUM(fact_sales[amount]),
+    fact_sales[transaction_type] = "sale"
+) -
+CALCULATE(
+    SUM(fact_sales[amount]),
+    fact_sales[transaction_type] IN {"return", "discount"}
+)
+```
+
+### 3. 实施变更管控
+
+<MermaidDiagram chart={`graph TD
+    A[指标变更请求] --> B{影响评估}
+    B -->|低风险| C[直接更新]
+    B -->|高风险| D[评审委员会]
+    D --> E[批准]
+    E --> F[更新 + 通知下游]
+    C --> F
+    F --> G[回归测试]`} />
+
+## 实施效果
+
+- 报表数据不一致的投诉减少
+- 新报表开发效率提升
+- 数据团队不再重复解释指标含义
+
+## 最佳实践总结
+
+1. **指标字典是基础**：先有定义再有实现
+2. **工具化**：Tabular Editor + DevOps 实现版本管理
+3. **自动化测试**：指标变更后自动跑下游报表快照对比
+4. **文档先行**：新增指标必须有文档才能发布

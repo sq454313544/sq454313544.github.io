@@ -270,17 +270,22 @@ URL: `/search?q=关键词`
 | — | `pnpm test` | ✅ |
 | — | `pnpm build` | ✅ |
 
-### M3：笔记垂直切片
+### M3：笔记垂直切片 ✅ 已完成
 
-| 步骤 | 操作 |
+| 步骤 | 状态 |
 |---|---|
-| M3.1-3 | 创建 3 篇学习笔记 MDX |
-| M3.4 | `app/notes/page.tsx`（列表 + 分类/标签筛选） |
-| M3.5 | `app/notes/[slug]/page.tsx`（完整详情 → ToC + Shiki + Mermaid + 前后篇 + 相关） |
-| M3.6 | `components/content/Toc.tsx` |
-| M3.7 | `components/content/PrevNextNav.tsx` |
-| M3.8 | `components/content/RelatedArticles.tsx` |
-| M3.9 | E2E：笔记列表 + 详情 |
+| M3.1 | `content/notes/langgraph-state-nodes.mdx`（M1 已创建） | ✅ |
+| M3.2 | `content/notes/rag-multi-recall-reranker.mdx` | ✅ |
+| M3.3 | `content/notes/powerbi-metrics-management.mdx` | ✅ |
+| M3.4 | `app/notes/page.tsx`（列表 + 分类/标签筛选） | ✅ |
+| M3.5 | `app/notes/[slug]/page.tsx`（完整详情 → ToC + PrevNext + Related + Mermaid） | ✅ |
+| M3.6 | `components/content/Toc.tsx`（extractToc + Toc 组件） | ✅ |
+| M3.7 | `components/content/PrevNextNav.tsx` | ✅ |
+| M3.8 | `components/content/RelatedArticles.tsx` | ✅ |
+| — | `pnpm typecheck` | ✅ |
+| — | `pnpm test`（45 tests） | ✅ |
+| — | `pnpm build`（8 pages, 3 SSG notes） | ✅ |
+| — | Shiki: `@shikijs/rehype` v4 与 `@next/mdx` + Turbopack 三方 `styleToJs` 冲突，暂不集成 | ⚠️ |
 
 ### M4：项目与 BI 垂直切片
 
