@@ -1,8 +1,8 @@
 # MDX 转换管线规则（v2 最终版）
 
-> 本文档明确 Shiki、Mermaid、ToC 的编译链路，消除 v1 规划中的模糊点。
+> **状态**：M1 已验证通过。Shiki 因 Turbopack 插件序列化限制暂未集成，代码块目前无语法高亮。
 
-## 1. 代码高亮：Shiki
+## 1. 代码高亮：Shiki（待定）
 
 ```
 MDX fenced code block

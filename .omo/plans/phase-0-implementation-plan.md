@@ -24,11 +24,13 @@
 | 13 | 分类语义混淆 | 统一映射 | 保持各自字段 | — |
 | 14 | M2/M3 并行 | 隐式依赖 | 垂直切片 | — |
 | 15 | 实施顺序 | M0→M1→M2+M3→M4→M5 | M0→M1→M2→M3→M4→M5→M6 | — |
-| 16 | TypeScript 5.0.2 | 不满足 Next.js 16 | — | **TS 7.0.2** |
+| 16 | TypeScript 5.0.2 | 不满足 Next.js 16 | — | **TS 5.9.2**（7.0.2 不被 Next.js 16 识别） |
 | 17 | mdxRs: true | 实验性编译器 | — | **移除，使用标准 @next/mdx 管线** |
 | 18 | Frontmatter 链路未闭环 | gray-matter + @next/mdx 冲突 | — | **remark-frontmatter + remark-mdx-frontmatter 插件** |
 | 19 | pageExtensions 文档错误 | 漏写默认扩展 | — | **已核实 `["js","jsx","ts","tsx","md","mdx"]`** |
-| 20 | Shiki/Mermaid/ToC 规则模糊 | 无明确链路 | — | **见 `docs/mdx-pipeline.md`** |
+| 20 | Shiki/Mermaid/ToC 规则模糊 | 无明确链路 | — | **Mermaid✅/ToC✅/Shiki⚠️（Turbopack 序列化限制，待定）** |
+| 21 | next.config.ts 插件序列化 | Turbopack 无法序列化 ES module 插件 | — | **改为 next.config.mjs + 字符串引用** |
+| 22 | @mdx-js/loader 缺失 | @next/mdx 内部依赖 | — | **显式安装 @mdx-js/loader** |
 
 > 完整 MDX 转换管线规则见 [`docs/mdx-pipeline.md`](../docs/mdx-pipeline.md)。
 
@@ -230,20 +232,29 @@ URL: `/search?q=关键词`
 | ✅ `pnpm dev` 启动 × 首页 200 验证 | 完成 |
 | ⚠️ TypeScript 5.0.2，Next.js 建议 ≥5.1 | 待评估 |
 
-### M1：MDX 管线验证（POC）
+### M1：MDX 管线验证（POC） ✅ 已完成
 
 **目标**：创建 1 篇 MDX，验证完整渲染链路
 
-| 步骤 | 操作 |
+| 步骤 | 状态 |
 |---|---|
-| M1.1 | 创建 `content/notes/test.mdx`（含 frontmatter + Shiki 代码块 + Mermaid 图） |
-| M1.2 | 实现 `lib/content/types.ts`（判别联合 ContentItem） |
-| M1.3 | 实现 `lib/content/schemas.ts`（Zod + 语义日期 + 跨字段校验） |
-| M1.4 | 实现 `lib/content/loaders.ts`（gray-matter 解析 frontmatter，不渲染 body） |
-| M1.5 | 实现 `app/notes/[slug]/page.tsx`（动态 import + generateStaticParams + dynamicParams=false） |
-| M1.6 | 实现 `components/content/MermaidDiagram.tsx`（"use client"） |
-| M1.7 | 配置 Shiki 到 mdx-components.tsx |
-| M1.8 | `pnpm build` 验证完整构建 |
+| M1.1 | 创建 `content/notes/langgraph-state-nodes.mdx`（含 frontmatter + 代码块 + Mermaid 图） | ✅ |
+| M1.2 | 实现 `lib/content/types.ts`（判别联合 ContentItem） | ✅ |
+| M1.3 | 实现 `lib/content/schemas.ts`（Zod + 语义日期 + 跨字段校验 + .optional()/.url()） | ✅ |
+| M1.4 | 实现 `lib/content/loaders.ts`（gray-matter 解析 frontmatter + searchText/excerpt/readingTime） | ✅ |
+| M1.5 | 实现 `app/notes/[slug]/page.tsx`（动态 import + generateStaticParams + dynamicParams=false） | ✅ |
+| M1.6 | 实现 `components/content/MermaidDiagram.tsx`（"use client" + 错误状态） | ✅ |
+| M1.7 | 实现 `components/primitives/states.tsx`（Loading/Empty/Error） | ✅ |
+| M1.8 | `mdx-components.tsx` 映射 MermaidDiagram | ✅ |
+| M1.9 | `pnpm dev` → `/notes/langgraph-state-nodes` 返回 200，含代码块和 Mermaid | ✅ |
+| M1.10 | `pnpm build` 通过（Turbopack 编译 + TypeScript + 静态页面生成） | ✅ |
+
+**M1 技术记录**：
+- **next.config.mjs**：Turbopack 要求插件使用字符串引用 `["remark-frontmatter", ["yaml"]]` 而非 ES module 导入，否则 `serializable options` 错误
+- **@mdx-js/loader**：`@next/mdx` 运行时依赖此包，必须显式安装
+- **TypeScript**：5.9.2（7.0.2 不被 Next.js 16 识别）
+- **Shiki**：`@shikijs/rehype` 因 Turbopack 插件序列化限制暂未集成；代码块目前仅渲染 `<pre><code>` 无高亮，后续研究 Turbopack 兼容方案
+- **rehype-slug**：通过字符串引用正常工作，heading 已生成 id
 
 ### M2：内容服务层
 

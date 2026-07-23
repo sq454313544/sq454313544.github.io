@@ -11,11 +11,11 @@
 
 - Next.js 16 App Router
 - React 19
-- TypeScript strict
+- TypeScript strict（5.9.2，Next.js 16 兼容）
 - Tailwind CSS 4
 - 本地 MDX（`@next/mdx` 编译 + `gray-matter` 仅解析 frontmatter）
 - Zod（frontmatter 校验）
-- Shiki（代码高亮）
+- Shiki（代码高亮，Turbopack 兼容方案待定）
 - Mermaid（图表）
 - ECharts（图表）
 - pnpm（包管理）

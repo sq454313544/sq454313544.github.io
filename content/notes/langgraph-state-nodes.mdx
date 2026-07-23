@@ -1,0 +1,88 @@
+---
+title: "LangGraph 状态与节点设计入门"
+description: "介绍 LangGraph 的核心概念：状态图、节点、边和条件路由，并通过示例代码演示基础用法。"
+publishedAt: "2026-07-01"
+updatedAt: "2026-07-01"
+category: "langgraph"
+tags: ["langgraph", "agent", "state-machine"]
+draft: false
+featured: false
+---
+
+## 什么是 LangGraph
+
+LangGraph 是一个用于构建有状态、多参与者应用程序的框架，基于 LangChain 生态。它使用**图**的概念来编排 Agent 的工作流。
+
+## 核心概念：状态图
+
+LangGraph 的核心是 `StateGraph`，它定义了：
+
+- **状态（State）**：在节点之间传递的共享数据结构
+- **节点（Node）**：执行具体逻辑的函数
+- **边（Edge）**：定义节点之间的流转规则
+
+```python
+from typing import TypedDict
+from langgraph.graph import StateGraph, END
+
+class AgentState(TypedDict):
+    messages: list
+    next_step: str
+
+def agent_node(state: AgentState) -> AgentState:
+    # Agent 处理逻辑
+    return {"next_step": "tool"}
+
+def tool_node(state: AgentState) -> AgentState:
+    # 工具调用逻辑
+    return {"next_step": "finish"}
+```
+
+## 条件路由
+
+LangGraph 支持根据状态动态选择下一步：
+
+```python
+def router(state: AgentState) -> str:
+    if state["next_step"] == "tool":
+        return "tool_node"
+    return "finish"
+
+graph = StateGraph(AgentState)
+graph.add_node("agent", agent_node)
+graph.add_node("tool", tool_node)
+graph.add_conditional_edges("agent", router, {
+    "tool_node": "tool",
+    "finish": END,
+})
+```
+
+## 一个简单的交互示例
+
+下面是一个完整的对话 Agent 流程图：
+
+<MermaidDiagram chart={`graph TD
+    A[用户输入] --> B[Agent 思考]
+    B --> C{需要工具?}
+    C -->|是| D[调用工具]
+    C -->|否| E[生成回复]
+    D --> B
+    E --> F[返回结果]`} />
+
+## 关键要点
+
+1. **状态是核心**：所有节点共享并修改同一个状态对象
+2. **图结构清晰**：节点和边的关系一目了然
+3. **条件路由灵活**：可以基于状态动态选择路径
+4. **循环支持**：Agent 可以在思考和工具调用之间循环
+
+## 与普通 Chain 的区别
+
+| 特性 | LangChain Chain | LangGraph |
+|------|----------------|-----------|
+| 执行方式 | 线性流水线 | 有向图 |
+| 状态管理 | 隐式传递 | 显式 State |
+| 循环 | 不支持 | 原生支持 |
+| Debug | 困难 | 图可视化 |
+
+LangGraph 特别适合构建需要**反复决策**和**工具调用**的 Agent 系统。
