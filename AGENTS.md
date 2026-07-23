@@ -15,7 +15,7 @@
 - Tailwind CSS 4
 - 本地 MDX（`@next/mdx` 编译 + `gray-matter` 仅解析 frontmatter）
 - Zod（frontmatter 校验）
-- Shiki（代码高亮，Turbopack 兼容方案待定）
+- Shiki（代码高亮，Server Component 方式：`codeToHtml()` + `mdx-components.tsx` 重映射 `pre`）
 - Mermaid（图表）
 - ECharts（图表）
 - pnpm（包管理）

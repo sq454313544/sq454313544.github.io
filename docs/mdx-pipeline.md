@@ -1,26 +1,32 @@
 # MDX 转换管线规则（v2 最终版）
 
-> **状态**：M1 已验证通过。Shiki 因 Turbopack 插件序列化限制暂未集成，代码块目前无语法高亮。
+> **状态**：M6 已完成。Shiki 通过 Server Component 方式集成（`PreCodeBlock` + `codeToHtml()`），绕过 `hast-util-to-estree` 的 `styleToJs` 兼容性问题。
 
-## 1. 代码高亮：Shiki（待定）
+## 1. 代码高亮：Shiki ✅
+
+### 方案：Server Component `PreCodeBlock`
 
 ```
-MDX fenced code block
+MDX fenced code
   │  ```python
   │  code here
   │  ```
   ▼
-@next/mdx → remark/rehype 插件链
-  │  rehype-shiki 插件（构建时）
+@next/mdx → <pre><code className="language-python">code</code></pre>
   ▼
-输出：高亮 HTML（<pre><code> 含内联样式）
+mdx-components.tsx: pre → PreCodeBlock
+  ▼
+PreCodeBlock (async Server Component)
+  │  codeToHtml(code, { lang, theme: "github-dark" })
+  ▼
+输出：<div dangerouslySetInnerHTML={{ __html: highlighted }} />
 ```
 
-**实现方式**：在 `next.config.ts` 的 `rehypePlugins` 中添加 Shiki rehype 插件。构建时完成高亮，无客户端 JS。
+**实现方式**：`mdx-components.tsx` 将 `<pre>` 映射为 `PreCodeBlock`，在 React Server Component 中调用 `shiki.codeToHtml()`，通过 `dangerouslySetInnerHTML` 插入高亮 HTML。
 
-**不采用**：
-- ❌ `mdx-components.tsx` 中覆写 `<code>`（这是运行时方案，不适合构建时高亮）
-- ❌ 客户端 Shiki（增加 bundle 体积）
+**为什么不用 rehype 插件**：`@shikijs/rehype` 生成的 `<span style="color:...">` 样式无法被 `@next/mdx` 内部的 `hast-util-to-estree` 解析（`styleToJs is not a function`），Webpack 和 Turbopack 均失败。Server Component 方案在 React 渲染层处理，完全绕过该问题。
+
+**特点**：服务端渲染，零客户端 JS，`github-dark` 主题。
 
 ## 2. 文章目录：ToC
 

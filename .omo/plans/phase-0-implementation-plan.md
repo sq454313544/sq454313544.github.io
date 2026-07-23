@@ -28,7 +28,7 @@
 | 17 | mdxRs: true | 实验性编译器 | — | **移除，使用标准 @next/mdx 管线** |
 | 18 | Frontmatter 链路未闭环 | gray-matter + @next/mdx 冲突 | — | **remark-frontmatter + remark-mdx-frontmatter 插件** |
 | 19 | pageExtensions 文档错误 | 漏写默认扩展 | — | **已核实 `["js","jsx","ts","tsx","md","mdx"]`** |
-| 20 | Shiki/Mermaid/ToC 规则模糊 | 无明确链路 | — | **Mermaid✅/ToC✅/Shiki⚠️（Turbopack 序列化限制，待定）** |
+| 20 | Shiki 代码高亮 | `@shikijs/rehype` + Turbopack 三方冲突 | — | **Server Component 方案：`PreCodeBlock` + `codeToHtml()` 绕过 hast-util-to-estree** |
 | 21 | next.config.ts 插件序列化 | Turbopack 无法序列化 ES module 插件 | — | **改为 next.config.mjs + 字符串引用** |
 | 22 | @mdx-js/loader 缺失 | @next/mdx 内部依赖 | — | **显式安装 @mdx-js/loader** |
 
