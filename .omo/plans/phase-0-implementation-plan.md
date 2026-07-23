@@ -256,16 +256,19 @@ URL: `/search?q=关键词`
 - **Shiki**：`@shikijs/rehype` 因 Turbopack 插件序列化限制暂未集成；代码块目前仅渲染 `<pre><code>` 无高亮，后续研究 Turbopack 兼容方案
 - **rehype-slug**：通过字符串引用正常工作，heading 已生成 id
 
-### M2：内容服务层
+### M2：内容服务层 ✅ 已完成
 
-| 步骤 | 操作 |
+| 步骤 | 状态 |
 |---|---|
-| M2.1 | `lib/content/slugs.ts`：slug 生成 + 去重 |
-| M2.2 | `lib/content/reading-time.ts`：阅读时间计算 |
-| M2.3 | `lib/content/queries.ts`：全部查询（按 slug/category/标签/精选/最新/前后篇/相关） |
-| M2.4 | `lib/search/index.ts`：searchText 全文索引 |
-| M2.5 | `lib/search/matcher.ts`：搜索匹配 + 中文归一化 |
-| M2.6 | 单元测试：schemas + slugs + queries + search |
+| M2.1 | `lib/content/slugs.ts`：slug 生成 + 去重 | ✅ |
+| M2.2 | `lib/content/reading-time.ts`：阅读时间计算 | ✅ |
+| M2.3 | `lib/content/queries.ts`：getPublished/getBySlug/getByCategory/getByTag/getFeatured/getLatest/getPrevNext/getRelated/getAllTags/getAllCategories | ✅ |
+| M2.4 | `lib/search/index.ts`：searchText 全文索引 | ✅ |
+| M2.5 | `lib/search/matcher.ts`：搜索匹配 + 权重排序 + 中文归一化 | ✅ |
+| M2.6 | 单元测试：schemas(16) + slugs(4) + queries(13) + search(10) = 45 tests | ✅ |
+| — | `pnpm typecheck` | ✅ |
+| — | `pnpm test` | ✅ |
+| — | `pnpm build` | ✅ |
 
 ### M3：笔记垂直切片
 
