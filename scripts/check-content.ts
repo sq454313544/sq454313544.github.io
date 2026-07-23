@@ -14,7 +14,7 @@ const CONTENT_TYPES = ["notes", "projects", "dashboards"] as const;
 
 let totalFiles = 0;
 let validFiles = 0;
-let errors: string[] = [];
+const errors: string[] = [];
 
 for (const type of CONTENT_TYPES) {
   const dir = join(CONTENT_DIR, type);

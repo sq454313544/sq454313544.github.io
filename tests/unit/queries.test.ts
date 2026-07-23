@@ -11,7 +11,7 @@ import {
   getAllTags,
   getAllCategories,
 } from "@/lib/content/queries";
-import type { NoteItem, ProjectItem, ContentItem } from "@/lib/content/types";
+import type { NoteItem, ContentItem } from "@/lib/content/types";
 
 function makeNote(overrides: Partial<NoteItem> = {}): NoteItem {
   return {

@@ -3,3 +3,13 @@
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
+
+pre {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+pre code {
+  white-space: pre;
+  word-break: normal;
+}

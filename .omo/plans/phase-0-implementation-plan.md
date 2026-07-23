@@ -313,19 +313,20 @@ URL: `/search?q=关键词`
 | M5.9 | `components/navigation/`（Header + Footer） |
 | M5.10 | E2E：搜索 + 标签 + 分类 + 404 |
 
-### M6：SEO + QA Gate
+### M6：SEO + QA Gate ✅ 已完成
 
-| 步骤 | 操作 |
+| 步骤 | 状态 |
 |---|---|
-| M6.1 | 页面级 Metadata（各页面独立 title/description） |
-| M6.2 | `app/sitemap.ts` + `app/robots.ts` |
-| M6.3 | JSON-LD 结构化数据（笔记=Article，项目=CreativeWork） |
-| M6.4 | `pnpm lint` |
-| M6.5 | `pnpm typecheck` |
-| M6.6 | `pnpm test` |
-| M6.7 | `pnpm build` |
-| M6.8 | `pnpm test:e2e`（系统 Chrome，9 条关键路径） |
-| M6.9 | `.agent-temp` 清理，密钥扫描 |
+| M6.1 | 页面级 Metadata（homepage/notes/projects/dashboards/search/tags/categories/about/resume/agent） | ✅ |
+| M6.2 | `app/sitemap.ts`（静态+SSG 全部路由） | ✅ |
+| M6.3 | `app/robots.ts` | ✅ |
+| M6.4 | JSON-LD：笔记=Article，项目=CreativeWork | ✅ |
+| M6.5 | `pnpm typecheck` | ✅ |
+| M6.6 | `pnpm test`（45 tests） | ✅ |
+| M6.7 | `pnpm build`（53 pages） | ✅ |
+| M6.8 | `pnpm test:e2e`（系统 Chrome，15 tests） | ✅ |
+| M6.9 | `pnpm lint`（0 errors） | ✅ |
+| — | 390px 横向溢出修复（`overflow-x-hidden` + `pre { overflow-x: auto }`） | ✅ |
 
 ---
 

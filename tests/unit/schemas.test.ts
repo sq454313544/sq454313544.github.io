@@ -27,7 +27,8 @@ describe("NoteMetaSchema", () => {
   });
 
   it("rejects missing title", () => {
-    const { title, ...rest } = valid;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { title: _title, ...rest } = valid;
     expect(() => NoteMetaSchema.parse(rest)).toThrow();
   });
 

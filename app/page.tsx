@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -24,12 +25,12 @@ export default function HomePage() {
       <nav className="space-y-2">
         <h2 className="text-lg font-semibold mb-3">浏览</h2>
         <ul className="space-y-1">
-          <li><a href="/notes" className="text-blue-600 hover:underline">学习笔记 →</a></li>
-          <li><a href="/projects" className="text-blue-600 hover:underline">项目作品集 →</a></li>
-          <li><a href="/dashboards" className="text-blue-600 hover:underline">BI 案例 →</a></li>
-          <li><a href="/search" className="text-blue-600 hover:underline">搜索 →</a></li>
-          <li><a href="/about" className="text-blue-600 hover:underline">关于我 →</a></li>
-          <li><a href="/agent" className="text-blue-600 hover:underline">Agent Demo（建设中）→</a></li>
+          <li><Link href="/notes" className="text-blue-600 hover:underline">学习笔记 →</Link></li>
+          <li><Link href="/projects" className="text-blue-600 hover:underline">项目作品集 →</Link></li>
+          <li><Link href="/dashboards" className="text-blue-600 hover:underline">BI 案例 →</Link></li>
+          <li><Link href="/search" className="text-blue-600 hover:underline">搜索 →</Link></li>
+          <li><Link href="/about" className="text-blue-600 hover:underline">关于我 →</Link></li>
+          <li><Link href="/agent" className="text-blue-600 hover:underline">Agent Demo（建设中）→</Link></li>
         </ul>
       </nav>
     </main>

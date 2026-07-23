@@ -85,6 +85,20 @@ export default async function ProjectPage({
         <PrevNextNav prev={prev} next={next} basePath="/projects" />
         <RelatedArticles items={related} />
       </article>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CreativeWork",
+            name: project.meta.title,
+            description: project.meta.description,
+            datePublished: project.meta.publishedAt,
+            dateModified: project.meta.updatedAt,
+          }),
+        }}
+      />
     </main>
   );
 }

@@ -92,6 +92,20 @@ export default async function NotePage({
 
         <RelatedArticles items={related} />
       </article>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            headline: note.meta.title,
+            description: note.meta.description,
+            datePublished: note.meta.publishedAt,
+            dateModified: note.meta.updatedAt,
+          }),
+        }}
+      />
     </main>
   );
 }

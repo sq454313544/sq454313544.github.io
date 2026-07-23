@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import { loadAllContent } from "@/lib/content/loaders";
 import { getByTag } from "@/lib/content/queries";
 import Link from "next/link";
-import { Empty } from "@/components/primitives/states";
 import type { Metadata } from "next";
 
 export function generateStaticParams() {
