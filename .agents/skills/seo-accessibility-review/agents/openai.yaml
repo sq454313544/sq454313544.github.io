@@ -1,0 +1,4 @@
+interface:
+  display_name: "SEO & Accessibility Review"
+  short_description: "Review pages for search and inclusive access."
+  default_prompt: "Use $seo-accessibility-review to review a completed page before release."

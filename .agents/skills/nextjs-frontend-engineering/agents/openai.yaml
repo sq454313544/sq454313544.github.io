@@ -1,0 +1,4 @@
+interface:
+  display_name: "Next.js Frontend Engineering"
+  short_description: "Implement Next.js App Router pages, components, and MDX integration."
+  default_prompt: "Use $nextjs-frontend-engineering to implement a Next.js page, component, or route."

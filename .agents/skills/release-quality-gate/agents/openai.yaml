@@ -1,0 +1,4 @@
+interface:
+  display_name: "Release Quality Gate"
+  short_description: "Run release-ready quality checks before delivery."
+  default_prompt: "Use $release-quality-gate to verify a completed feature before commit or deployment."

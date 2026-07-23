@@ -1,0 +1,4 @@
+interface:
+  display_name: "Content Authoring"
+  short_description: "Author safe, structured technical MDX content."
+  default_prompt: "Use $content-authoring to draft or review a technical MDX entry."

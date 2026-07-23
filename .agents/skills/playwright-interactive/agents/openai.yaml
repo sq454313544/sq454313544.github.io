@@ -1,0 +1,4 @@
+interface:
+  display_name: "Playwright Interactive"
+  short_description: "Verify pages in a real browser with system Chrome."
+  default_prompt: "Use $playwright-interactive to verify the page in a real browser."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Frontend Design System"
+  short_description: "Apply visual design, Tailwind styling, and responsive layouts to pages and components."
+  default_prompt: "Use $frontend-design-system to apply visual design to a page or component."
