@@ -105,7 +105,7 @@ describe("search", () => {
       makeNote({ slug: "old", title: "Guide" }),
       makeNote({ slug: "new", title: "Guide" }),
     ];
-    (items[1].meta as NoteMeta & { publishedAt: string }).publishedAt = "2026-06-01";
+    (items[1].meta as NoteMeta).publishedAt = "2026-06-01";
     const index = buildSearchIndex(items);
     const results = search(index, "guide");
     expect(results[0].entry.slug).toBe("new");

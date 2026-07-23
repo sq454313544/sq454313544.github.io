@@ -1,5 +1,3 @@
-import type { NoteItem } from "@/lib/content/types";
-
 interface TocItem {
   id: string;
   text: string;

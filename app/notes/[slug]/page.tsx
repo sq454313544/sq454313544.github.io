@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { loadNotes } from "@/lib/content/loaders";
-import { getPrevNext, getRelated, getPublished } from "@/lib/content/queries";
+import { getPrevNext, getRelated } from "@/lib/content/queries";
 import type { NoteItem } from "@/lib/content/types";
 import type { Metadata } from "next";
 import { Toc, extractToc } from "@/components/content/Toc";
@@ -47,7 +47,6 @@ export default async function NotePage({
   );
 
   const toc = extractToc(note.body);
-  const published = getPublished(allNotes);
   const { prev, next } = getPrevNext(allNotes, slug);
   const related = getRelated(allNotes, note);
 

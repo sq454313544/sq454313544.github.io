@@ -2,13 +2,10 @@ import { readFileSync, readdirSync } from "node:fs";
 import { join, extname } from "node:path";
 import matter from "gray-matter";
 import { validateNoteMeta, validateProjectMeta, validateDashboardMeta } from "./schemas";
-import type { ContentItem, NoteItem, ProjectItem, DashboardItem } from "./types";
+import type { ContentItem, NoteItem, ProjectItem, DashboardItem, ContentType } from "./types";
+import { generateSlug } from "./slugs";
 
 const CONTENT_DIR = join(process.cwd(), "content");
-
-function generateSlug(filename: string): string {
-  return filename.replace(extname(filename), "");
-}
 
 function generateExcerpt(body: string, maxLength = 200): string {
   return body.replace(/[#*`>\[\]()]/g, "").replace(/\s+/g, " ").trim().slice(0, maxLength);
@@ -25,12 +22,14 @@ function generateSearchText(body: string): string {
     .trim();
 }
 
-function calculateReadingTime(body: string, wordsPerMinute = 300): number {
-  const words = body.replace(/```[\s\S]*?```/g, "").replace(/<[^>]+>/g, "").length;
-  return Math.max(1, Math.ceil(words / wordsPerMinute));
+function calcReadingTime(body: string, wordsPerMinute = 300): number {
+  const cleaned = body
+    .replace(/```[\s\S]*?```/g, "")
+    .replace(/<[^>]+>/g, "");
+  return Math.max(1, Math.ceil(cleaned.length / wordsPerMinute));
 }
 
-function loadContentType(type: string, dir: string): ContentItem[] {
+function loadContentType(type: ContentType, dir: string): ContentItem[] {
   const items: ContentItem[] = [];
   try {
     const files = readdirSync(dir).filter((f) => extname(f) === ".mdx");
@@ -41,7 +40,7 @@ function loadContentType(type: string, dir: string): ContentItem[] {
       const slug = generateSlug(file);
       const excerpt = generateExcerpt(body);
       const searchText = generateSearchText(body);
-      const readingTime = calculateReadingTime(body);
+      const readingTime = calcReadingTime(body);
 
       try {
         if (type === "note") {

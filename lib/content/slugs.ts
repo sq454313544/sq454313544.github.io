@@ -1,23 +1,19 @@
-import { extname } from "node:path";
-import type { ContentItem } from "./types";
+import type { ContentType } from "./types";
 
 export function generateSlug(filename: string): string {
-  return filename.replace(extname(filename), "");
+  return filename.replace(/\.[^.]+$/, "");
 }
 
-export function findDuplicateSlugs(items: ContentItem[]): string[] {
-  const seen = new Map<string, string[]>();
+export function findDuplicateSlugs(
+  items: { type: ContentType; slug: string }[]
+): string[] {
+  const seen = new Map<string, number>();
+  const duplicates: string[] = [];
   for (const item of items) {
     const key = `${item.type}:${item.slug}`;
-    const existing = seen.get(key) ?? [];
-    existing.push(item.slug);
-    seen.set(key, existing);
-  }
-  const duplicates: string[] = [];
-  for (const [, slugs] of seen) {
-    if (slugs.length > 1) {
-      duplicates.push(slugs[0]);
-    }
+    const count = (seen.get(key) ?? 0) + 1;
+    seen.set(key, count);
+    if (count === 2) duplicates.push(key);
   }
   return duplicates;
 }

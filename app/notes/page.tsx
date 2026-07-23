@@ -27,13 +27,12 @@ export default function NotesPage() {
           <h2 className="text-sm font-semibold text-gray-500 mb-2">分类</h2>
           <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (
-              <Link
+              <span
                 key={cat.name}
-                href={`/categories/${cat.name}`}
-                className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded transition-colors"
+                className="text-sm bg-gray-100 px-3 py-1 rounded"
               >
                 {cat.name} ({cat.count})
-              </Link>
+              </span>
             ))}
           </div>
         </nav>
@@ -44,13 +43,12 @@ export default function NotesPage() {
           <h2 className="text-sm font-semibold text-gray-500 mb-2">标签</h2>
           <div className="flex flex-wrap gap-1.5">
             {tags.slice(0, 20).map((tag) => (
-              <Link
+              <span
                 key={tag.name}
-                href={`/tags/${tag.name}`}
-                className="text-xs bg-gray-50 hover:bg-gray-100 px-2 py-0.5 rounded transition-colors"
+                className="text-xs bg-gray-50 px-2 py-0.5 rounded"
               >
                 {tag.name} ({tag.count})
-              </Link>
+              </span>
             ))}
           </div>
         </nav>

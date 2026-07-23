@@ -17,10 +17,12 @@ interface MermaidDiagramProps {
 export function MermaidDiagram({ chart, className }: MermaidDiagramProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [error, setError] = useState<string | null>(null);
-  const [rendered, setRendered] = useState(false);
+  const prevChart = useRef<string | null>(null);
 
   useEffect(() => {
-    if (!ref.current || rendered) return;
+    if (!ref.current) return;
+    if (prevChart.current === chart) return;
+    prevChart.current = chart;
 
     const id = `mermaid-${Math.random().toString(36).slice(2, 8)}`;
 
@@ -29,14 +31,13 @@ export function MermaidDiagram({ chart, className }: MermaidDiagramProps) {
       .then(({ svg }) => {
         if (ref.current) {
           ref.current.innerHTML = svg;
-          setRendered(true);
           setError(null);
         }
       })
       .catch((err) => {
         setError(err instanceof Error ? err.message : "Mermaid 渲染失败");
       });
-  }, [chart, rendered]);
+  }, [chart]);
 
   if (error) {
     return (

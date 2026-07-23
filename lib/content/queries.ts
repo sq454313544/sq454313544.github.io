@@ -1,18 +1,5 @@
 import type { ContentItem, NoteItem, ProjectItem, DashboardItem } from "./types";
 
-let _allContent: ContentItem[] | null = null;
-
-function getAllContent(items: ContentItem[]): ContentItem[] {
-  if (!_allContent) {
-    _allContent = items;
-  }
-  return _allContent;
-}
-
-export function invalidateCache(): void {
-  _allContent = null;
-}
-
 /** All published content (exclude drafts) - sorted by date descending */
 export function getPublished(items: ContentItem[]): ContentItem[] {
   return items
