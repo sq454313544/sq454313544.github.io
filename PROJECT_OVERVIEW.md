@@ -59,7 +59,7 @@
 - 最终视觉设计（品牌色、字体、动画）
 - 部署（Vercel/Cloudflare）、自动 push
 
-**状态**：M0 工程初始化已完成，项目已可运行。工作目录 `E:\昂承\个人网站`。
+**状态**：M0 工程初始化已完成，项目已可运行。工作目录为项目根目录。
 
 ---
 
@@ -75,7 +75,7 @@
 | 6 | Google Chrome | ✅ | v150.0.7871.129，Playwright 烟雾测试通过 |
 | 7 | Context7 | ✅ | HTTP 200 可达 |
 | 8 | Skills | ✅ | 5 active + 1 disabled（详见 §13） |
-| 9 | 目录名 | ⚠️ | `E:\昂承\个人网站` 含中文，`pnpm create next-app` 需用 `--name` 绕过 |
+| 9 | 目录名 | ⚠️ | 项目根目录含中文，`pnpm create next-app` 需用 `--name` 绕过 |
 | 10 | OpenAI API | ⚠️ | `api.openai.com:443` TCP 不通，Codex Agent 功能受限 |
 | 11 | TypeScript | ✅ | 7.0.2（devDependencies） |
 | 12 | MDX 管线 | ✅ | remark-frontmatter + remark-mdx-frontmatter 插件链已验证，mdxRs 已移除，pageExtensions 已扩展 |
