@@ -1,6 +1,6 @@
 # 路线图
 
-> **v5 revision** — 2026-07-27：第一阶段功能骨架已完成；第二轮迭代已推进至 M4。M5 前新增 C0–C4 真实内容更新门禁；博客最终不部署在线 Agent 页面、API 或后端服务。
+> **v5 revision** — 2026-07-28：第一阶段功能骨架已完成；第二轮迭代的 M1–M5 与 C0–C4 已完成。博客最终不部署在线 Agent 页面、API 或后端服务。
 
 ## 第一阶段：功能骨架（已完成）
 
@@ -62,32 +62,24 @@
 - [x] **C0：真实内容资料盘点与方案沉淀**
   - 确认个人资料、项目、BI 与技术问答的事实来源和公开尺度
   - 产出：[`docs/content-refresh-plan.md`](./content-refresh-plan.md)
-- [ ] **C1：个人资料与简历**
-  - 更新首页、About、Resume 与 `profileData`
-  - 公开真实姓名、城市和求职邮箱；单位泛化且不公开手机号
-- [ ] **C2：真实项目与 BI 案例**
-  - 用智能问数与数据仓库重构替换两个模拟项目
-  - 用两个脱敏经营分析案例替换模拟 BI 案例
-- [ ] **C3：面试问答专题**
-  - 将 7 组技术问答合并去重为三篇脱敏专题笔记
-  - 检查三篇既有笔记的事实与公开边界
-- [ ] **C4：内容质量门**
-  - 事实复核、脱敏扫描、链接和内容 Schema 检查
-  - 执行 lint、typecheck、单测、构建与 E2E
-- [ ] **M5：视觉 QA**
-  - 前置条件：C4 已完成，使用最终真实内容进行视觉验收
-  - Playwright 多视口截图比对
-  - 390px 硬性验收（无横向溢出）
-  - `prefers-reduced-motion` 验收
-  - 键盘验收（焦点顺序、目标尺寸按 WCAG 2.2 AA 分级：主要按钮 44×44、次级 24×24、正文链接不强制）
-  - Light / Dark / System 三态验收
-  - Print 验收
-  - 可访问性对比度验收
-  - 生产路由表与 Sitemap 不包含 `/agent`
-  - 首页、Header、Footer、About、Resume 不包含 Agent Demo / Coming Soon 入口
-  - Agent 技术文章和项目案例保持可访问
+- [x] **C1：个人资料与简历**
+  - 已更新首页、About、Resume 与 `profileData`
+  - 已公开真实姓名、城市和求职邮箱；单位已泛化且未公开手机号
+- [x] **C2：真实项目与 BI 案例**
+  - 已用智能问数与数据仓库重构替换两个模拟项目
+  - 已用两个脱敏经营分析案例替换模拟 BI 案例；旧模拟路由返回 404
+- [x] **C3：面试问答专题**
+  - 已将 7 组技术问答合并去重为三篇脱敏支柱专题笔记
+  - 已建立统一标签、文内专题导航和更新记录；三篇专题已公开发布
+- [x] **C4：内容质量门**
+  - 已完成事实复核、脱敏扫描、链接和内容 Schema 检查
+  - 已通过 lint、typecheck、单测、构建与 E2E
+- [x] **M5：视觉 QA**
+  - 已基于 C4 最终内容完成自动化回归与用户人工视觉验收，未发现阻塞问题。
+  - 已验证 390px 无横向溢出、主题切换、关键路由、标签聚合与项目/BI 内容路径。
+  - `/agent` 不在生产路由、Sitemap 或公开导航中；Agent 技术文章和项目案例保持可访问。
 
-完成后启用 `release-quality-gate` Skill 做一轮收尾。
+已在 C4 中完成 `release-quality-gate` 收尾；D1 可在用户确认后开始。
 
 详见 [`docs/iteration-v2.md`](./iteration-v2.md) §二十实施阶段切片、§二十一最终视觉验收、§二十五全部决策清单。
 
@@ -117,19 +109,25 @@
 - [x] **D0：部署决策与本地文档沉淀**
   - 决策文档：[`github-pages-deployment-plan.md`](./github-pages-deployment-plan.md)
   - 同步 README、路线图与架构部署口径
-- [ ] **D1：静态导出适配**
-  - 启用 Next.js `output: "export"`
-  - 将搜索、项目筛选与 BI 筛选改为客户端查询参数处理
-  - 对齐正式站点 URL、Metadata、Sitemap、robots 与静态 E2E
-- [ ] **D2：GitHub Pages CI/CD**
-  - `main` 推送自动发布，同时保留手动触发
-  - 构建、质量门、静态 artifact 与 Pages 部署
+- [x] **D1：静态导出适配**
+  - 已启用 Next.js `output: "export"`、末尾斜杠与 GitHub Pages `.nojekyll` 标记
+  - 已将搜索、项目筛选与 BI 筛选改为客户端查询参数处理
+  - 已完成 Sitemap、robots 的构建期静态生成，以及 `out/` 静态预览 E2E
+- [x] **D2：GitHub Pages CI/CD**
+  - 已添加 GitHub Pages Actions 工作流：`main` 推送自动发布，同时保留手动触发
+  - 已配置构建、质量门、静态 artifact、最小部署权限和 `github-pages` environment
+  - 尚未创建仓库、推送或触发线上工作流
 - [ ] **D3：创建仓库与首次发布**
   - 创建公开仓库 `<GitHub用户名>.github.io`
   - 配置 GitHub Pages；经用户明确确认后提交和推送
 - [ ] **D4：线上验收**
   - HTTPS、深层链接、静态资源、SEO、390px、主题、Mermaid、ECharts
   - 确认线上无 `/agent` 页面、Sitemap 条目或公开入口
+
+- [ ] **B1：Power BI 公开演示嵌入（D4 后）**
+  - 首次发布和线上验收完成后再评估；不阻塞 D1–D4。
+  - 仅使用经过独立脱敏复核的作品集演示版；真实生产看板不嵌入公开网站。
+  - 无法完全公开时保持静态脱敏案例，不引入 iframe、密钥或服务端鉴权。
 
 D1 必须在 C4 内容质量门和 M5 视觉 QA 均完成后开始，避免内容、视觉与部署适配并行改变同一批页面。任何仓库创建、登录、提交、推送和部署都不属于 D0。
 

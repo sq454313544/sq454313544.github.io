@@ -164,6 +164,17 @@ describe("getAllTags", () => {
     const agent = tags.find((t) => t.name === "agent");
     expect(agent?.count).toBe(2);
   });
+
+  it("excludes tags that only belong to draft notes", () => {
+    const items: ContentItem[] = [
+      makeNote({
+        slug: "draft-series-note",
+        meta: { ...makeNote().meta, tags: ["enterprise-data-agent"], draft: true },
+      }),
+    ];
+
+    expect(getAllTags(items)).not.toContainEqual({ name: "enterprise-data-agent", count: 1 });
+  });
 });
 
 describe("getAllCategories", () => {

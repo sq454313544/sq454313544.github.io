@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export interface Profile {
   name: string;
   headline: string;
@@ -7,7 +9,7 @@ export interface Profile {
 
 export interface KeyProjectRef {
   title: string;
-  href: string;
+  href?: string;
 }
 
 export interface WorkExperience {
@@ -45,7 +47,7 @@ export interface EducationEntry {
 export interface ProjectHighlightRef {
   title: string;
   role: string;
-  href: string;
+  href?: string;
   description: string;
 }
 
@@ -56,6 +58,7 @@ const profileDataSchema = z.object({
     summary: z.string(),
     location: z.string().optional(),
   }),
+  heroSkills: z.array(z.string()),
   workExperiences: z.array(
     z.object({
       company: z.string(),
@@ -63,7 +66,7 @@ const profileDataSchema = z.object({
       period: z.object({ start: z.string(), end: z.string().nullable() }),
       background: z.string(),
       responsibilities: z.array(z.string()),
-      keyProjects: z.array(z.object({ title: z.string(), href: z.string() })),
+      keyProjects: z.array(z.object({ title: z.string(), href: z.string().optional() })),
       stack: z.array(z.string()),
     })
   ),
@@ -82,78 +85,112 @@ const profileDataSchema = z.object({
   ),
   certifications: z.array(z.object({ name: z.string(), issuer: z.string(), year: z.string() })),
   projectHighlights: z.array(
-    z.object({ title: z.string(), role: z.string(), href: z.string(), description: z.string() })
+    z.object({ title: z.string(), role: z.string(), href: z.string().optional(), description: z.string() })
   ),
 });
 
 export const profileData = profileDataSchema.parse({
   profile: {
-    name: "数据产品工程师",
-    headline: "BI / AI 数据应用",
+    name: "金仔伟",
+    headline: "数据产品工程师 · BI / AI 数据应用",
+    location: "长沙",
     summary:
-      "聚焦把业务问题转化为可验证的数据产品：从指标口径、BI 分析到 RAG 与工作流自动化，强调可用性、可解释性与长期维护。",
+      "具备数据产品、BI、数据工程与 AI 数据应用的端到端实践经验，擅长把业务问题转化为可验证、可维护的数据产品：从指标口径与建模、Power BI 语义模型，到受控的智能问数与工程化交付。",
   },
+  heroSkills: ["数据产品", "Power BI", "数据工程", "智能问数", "SQL", "Python"],
   workExperiences: [
     {
-      company: "数据产品与分析团队",
-      role: "数据产品工程师",
-      period: { start: "2023", end: null },
+      company: "专业服务行业数据团队",
+      role: "数据分析师",
+      period: { start: "2026.04", end: null },
       background:
-        "面向经营分析和数据自助需求，连接业务、数据与工程实施，持续完善分析链路和数据使用体验。",
+        "负责数据平台、经营分析与智能问数相关建设，服务运营监控、流程分析、绩效分析和数据自助需求。",
       responsibilities: [
-        "梳理指标口径与数据链路，将业务问题拆解为可交付的数据产品能力。",
-        "建设 BI 分析与数据自助查询方案，降低重复取数和沟通成本。",
-        "探索 RAG 与 Agent 工程在数据工作流中的可靠应用边界。",
+        "梳理指标口径、数据链路与消费边界，将业务问题拆解为可交付的数据产品能力。",
+        "建设数据同步、分层建模、质量检查与调度链路，为 BI 和 AI 数据应用提供统一数据底座。",
+        "设计受控智能问数能力，围绕检索、查询校验、权限与审计完善可靠性边界。",
       ],
       keyProjects: [
         { title: "企业智能问数助手", href: "/projects/enterprise-qa-assistant" },
-        { title: "Agent 可观测性与监控看板", href: "/projects/agent-observability-dashboard" },
+        { title: "数据仓库重构与治理平台", href: "/projects/data-warehouse-modernization" },
       ],
-      stack: ["Python", "SQL", "Power BI", "LangGraph", "RAG"],
+      stack: ["Python", "SQL", "Power BI", "LangGraph", "dbt", "Airflow"],
+    },
+    {
+      company: "本地生活与运营服务团队",
+      role: "数据专员",
+      period: { start: "2024.11", end: "2026.02" },
+      background:
+        "面向经营团队提供指标监控和专题分析，支持城市、门店与时间维度的经营问题定位。",
+      responsibilities: [
+        "梳理交易、履约和门店运营等核心指标，输出可追溯的经营分析结论。",
+        "使用 Power Query 与 Python 自动化重复数据处理流程，降低人工整理与口径偏差。",
+      ],
+      keyProjects: [],
+      stack: ["Power BI", "Power Query", "Python", "SQL"],
+    },
+    {
+      company: "互联网产品团队",
+      role: "游戏测试工程师",
+      period: { start: "2021.04", end: "2023.12" },
+      background:
+        "负责产品版本的功能、性能与网络专项测试，积累需求理解、质量保障和交付验收经验。",
+      responsibilities: [
+        "分析缺陷影响范围并推动问题闭环，协作保障版本交付质量。",
+        "验证数值与系统逻辑，维护测试过程中的版本与配置记录。",
+      ],
+      keyProjects: [],
+      stack: ["功能测试", "性能测试", "质量保障", "产品协作"],
     },
   ],
   skills: [
     {
-      title: "数据产品设计",
-      boundaries: "从业务问题、指标定义到交付路径，建立可验证、可迭代的数据产品方案。",
+      title: "数据产品与 BI",
+      boundaries: "从业务问题、指标定义到 Power BI 语义模型和交付路径，建立可验证、可迭代的数据产品方案。",
     },
     {
-      title: "BI 与经营分析",
-      boundaries: "将多维经营数据组织为可读、可追溯的分析模型和决策看板。",
+      title: "AI 数据应用",
+      boundaries: "围绕意图路由、受控检索、自然语言问数与结果解释，明确 AI 能力的可靠应用边界。",
     },
     {
-      title: "Agent / RAG 应用",
-      boundaries: "关注检索质量、工作流编排与可观测性，避免把实验性能力包装为在线产品。",
+      title: "数据工程底座",
+      boundaries: "通过分层建模、数据契约、质量检查、调度与血缘，提升数据资产的可信度和复用性。",
     },
     {
-      title: "数据建模与治理",
-      boundaries: "围绕口径一致性、数据质量和复用边界，提升分析结果的可信度。",
+      title: "AI 辅助研发",
+      boundaries: "将 Agent 用于需求拆解、实现、测试和审查，并通过人工复核、自动化测试与回滚控制交付质量。",
     },
   ],
   toolsAndTech: [
-    { title: "数据与分析", items: ["SQL", "Python", "Power BI", "指标治理"] },
-    { title: "AI 数据应用", items: ["LangGraph", "RAG", "向量检索", "可观测性"] },
-    { title: "工程实践", items: ["TypeScript", "Next.js", "Git", "Playwright"] },
+    { title: "数据与分析", items: ["Power BI", "DAX", "Power Query", "TMDL/PBIP", "指标治理"] },
+    { title: "AI 数据应用", items: ["Python", "FastAPI", "LangGraph", "MCP", "RAG"] },
+    { title: "数据工程", items: ["SQL", "MySQL", "DataX", "dbt", "Airflow", "Docker"] },
+    { title: "工程质量", items: ["Git", "自动化测试", "代码审查", "发布与回滚"] },
   ],
   interests: ["数据产品", "指标治理", "智能问数", "RAG 工程", "技术复盘"],
-  contacts: [],
+  contacts: [{ label: "454313544@qq.com", href: "mailto:454313544@qq.com" }],
   resumeSummary:
-    "数据产品工程师，具备数据分析、BI 建设、指标治理与 AI 数据应用实践经验，擅长在业务目标和工程可行性之间建立清晰、可维护的交付路径。",
-  education: [],
+    "数据产品工程师，具备数据分析、Power BI、数据工程与 AI 数据应用实践经验，擅长在业务目标和工程可行性之间建立清晰、可维护的交付路径。",
+  education: [
+    {
+      school: "湖南机电职业技术学院",
+      degree: "移动应用开发（Java Web 方向）· 大专",
+      period: { start: "2017.09", end: "2020.06" },
+    },
+  ],
   certifications: [],
   projectHighlights: [
     {
       title: "企业智能问数助手",
-      role: "数据产品与工程实现",
+      role: "产品设计 / 架构设计 / 核心开发",
       href: "/projects/enterprise-qa-assistant",
-      description: "以 LangGraph 与 RAG 为基础，组织自然语言查询、数据检索与 SQL 生成的工作流。",
+      description: "围绕自然语言指标查询、明细查询、上下文追问与结果导出，设计受控检索、查询校验、权限与审计边界。",
     },
     {
-      title: "Agent 可观测性与监控看板",
-      role: "可观测性方案设计",
-      href: "/projects/agent-observability-dashboard",
-      description: "围绕调用链、Token 用量、错误率和性能指标建立生产监控视图。",
+      title: "数据仓库重构与治理平台",
+      role: "数据产品 / 数据建模 / 治理建设",
+      href: "/projects/data-warehouse-modernization",
+      description: "以源数据同步、五层建模、数据契约、质量检查与调度治理为主线，为 BI 与 AI 数据应用提供统一的数据消费边界。",
     },
   ],
 });
-import { z } from "zod";

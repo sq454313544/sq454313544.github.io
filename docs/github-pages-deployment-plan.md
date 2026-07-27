@@ -1,9 +1,9 @@
 # GitHub Pages 部署方案
 
-> 版本：v1.0
-> 日期：2026-07-27
-> 决策状态：已批准，实施未开始
-> 当前边界：仅完成本地文档沉淀；不创建仓库、不登录 GitHub、不提交、不推送、不部署
+> 版本：v1.1
+> 日期：2026-07-28
+> 决策状态：D1 已完成；D2–D4 尚未实施
+> 当前边界：本地静态导出适配已完成；不创建仓库、不登录 GitHub、不提交、不推送、不部署
 
 ## 一、目标
 
@@ -29,6 +29,8 @@ GitHub Pages 不承载以下能力：
 - Server Actions、请求时动态渲染和依赖服务器的 Route Handler
 - 在线内容管理后台
 - 需要密钥才能在浏览器运行的第三方服务
+
+首期 D1–D4 也不实施 Power BI iframe 嵌入；现有 BI 案例继续使用已脱敏的图表、方法说明和静态内容。真实 Power BI 演示版的嵌入安排在站点首次发布并完成线上验收之后，作为独立的 B1 阶段。
 
 Agent、RAG、LangGraph 和智能问数仍可作为公开技术内容、项目案例与能力描述保留。Agent 部署边界以 [`agent-deployment-decision.md`](./agent-deployment-decision.md) 为准。
 
@@ -120,7 +122,7 @@ Sitemap、robots、canonical、Open Graph 和 JSON-LD 必须基于该地址生�
 - 仅在构建任务全部通过后执行。
 - 使用 `github-pages` environment。
 - 最小权限为 `contents: read`、`pages: write`、`id-token: write`。
-- 使用 `actions/configure-pages@v5`、`actions/upload-pages-artifact@v4` 与 `actions/deploy-pages@v4`。
+- 使用 `actions/checkout@v6`、`pnpm/action-setup@v4`、`actions/setup-node@v4`、`actions/configure-pages@v5`、`actions/upload-pages-artifact@v4` 与 `actions/deploy-pages@v4`。
 - 同一时间只允许一个 Pages 部署流程，避免并发覆盖。
 
 ## 六、实施阶段
@@ -128,14 +130,15 @@ Sitemap、robots、canonical、Open Graph 和 JSON-LD 必须基于该地址生�
 - [x] **D0：方案沉淀**
   - 完成本文件。
   - 更新路线图、README 与架构部署口径。
-- [ ] **D1：静态导出适配**
-  - 配置 Next.js 静态导出。
-  - 将搜索、项目筛选和 BI 筛选改为客户端查询参数处理。
-  - 对齐正式站点 URL、Metadata、Sitemap 与 robots。
-  - 增加静态产物预览和 E2E 支持。
-- [ ] **D2：CI/CD**
-  - 添加 GitHub Pages Actions 工作流。
-  - 完成构建、测试、artifact 与部署权限配置。
+- [x] **D1：静态导出适配**
+  - 已启用 Next.js 静态导出与末尾斜杠，构建产物输出至 `out/`。
+  - 已将搜索、项目筛选和 BI 筛选改为客户端查询参数处理，并以 `Suspense` 包裹。
+  - 已为 Sitemap 与 robots 声明构建期静态生成；正式站点 URL 仍由 D2 Actions 注入。
+  - 已加入 `.nojekyll`、本地静态预览脚本和 `pnpm test:e2e:static` 验收命令。
+- [x] **D2：CI/CD**
+  - 已添加 `.github/workflows/deploy-pages.yml`；`main` 推送自动触发，并保留 `workflow_dispatch`。
+  - 已配置 Node.js 22、pnpm 11、内容/代码质量门、静态构建、Chrome 静态 E2E 和 Pages artifact。
+  - 已配置最小权限、`github-pages` environment 与同组串行部署；本地尚未创建仓库或触发工作流。
 - [ ] **D3：首次发布**
   - 用户完成 GitHub 登录。
   - 创建公开仓库 `<GitHub用户名>.github.io`。
@@ -145,6 +148,13 @@ Sitemap、robots、canonical、Open Graph 和 JSON-LD 必须基于该地址生�
   - 验证 HTTPS、深层链接、404、静态资源和 SEO 文件。
   - 验证搜索、筛选、主题、Mermaid、ECharts、Resume 打印和移动端。
   - 确认线上无 `/agent` 页面、Sitemap 条目或导航入口。
+
+- [ ] **B1：Power BI 公开演示嵌入（首次发布后）**
+  - 仅在 D4 完成、用户明确确认并完成单独脱敏复核后评估实施。
+  - 只允许嵌入独立的作品集演示版，不嵌入生产或内部看板。
+  - 若使用 Power BI 的“发布到 Web”，报告及其模型中的数据必须可被任何互联网访客公开访问；不能依赖 RLS、隐藏页或隐藏字段保护数据。
+  - 若无法满足完全公开条件，则保留静态脱敏展示，不接入 iframe。
+  - GitHub Pages 不保存 Power BI 凭据、嵌入令牌或其他密钥，也不实现需要服务端令牌的安全嵌入。
 
 D1 必须在 C4 内容质量门和第二轮 M5 视觉 QA 均完成后开始，避免内容更新、静态适配和视觉修正并行改变同一批页面。
 
@@ -171,6 +181,7 @@ pnpm test:e2e
 - Mermaid 与 ECharts 正常渲染，控制台无错误。
 - Sitemap 与 robots 使用正式 HTTPS 地址。
 - `/agent` 不存在，Agent 技术内容和项目案例仍可访问。
+- B1 不属于本轮静态导出、CI/CD 或首次发布验收范围。
 
 线上质量门：
 

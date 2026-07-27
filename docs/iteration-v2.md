@@ -1,8 +1,8 @@
 # 第二轮迭代方案（v2 视觉与体验升级）
 
-> 版本：v2.3 Approved
-> 日期：2026-07-27
-> 状态：已批准可执行；在线 Agent 已排除出博客部署范围；M4 后新增 C0–C4 真实内容更新门禁，完成后再进入 M5
+> 版本：v2.4 Completed
+> 日期：2026-07-28
+> 状态：M1–M5 与 C0–C4 已完成；在线 Agent 已排除出博客部署范围；下一阶段为 GitHub Pages D1 静态导出适配
 > 范围：第一阶段功能性骨架已完成（历史验收为 15 个公开页面类型 + 1 个 not-found 边界，包含 `/agent` 占位页）。最终部署目标为 14 个公开页面类型 + 1 个 not-found 边界。本轮迭代在不动现有内容系统、Queries、既有内容 URL 参数、MDX Schema、ECharts 数据接口的前提下，完成视觉系统、深色模式、设计与开发的工程化对接，以及 Shiki/Mermaid/TOC 三项前置 POC。
 > 上游契约（本轮不得破坏）：[`architecture.md`](./architecture.md)、[`content-model.md`](./content-model.md)、[`page-contracts.md`](./page-contracts.md)、[`functional-requirements.md`](./functional-requirements.md)、[`mdx-pipeline.md`](./mdx-pipeline.md)、[`design-handoff.md`](./design-handoff.md)。
 > Agent 部署决策：[`agent-deployment-decision.md`](./agent-deployment-decision.md)。
@@ -1106,3 +1106,4 @@ ConvertTo-OKLCH "#2563EB"
 | 2026-07-24 | v2.1 Approved | 修复 15 项阻塞问题：(1) 删除本轮"M2 内容系统层升级"，改 P0 契约一致性检查；(2) 项目/BI 字段与 URL 参数恢复 content-model 语义（`type` / `domain` 而非 `category`，字段用 `ProjectItem` / `DashboardItem` 而非 `ContentItem`）；(3) 项目状态枚举从 content-model import 不重新定义，删除 `'planning' / 'in-progress'` 改动；(4) 修正 Tailwind duration / ease 命名空间混淆，时长直接用 `duration-150 / duration-200` 不新增定制 token；(5) 删除与 `next-themes` 重复的自定义 IIFE 防闪脚本，确定 Light/Dark/System 三态；(6) Geist 通过 `next/font/google` 生成的 CSS Variable（`--font-geist-sans`）而非字面字体名；(7) ECharts 主题色作为 TypeScript `lib/charts/palette.ts` 浅深两套数组，不再依赖 CSS 变量（Canvas 不解析）；(8) Shiki / Mermaid / TOC POC 改在真实项目中做而非 `.agent-temp/poc/` 里跑 standalone demo；(9) fenced code 分流顺序明确（mermaid 优先于 Shiki）；(10) Shiki 失败回退方案修正（Tailwind Typography 不做高亮）；(11) 删除搜索索引 POC（与"搜索逻辑不可改"自相矛盾）；(12) Resume 打印分页改为 `break-inside: avoid` 自然分页 + `print-color-adjust: exact` 保留灰度 + 链接下划线 + URL 打印；(13) 无障碍 44×44 改为按 WCAG 2.2 AA 分级（44 / 24 / 正文链接不强制）；(14) 静态 Callout 不设 `aria-live` 澄清；(15) 进入实现前关闭全部"待第二轮决定"未决项。 |
 | 2026-07-27 | v2.2 Approved | 根据 Agent 部署范围决策移除 `/agent` 次级入口、About `agentPreview`、M4 Coming Soon 视觉和后续上线条件；M4 调整为首页 + About + Resume，M5 增加无 `/agent` 路由/Sitemap/公开链接以及保留 Agent 技术内容与项目案例的验收。 |
 | 2026-07-27 | v2.3 Approved | 在 M4 与 M5 之间增加 C0–C4 真实内容更新门禁：公开真实姓名、城市和求职邮箱，单位与业务泛化且不公开手机号；用真实智能问数、数据仓库和脱敏 BI 方法替换模拟案例；将 7 组技术问答整理为三篇专题笔记。M5 改为基于 C4 最终内容执行视觉验收。 |
+| 2026-07-28 | v2.4 Completed | C0–C4 已完成，三篇专题公开发布并通过内容质量门；M5 已完成自动化回归与用户人工视觉验收，未发现阻塞问题。下一阶段为 GitHub Pages D1 静态导出适配。 |

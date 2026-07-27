@@ -4,7 +4,7 @@ import { profileData } from "@/data/profile";
 import { loadDashboards, loadNotes, loadProjects } from "@/lib/content/loaders";
 
 export const metadata: Metadata = {
-  title: "数据产品工程师 · BI / AI 数据应用",
+  title: "金仔伟 · 数据产品工程师",
 };
 
 export default function HomePage() {
@@ -27,9 +27,9 @@ export default function HomePage() {
     <main className="mx-auto w-full max-w-6xl px-4 py-12 sm:py-16">
       <section className="grid gap-8 border-b border-border pb-12 lg:grid-cols-[minmax(0,7fr)_minmax(18rem,5fr)]">
         <div>
-          <p className="text-sm font-medium text-primary">数据产品工程师</p>
+          <p className="text-sm font-medium text-primary">{profileData.profile.name} · {profileData.profile.location}</p>
           <h1 className="mt-3 text-h1 font-semibold leading-tight text-text-primary">
-            数据产品工程师 · BI / AI 数据应用
+            {profileData.profile.headline}
           </h1>
           <p className="mt-5 max-w-2xl text-body leading-body text-text-secondary">
             {profileData.profile.summary}
@@ -46,7 +46,7 @@ export default function HomePage() {
         <aside aria-label="能力概览" className="border border-border bg-surface p-5">
           <h2 className="text-sm font-semibold text-text-primary">能力概览</h2>
           <ul className="mt-4 grid grid-cols-2 gap-3 text-sm text-text-secondary">
-            {['Data Product', 'Power BI', 'Agent / RAG', 'SQL', 'Python', '指标治理'].map((skill) => (
+            {profileData.heroSkills.map((skill) => (
               <li key={skill} className="border-l-2 border-accent-border pl-3">{skill}</li>
             ))}
           </ul>

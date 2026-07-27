@@ -1,8 +1,8 @@
 # 真实内容与在线简历更新方案
 
-> 版本：v1.0
-> 日期：2026-07-27
-> 状态：已批准；C0 已完成，C1–C4 尚未实施
+> 版本：v1.1
+> 日期：2026-07-28
+> 状态：已完成；C0–C4 已通过内容质量门
 > 执行顺序：C1–C4 内容更新 → M5 视觉 QA → D1–D4 GitHub Pages
 
 ## 一、目标
@@ -119,7 +119,7 @@
 ### 6.1 业务流程与经营分析看板
 
 - 路由：`/dashboards/operations-process-analysis`
-- 状态：C2 尚未创建；C4 验收通过后公开。Dashboard Schema 不新增状态字段。
+- 状态：已公开；Dashboard Schema 不新增状态字段。
 - 领域：专业服务运营
 - 工具：Power BI、DAX、TMDL、MySQL
 - 指标：业务规模、节点到达率、阶段耗时、完成率
@@ -128,7 +128,7 @@
 ### 6.2 回款与团队绩效分析看板
 
 - 路由：`/dashboards/payment-performance-analysis`
-- 状态：C2 尚未创建；C4 验收通过后公开。Dashboard Schema 不新增状态字段。
+- 状态：已公开；Dashboard Schema 不新增状态字段。
 - 领域：经营管理
 - 工具：Power BI、DAX、Power Query、MySQL
 - 指标：回款金额、回款户数、目标达成率、人均产出
@@ -144,7 +144,7 @@
 
 - 路由：`/notes/registry-first-for-enterprise-analytics`
 - 标题：Registry First：让智能问数从 Prompt 驱动走向契约驱动
-- 状态：C3 尚未创建；C4 验收通过后以 `draft: false` 发布。
+- 状态：已公开，`draft: false`。
 - 来源范围：Registry First、指标一致性、Metadata MCP、变更链路和幻觉控制。
 - 分类：`agent`
 - 标签：`registry-first`、`mcp`、`metrics`、`governance`
@@ -153,7 +153,7 @@
 
 - 路由：`/notes/controlled-query-mcp-security`
 - 标题：受控查询：Query MCP 如何建立 SQL 安全边界
-- 状态：C3 尚未创建；C4 验收通过后以 `draft: false` 发布。
+- 状态：已公开，`draft: false`。
 - 来源范围：只读权限、参数校验、AST、白名单、RLS、返回量限制、超时和审计。
 - 分类：`agent`
 - 标签：`mcp`、`sql-security`、`rls`、`audit`
@@ -162,7 +162,7 @@
 
 - 路由：`/notes/enterprise-analytics-agent-architecture`
 - 标题：企业智能问数架构复盘：LangGraph、MCP 与确定性执行
-- 状态：C3 尚未创建；C4 验收通过后以 `draft: false` 发布。
+- 状态：已公开，`draft: false`。
 - 来源范围：意图路由、知识检索、Plugin、Capability、MCP、流式响应和失败降级。
 - 分类：`agent`
 - 标签：`langgraph`、`mcp`、`architecture`、`agent`
@@ -179,20 +179,18 @@
 - [x] **C0：资料盘点与方案沉淀**
   - 确认事实来源、公开尺度和脱敏规则。
   - 完成本文件并同步路线图。
-- [ ] **C1：个人资料与简历**
-  - 更新 `profileData`、首页、About 和 Resume。
-  - 补充教育、邮箱和项目亮点。
-- [ ] **C2：项目与 BI 案例**
-  - C2 开始前继续保留现有模拟内容，实施时统一替换，避免网站处于半更新状态。
-  - 重写两个项目案例。
-  - 替换两个模拟 BI 案例。
-  - 更新相关链接、精选内容和 E2E 路径。
-- [ ] **C3：专题笔记**
-  - 将 7 组问答整理为三篇脱敏专题。
-  - 检查三篇既有笔记的事实和公开边界。
-- [ ] **C4：内容质量门**
-  - 执行事实复核、脱敏扫描、链接检查和 Schema 校验。
-  - 运行完整工程质量门。
+- [x] **C1：个人资料与简历**
+  - 已更新 `profileData`、首页、About 和 Resume。
+  - 已补充教育、唯一求职邮箱和两个真实项目亮点；尚未发布的案例不链接到不存在的路由。
+- [x] **C2：项目与 BI 案例**
+  - 已一次性替换两个模拟项目和两个模拟 BI 案例，避免出现半更新状态。
+  - 已更新精选内容、简历项目链接与 E2E 路径；旧模拟路由返回 404。
+- [x] **C3：专题笔记**
+  - 已将 7 组问答整理为三篇脱敏支柱专题，并统一使用 `enterprise-data-agent` 标签与文内专题导航。
+  - 三篇文章已在 C4 中统一切换为 `draft: false` 发布。
+- [x] **C4：内容质量门**
+  - 已完成人工事实复核、脱敏扫描、站内链接和 Schema 校验。
+  - 已通过完整工程质量门；公开标签页、Sitemap 与搜索索引均包含三篇专题。
 
 C4 完成后才能进入 M5；M5 完成后才能进入 GitHub Pages D1。
 

@@ -35,7 +35,11 @@ export default function AboutPage() {
                 {experience.responsibilities.map((item) => <li key={item}>{item}</li>)}
               </ul>
               <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-sm">
-                {experience.keyProjects.map((project) => <Link key={project.href} href={project.href} className="font-medium text-primary hover:text-primary-hover">{project.title} →</Link>)}
+                {experience.keyProjects.map((project) => project.href ? (
+                  <Link key={project.title} href={project.href} className="font-medium text-primary hover:text-primary-hover">{project.title} →</Link>
+                ) : (
+                  <span key={project.title} className="font-medium text-text-secondary">{project.title}（案例整理中）</span>
+                ))}
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 {experience.stack.map((item) => <span key={item} className="rounded-tag bg-surface-soft px-2 py-1 text-tag text-text-secondary">{item}</span>)}

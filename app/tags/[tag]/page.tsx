@@ -1,22 +1,12 @@
 import { notFound } from "next/navigation";
 import { loadAllContent } from "@/lib/content/loaders";
-import { getByTag } from "@/lib/content/queries";
+import { getAllTags, getByTag } from "@/lib/content/queries";
 import Link from "next/link";
 import type { Metadata } from "next";
 
 export function generateStaticParams() {
   const items = loadAllContent();
-  const tagSet = new Set<string>();
-  for (const item of items) {
-    const tags: string[] =
-      item.type === "note"
-        ? item.meta.tags
-        : item.type === "project"
-          ? item.meta.techStack
-          : [...item.meta.tools, ...item.meta.metrics];
-    tags.forEach((t) => tagSet.add(t));
-  }
-  return [...tagSet].map((tag) => ({ tag }));
+  return getAllTags(items).map(({ name: tag }) => ({ tag }));
 }
 
 export async function generateMetadata({
