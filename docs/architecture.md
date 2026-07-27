@@ -1,6 +1,11 @@
 # 系统架构
 
 > **v2 revision (2026-07):** 组件状态分层、Agent 接口简化、MDX 编译流程更新。
+> **v3 revision (2026-07-27):** 在线 Agent 已排除出目标架构并完成遗留代码清理；图中的 `lib/agent/` 仅是第一阶段历史快照，不是当前或最终部署组件。
+> **v4 revision (2026-07-27):** 最终部署平台选定为 GitHub Pages；目标运行形态调整为 Next.js 静态导出，不保留 Node.js 服务端运行时。
+
+Agent 部署范围与清理验收以 [`agent-deployment-decision.md`](./agent-deployment-decision.md) 为准。
+部署阶段、兼容项与发布边界以 [`github-pages-deployment-plan.md`](./github-pages-deployment-plan.md) 为准。
 
 ## 架构总览
 
@@ -101,8 +106,8 @@ components/
 | 项目 | 当前 | 后续 |
 |---|---|---|
 | 搜索 | 内存匹配 | 可替换为 Meilisearch/Algolia（内容量大时） |
-| Agent | 占位页面 + 接口类型 | 接入 FastAPI + LangGraph 后端 |
+| Agent | 占位页面与接口类型已移除 | 不接入在线后端；保留 Agent 技术内容与项目案例 |
 | 视觉 | 中性骨架 | 品牌设计系统 |
 | 内容管理 | 手动编辑 MDX | 可选 CMS 后台 |
-| 部署 | 本地通过 | Vercel / 自托管 |
+| 部署 | 本地运行与生产构建已通过 | GitHub Pages 纯静态站点（M5 后进入 D1–D4） |
 | 分析 | 无 | GA / Plausible |

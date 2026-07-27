@@ -51,47 +51,55 @@ export default async function NotePage({
   const related = getRelated(allNotes, note);
 
   return (
-    <main className="max-w-3xl mx-auto px-4 py-8">
-      <article>
-        <header className="mb-8">
-          <h1 className="text-2xl font-bold mb-2">{note.meta.title}</h1>
-          <p className="text-gray-600 mb-3">{note.meta.description}</p>
-          <div className="flex flex-wrap gap-2 text-sm text-gray-500">
-            <span>{note.meta.publishedAt}</span>
-            {note.meta.updatedAt !== note.meta.publishedAt && (
-              <span>· 更新于 {note.meta.updatedAt}</span>
-            )}
-            <span>· 阅读约 {note.readingTime} 分钟</span>
-            <span>· {note.meta.category}</span>
-          </div>
-          {note.meta.tags.length > 0 && (
-            <div className="flex flex-wrap gap-1.5 mt-3">
-              {note.meta.tags.map((tag: string) => (
-                <span
-                  key={tag}
-                  className="text-xs bg-gray-100 px-2 py-0.5 rounded"
-                >
-                  {tag}
-                </span>
-              ))}
+    <main className="mx-auto w-full max-w-detail px-5 py-10 sm:px-8 sm:py-14">
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,47.5rem)_13.75rem] lg:items-start lg:gap-12">
+        <article className="min-w-0">
+          <header className="border-b border-border pb-7">
+            <p className="text-auxiliary font-medium text-primary">{note.meta.category}</p>
+            <h1 className="mt-2 text-h2 font-semibold leading-tight text-text-primary sm:text-h1">{note.meta.title}</h1>
+            <p className="mt-4 text-body leading-body text-text-secondary">{note.meta.description}</p>
+            <div className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-1 text-auxiliary text-text-muted">
+              <time dateTime={note.meta.publishedAt}>{note.meta.publishedAt}</time>
+              {note.meta.updatedAt !== note.meta.publishedAt && (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <time dateTime={note.meta.updatedAt}>更新于 {note.meta.updatedAt}</time>
+                </>
+              )}
+              <span aria-hidden="true">·</span>
+              <span>阅读约 {note.readingTime} 分钟</span>
             </div>
+            {note.meta.tags.length > 0 && (
+              <ul className="mt-4 flex flex-wrap gap-2" aria-label="文章标签">
+                {note.meta.tags.map((tag: string) => (
+                  <li key={tag} className="rounded-tag border border-border px-2 py-0.5 text-tag text-text-secondary">
+                    {tag}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </header>
+
+          {toc.length > 0 && (
+            <aside className="my-7 lg:hidden">
+              <Toc items={toc} />
+            </aside>
           )}
-        </header>
+
+          <div className="mt-10">
+            <Content />
+          </div>
+
+          <PrevNextNav prev={prev} next={next} basePath="/notes" />
+          <RelatedArticles items={related} />
+        </article>
 
         {toc.length > 0 && (
-          <aside className="mb-8">
+          <aside className="sticky top-20 hidden lg:block">
             <Toc items={toc} />
           </aside>
         )}
-
-        <div className="prose prose-gray max-w-none">
-          <Content />
-        </div>
-
-        <PrevNextNav prev={prev} next={next} basePath="/notes" />
-
-        <RelatedArticles items={related} />
-      </article>
+      </div>
 
       <script
         type="application/ld+json"

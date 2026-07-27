@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ThemeSwitch } from "./ThemeSwitch";
 
 const NAV_ITEMS = [
   { href: "/notes", label: "笔记" },
@@ -10,10 +11,10 @@ const NAV_ITEMS = [
 export function Header({ className }: { className?: string }) {
   return (
     <header
-      className={`border-b bg-white sticky top-0 z-10 ${className ?? ""}`}
+      className={`site-header sticky top-0 z-10 border-b border-border bg-surface ${className ?? ""}`}
     >
-      <div className="max-w-3xl mx-auto px-4 h-12 flex items-center justify-between">
-        <Link href="/" className="font-semibold text-gray-900 hover:text-gray-600">
+      <div className="mx-auto flex h-12 max-w-6xl items-center justify-between px-4">
+        <Link href="/" className="font-semibold text-text-primary transition-colors duration-150 ease-standard hover:text-primary">
           个人技术博客
         </Link>
         <nav aria-label="主导航" className="flex items-center gap-4">
@@ -21,18 +22,25 @@ export function Header({ className }: { className?: string }) {
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm text-gray-600 hover:text-gray-900"
+              className="text-sm text-text-secondary transition-colors duration-150 ease-standard hover:text-primary"
             >
               {item.label}
             </Link>
           ))}
           <Link
             href="/search"
-            className="text-sm text-gray-400 hover:text-gray-600"
+            className="text-sm text-text-muted transition-colors duration-150 ease-standard hover:text-primary"
             aria-label="搜索"
           >
             搜索
           </Link>
+          <Link
+            href="/resume"
+            className="text-sm text-text-secondary transition-colors duration-150 ease-standard hover:text-primary"
+          >
+            简历
+          </Link>
+          <ThemeSwitch />
         </nav>
       </div>
     </header>

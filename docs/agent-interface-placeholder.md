@@ -1,8 +1,10 @@
-# Agent 接口预留
+# Agent 接口预留（历史归档）
 
 > **v2 revision (2026-07):** 移除自定义错误类，简化占位实现。
 
-> **当前状态：占位。** 所有 Agent 功能尚未实现。本文档定义未来接口的边界和类型。
+> **归档状态（2026-07-27）：** 本文仅记录第一阶段占位实现，不再作为后续开发计划或稳定接口契约。博客不部署在线 Agent 页面、API 或后端服务，详见 [`agent-deployment-decision.md`](./agent-deployment-decision.md)。
+
+下述代码已于 2026-07-27 从仓库移除，保留片段仅用于记录第一阶段历史实现。
 
 ## 接口位置
 
@@ -92,34 +94,24 @@ export const mockExampleQuestions = [
 ]
 ```
 
-## 后续演进说明
+## 归档说明
 
-### 何时实现真实 Agent
+### 不再执行的上线计划
 
-当以下条件满足时，开始实现真实 Agent 服务：
+以下原计划已从博客范围中取消：
 
-1. 后端 Agent 服务已搭建（FastAPI + LangGraph 等）
-2. Agent 端点已定义并可访问
-3. 用户明确要求接入真实 Agent
+1. 搭建 FastAPI / LangGraph 在线 Agent 服务；
+2. 配置 Agent 端点与博客代理接口；
+3. 把 `/agent` 占位页升级为真实交互页面。
 
-### 实现步骤
+### 后续处理
 
-1. 创建 `.env.local` 添加 `NEXT_PUBLIC_AGENT_API_URL`
-2. 实现 `AgentClientImpl` 类替换 `client.ts` 中的 mock
-3. 实现 `/api/agent/run` API Route 作为服务端代理（避免暴露 API Key）
-4. 更新 `/agent` 页面使用真实交互组件
+遗留代码、Sitemap 与 E2E 引用已经清理。回归核验已确认 `/agent` 返回 404，同时 Agent 技术内容与项目案例保持可访问。
 
-### 协议稳定性
+### 历史接口稳定性
 
-当前定义的 `AgentRunRequest` 和 `AgentEvent` 是初始设计，后续允许调整：
-- 可以新增事件类型
-- 可以扩展请求参数
-- 不能删除已有字段（保持向后兼容）
+`AgentRunRequest`、`AgentEvent` 与 `AgentClient` 不再承诺向后兼容；它们会随历史占位代码一并移除。若未来在博客之外启动独立 Agent 产品，应重新评审需求、安全边界和协议，不直接复用本归档。
 
-### 安全注意事项（后续实现时必须遵守）
+### 历史安全备注
 
-- API Key 只存在于服务端（`.env.local`，不提交）
-- 客户端通过 Next.js API Route 代理请求（不直接调用 Agent 服务）
-- 实施请求频率限制（rate limiting）
-- 记录请求日志但不保存用户对话内容（除非用户明确要求）
-- 设置每次会话的 Token 上限
+以下原则仅作为未来独立项目的安全参考，不构成本博客的实施计划：密钥不得暴露到客户端、接口需限流、日志不得默认保存用户对话、会话需设置调用上限。

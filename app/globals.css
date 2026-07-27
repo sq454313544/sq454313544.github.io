@@ -1,7 +1,168 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), "Cascadia Code", "Microsoft YaHei", monospace;
+
+  --text-h1: 3.5rem;
+  --text-h2: 2.75rem;
+  --text-h3: 1.875rem;
+  --text-card-title: 1.375rem;
+  --text-body: 1.0625rem;
+  --text-auxiliary: 0.875rem;
+  --text-tag: 0.8125rem;
+  --leading-body: 1.75;
+  --leading-tight: 1.2;
+  --leading-normal: 1.5;
+  --container-default: 75rem;
+  --container-article: 47.5rem;
+  --container-detail: 67.5rem;
+  --radius-cover: 20px;
+  --radius-card: 16px;
+  --radius-button: 10px;
+  --radius-code: 12px;
+  --radius-tag: 999px;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+
+  --color-background: var(--theme-background);
+  --color-surface: var(--theme-surface);
+  --color-surface-soft: var(--theme-surface-soft);
+  --color-text-primary: var(--theme-text-primary);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-text-muted: var(--theme-text-muted);
+  --color-border: var(--theme-border);
+  --color-primary: var(--theme-primary);
+  --color-primary-hover: var(--theme-primary-hover);
+  --color-accent-bg: var(--theme-accent-bg);
+  --color-accent-border: var(--theme-accent-border);
+  --color-accent-text: var(--theme-accent-text);
+  --color-success-bg: var(--theme-success-bg);
+  --color-success-border: var(--theme-success-border);
+  --color-success-text: var(--theme-success-text);
+  --color-warning-bg: var(--theme-warning-bg);
+  --color-warning-border: var(--theme-warning-border);
+  --color-warning-text: var(--theme-warning-text);
+  --color-error-bg: var(--theme-error-bg);
+  --color-error-border: var(--theme-error-border);
+  --color-error-text: var(--theme-error-text);
+  --color-info-bg: var(--theme-info-bg);
+  --color-info-border: var(--theme-info-border);
+  --color-info-text: var(--theme-info-text);
+}
+
+:root {
+  --theme-background: oklch(0.9789 0.0029 274.3);
+  --theme-surface: oklch(1 0 0);
+  --theme-surface-soft: oklch(0.963 0.0061 259.8);
+  --theme-text-primary: oklch(0.2099 0.0341 263.6);
+  --theme-text-secondary: oklch(0.4422 0.0354 258.1);
+  --theme-text-muted: oklch(0.5444 0.035 265.6);
+  --theme-border: oklch(0.9133 0.0114 254.3);
+  --theme-primary: oklch(0.5461 0.2152 263);
+  --theme-primary-hover: oklch(0.4882 0.2171 264.4);
+  --theme-accent-bg: oklch(0.9513 0.0488 180);
+  --theme-accent-border: oklch(0.6247 0.1107 180);
+  --theme-accent-text: oklch(0.4516 0.0953 180);
+  --theme-success-bg: oklch(0.9513 0.0488 180);
+  --theme-success-border: oklch(0.6247 0.1107 180);
+  --theme-success-text: oklch(0.4516 0.0953 180);
+  --theme-warning-bg: oklch(0.9626 0.0548 41);
+  --theme-warning-border: oklch(0.6461 0.1946 41);
+  --theme-warning-text: oklch(0.5302 0.1814 41);
+  --theme-error-bg: oklch(0.9577 0.0631 27);
+  --theme-error-border: oklch(0.5771 0.2154 27);
+  --theme-error-text: oklch(0.4686 0.2119 27);
+  --theme-info-bg: oklch(0.9491 0.0254 263);
+  --theme-info-border: oklch(0.5461 0.2152 263);
+  --theme-info-text: oklch(0.4882 0.2171 264.4);
+  color-scheme: light;
+}
+
+.dark {
+  --theme-background: oklch(0.1683 0.0181 264.2);
+  --theme-surface: oklch(0.2101 0.0318 264.9);
+  --theme-surface-soft: oklch(0.2449 0.0388 264.5);
+  --theme-text-primary: oklch(0.9842 0.0033 255.9);
+  --theme-text-secondary: oklch(0.869 0.0197 254.1);
+  --theme-text-muted: oklch(0.7107 0.035 257.4);
+  --theme-border: oklch(0.3232 0.0415 260);
+  --theme-primary: oklch(0.7137 0.1433 254.8);
+  --theme-primary-hover: oklch(0.8091 0.0955 252);
+  --theme-accent-bg: oklch(0.2683 0.0432 181);
+  --theme-accent-border: oklch(0.7845 0.1321 181);
+  --theme-accent-text: oklch(0.8382 0.1408 181);
+  --theme-success-bg: oklch(0.2683 0.0432 181);
+  --theme-success-border: oklch(0.7845 0.1321 181);
+  --theme-success-text: oklch(0.8382 0.1408 181);
+  --theme-warning-bg: oklch(0.2673 0.0647 41);
+  --theme-warning-border: oklch(0.8043 0.1639 41);
+  --theme-warning-text: oklch(0.8803 0.171 41);
+  --theme-error-bg: oklch(0.2948 0.0713 27);
+  --theme-error-border: oklch(0.7082 0.1865 27);
+  --theme-error-text: oklch(0.8852 0.1932 27);
+  --theme-info-bg: oklch(0.2209 0.0431 264);
+  --theme-info-border: oklch(0.7137 0.1433 254.8);
+  --theme-info-text: oklch(0.8091 0.0955 252);
+  color-scheme: dark;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+}
+
+::selection {
+  background: var(--theme-primary);
+  color: var(--theme-surface);
+}
+
+@media print {
+  .site-header,
+  .site-footer {
+    display: none !important;
+  }
+
+  .resume-page {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+
+  .resume-card {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .resume-experience {
+    break-inside: avoid;
+  }
+
+  .resume-page,
+  .resume-page * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .resume-page a {
+    color: inherit !important;
+    text-decoration: underline;
+  }
+
+  .resume-page a[href]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.85em;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 9.5pt;
+  }
 }
 
 pre {

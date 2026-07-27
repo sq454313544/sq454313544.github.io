@@ -87,7 +87,6 @@ pnpm test:e2e
 │  ├─ content/             # 内容服务层（Schema、Loader、Queries）
 │  ├─ search/              # 搜索索引和匹配
 │  ├─ seo/                 # SEO 工具
-│  └─ agent/               # Agent 接口预留（types、client、mock）
 ├─ public/                 # 静态资源
 ├─ tests/                  # 测试
 │  ├─ unit/                # Vitest 单测

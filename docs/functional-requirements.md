@@ -1,6 +1,7 @@
 # 功能需求
 
 > **v2 修订（2026-07-23）**：路由数量修正为 15 个公开页面 + 1 个 not-found 边界。搜索改为真正的 searchText 全文索引（非仅 200 字摘要）。
+> **v3 修订（2026-07-27）**：第一阶段“15 + 1”为历史验收口径；最终部署排除 `/agent`，目标为 14 个公开页面类型 + 1 个 not-found 边界。详见 [`agent-deployment-decision.md`](./agent-deployment-decision.md)。
 > 分类体系：笔记=category, 项目=projectType, BI=businessDomain，不统一映射。
 
 ## 页面功能清单
@@ -15,7 +16,6 @@
 - 最新学习笔记（列表，最多 5 篇）
 - 关于我摘要（文字 + 链接）
 - 简历入口（链接）
-- Agent 未来入口（链接 + 状态标识）
 
 **数据来源：** `lib/content/queries.ts` 的 `getFeaturedProjects()`, `getFeaturedDashboards()`, `getLatestNotes()`
 
@@ -126,20 +126,19 @@
 - PDF 下载配置（预留，当前无 PDF 时显示明确提示）
 - 不显示失效下载按钮
 
-### 10. Agent 占位 `/agent`
-
-- Agent Demo 未来定位说明
-- 计划展示的能力列表
-- "建设中" 状态标识
-- 示例问题展示
-- 隐私和数据安全说明
-- 不调用任何模型 API
-
-### 11. 404 `/not-found`
+### 10. 404 `/not-found`
 
 - 语义化 404 页面
 - 返回首页链接
 - 建议搜索功能
+
+### 排除项：在线 Agent
+
+- 不部署 `/agent` 页面、`/api/agent/*` API Route 或独立 Agent 后端服务
+- 不在首页、Header、Footer、About、Resume 或项目详情提供 Agent Demo / Coming Soon 入口
+- Sitemap、SEO 页面清单和 E2E 关键路径不包含 `/agent`
+- Agent、RAG、LangGraph、智能问数等内容主题与 `projectType: "agent"` 项目案例继续保留
+- 代码清理完成后，访问 `/agent` 应返回 404
 
 ## 全局功能
 

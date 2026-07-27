@@ -5,6 +5,26 @@ test.describe("首页", () => {
     await page.goto("/");
     await expect(page).toHaveTitle(/BI.*AI|数据产品工程师/);
     await expect(page.locator("h1")).toContainText("数据产品工程师");
+    await expect(page.getByText("精选项目")).toBeVisible();
+    await expect(page.locator("a[href='/resume']").last()).toBeVisible();
+  });
+
+  test("theme switch supports light, dark, and system", async ({ page }) => {
+    await page.goto("/");
+
+    const themeSelect = page.getByLabel("选择主题");
+    await expect(themeSelect).toBeVisible();
+
+    await themeSelect.selectOption("dark");
+    await expect(page.locator("html")).toHaveClass(/dark/);
+
+    await themeSelect.selectOption("light");
+    await expect(page.locator("html")).toHaveClass(/light/);
+
+    await themeSelect.selectOption("system");
+    await expect
+      .poll(() => page.evaluate(() => localStorage.getItem("theme")))
+      .toBe("system");
   });
 });
 
@@ -20,7 +40,7 @@ test.describe("笔记", () => {
     await page.goto("/notes/langgraph-state-nodes");
     await expect(page.locator("h1")).toContainText("LangGraph");
     await expect(page.locator("pre").first()).toBeVisible();
-    await expect(page.locator("nav[aria-label='文章目录']")).toBeVisible();
+    await expect(page.locator("nav[aria-label='文章目录']").last()).toBeVisible();
   });
 });
 
@@ -31,8 +51,28 @@ test.describe("项目", () => {
   });
 
   test("project detail page", async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/projects/enterprise-qa-assistant");
     await expect(page.locator("h1")).toContainText("智能问数");
+
+    const layout = await page.evaluate(() => {
+      const main = document.querySelector("main");
+      const body = document.body.getBoundingClientRect();
+      const rect = main?.getBoundingClientRect();
+      return rect
+        ? {
+            bodyLeft: body.left,
+            bodyRight: body.right,
+            left: rect.left,
+            right: rect.right,
+            width: rect.width,
+          }
+        : null;
+    });
+
+    expect(layout).not.toBeNull();
+    expect(layout?.width).toBeLessThanOrEqual(1080);
+    expect(Math.abs(((layout?.left ?? 0) - (layout?.bodyLeft ?? 0)) - ((layout?.bodyRight ?? 0) - (layout?.right ?? 0)))).toBeLessThanOrEqual(1);
   });
 });
 
@@ -86,27 +126,27 @@ test.describe("404", () => {
 test.describe("辅助页面", () => {
   test("about page", async ({ page }) => {
     await page.goto("/about");
-    await expect(page.locator("h1")).toContainText("关于");
+    await expect(page.locator("h1")).toContainText("数据产品工程师");
+    await expect(page.getByRole("heading", { name: "工作经历" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "核心能力" })).toBeVisible();
   });
 
   test("resume page", async ({ page }) => {
     await page.goto("/resume");
-    await expect(page.locator("h1")).toContainText("简历");
-  });
-
-  test("agent page", async ({ page }) => {
-    await page.goto("/agent");
-    await expect(page.locator("h1")).toContainText("Agent Demo");
-    await expect(page.getByText("建设中")).toBeVisible();
+    await expect(page.locator("h1")).toContainText("数据产品工程师");
+    await expect(page.getByText("在线简历")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "项目亮点" })).toBeVisible();
   });
 });
 
 test.describe("无横向溢出", () => {
   test("390px viewport", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 800 });
-    await page.goto("/notes/langgraph-state-nodes");
-    const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
-    const viewportWidth = await page.evaluate(() => window.innerWidth);
-    expect(bodyWidth).toBeLessThanOrEqual(viewportWidth + 1);
+    for (const path of ["/", "/about", "/resume", "/notes/langgraph-state-nodes"]) {
+      await page.goto(path);
+      const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
+      const viewportWidth = await page.evaluate(() => window.innerWidth);
+      expect(bodyWidth, `${path} should not overflow`).toBeLessThanOrEqual(viewportWidth + 1);
+    }
   });
 });

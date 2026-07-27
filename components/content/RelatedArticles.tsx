@@ -15,16 +15,16 @@ export function RelatedArticles({ items, className }: RelatedArticlesProps) {
   if (items.length === 0) return null;
 
   return (
-    <nav aria-label="相关文章" className={`mt-8 pt-4 border-t ${className ?? ""}`}>
-      <h2 className="text-sm font-semibold text-gray-500 mb-3">相关文章</h2>
-      <ul className="space-y-2">
+    <nav aria-label="相关文章" className={`mt-12 border-t border-border pt-6 ${className ?? ""}`}>
+      <h2 className="text-h3 font-semibold leading-tight text-text-primary">相关文章</h2>
+      <ul className="mt-4 space-y-2">
         {items.map((item) => (
           <li key={`${item.type}:${item.slug}`}>
             <Link
               href={itemPath(item)}
-              className="block text-sm text-gray-700 hover:text-gray-900"
+              className="block rounded-button p-2 text-sm text-text-secondary transition-colors duration-150 ease-standard hover:bg-surface-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              <span className="text-xs text-gray-400 mr-1">
+              <span className="mr-1 text-xs text-text-muted">
                 [{item.type === "note" ? "笔记" : item.type === "project" ? "项目" : "BI"}]
               </span>
               {item.meta.title}

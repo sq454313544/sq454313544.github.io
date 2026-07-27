@@ -12,16 +12,16 @@ export function PrevNextNav({ prev, next, basePath, className }: PrevNextNavProp
   return (
     <nav
       aria-label="前后篇导航"
-      className={`flex justify-between gap-4 mt-8 pt-4 border-t ${className ?? ""}`}
+      className={`mt-12 flex justify-between gap-6 border-t border-border pt-6 ${className ?? ""}`}
     >
       <div className="flex-1 min-w-0">
         {prev && (
           <Link
             href={`${basePath}/${prev.slug}`}
-            className="block text-sm group"
+            className="group block rounded-button p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
-            <span className="text-gray-400 text-xs">上一篇</span>
-            <span className="text-gray-700 group-hover:text-gray-900 truncate block">
+            <span className="text-xs text-text-muted">上一篇</span>
+            <span className="block truncate text-text-secondary transition-colors duration-150 ease-standard group-hover:text-primary">
               {prev.meta.title}
             </span>
           </Link>
@@ -31,10 +31,10 @@ export function PrevNextNav({ prev, next, basePath, className }: PrevNextNavProp
         {next && (
           <Link
             href={`${basePath}/${next.slug}`}
-            className="block text-sm group"
+            className="group block rounded-button p-2 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
           >
-            <span className="text-gray-400 text-xs">下一篇</span>
-            <span className="text-gray-700 group-hover:text-gray-900 truncate block">
+            <span className="text-xs text-text-muted">下一篇</span>
+            <span className="block truncate text-text-secondary transition-colors duration-150 ease-standard group-hover:text-primary">
               {next.meta.title}
             </span>
           </Link>

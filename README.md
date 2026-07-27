@@ -4,6 +4,10 @@
 
 面向公开访客的个人技术平台，用于知识沉淀和求职展示。
 
+## 项目入口
+
+不知道从哪里开始时，先看 [`docs/project-navigation.md`](./docs/project-navigation.md)：其中列出了服务启动命令、页面入口、内容目录、组件、业务逻辑、测试和关键文档的位置。
+
 ## 内容方向
 
 数据分析 · Power BI · SQL · Python · 数据产品 · RAG · LangGraph · Agent 工程 · 指标治理 · 智能问数 · 项目复盘
@@ -133,21 +137,27 @@ BI 案例分析...
 
 ## 页面设计状态
 
-当前阶段所有页面仅实现功能骨架和中性基础样式。品牌色、字体方案、卡片样式、动画和最终视觉设计将在后续阶段完成。详见 `docs/design-handoff.md`。
+第一阶段功能骨架与第二轮 M1–M4 已完成。下一步为 C1 真实个人资料与简历更新，随后依次完成真实案例、专题笔记和内容质量门，再进入 M5 视觉 QA。内容公开规则见 [`docs/content-refresh-plan.md`](./docs/content-refresh-plan.md)，总体进度见 [`docs/roadmap.md`](./docs/roadmap.md)。
 
-## Agent 功能状态
+## Agent 部署范围
 
-`/agent` 页面当前为占位状态，展示未来规划的能力和示例问题。未实现实际 Agent 运行、模型 API 调用、对话系统和数据库。详见 `docs/agent-interface-placeholder.md`。
+本博客不部署在线 Agent 页面、Agent API 或 Agent 后端服务。Agent、RAG、LangGraph、智能问数仍作为学习笔记、项目案例和能力描述保留。
+
+第一阶段遗留的 `/agent`、`lib/agent/`、Sitemap 与 E2E 占位引用已清理。详见 [`docs/agent-deployment-decision.md`](./docs/agent-deployment-decision.md)。
 
 ## 部署
 
-本项目具备部署兼容性。部署前需设置环境变量：
+部署平台已选择 GitHub Pages，当前仅完成本地方案沉淀，尚未创建远程仓库或执行发布。计划使用公开的 GitHub 用户根站点 `<GitHub用户名>.github.io`，通过 Next.js 静态导出和 GitHub Actions 发布。
+
+部署实施前需完成 C4 内容质量门与 M5 视觉 QA，并在 D1 处理搜索、项目筛选和 BI 筛选的静态导出兼容性。完整决策、阶段、验收与回滚方案见 [`docs/github-pages-deployment-plan.md`](./docs/github-pages-deployment-plan.md)。
+
+正式构建时设置：
 
 ```text
-NEXT_PUBLIC_SITE_URL=https://your-domain.com
+NEXT_PUBLIC_SITE_URL=https://<GitHub用户名>.github.io
 ```
 
-推荐平台：Vercel（零配置）或自托管 Node.js 服务器。
+首期不配置自定义域名，不部署 Node.js、API、数据库、登录或在线 Agent 服务。任何 GitHub 登录、仓库创建、提交、推送和部署都需要用户明确确认。
 
 ---
 
@@ -163,7 +173,6 @@ NEXT_PUBLIC_SITE_URL=https://your-domain.com
 │  ├─ search/              # 搜索
 │  ├─ tags/                # 标签
 │  ├─ categories/          # 分类
-│  ├─ agent/               # Agent 占位
 │  ├─ about/               # 关于
 │  ├─ resume/              # 简历
 │  ├─ sitemap.ts           # Sitemap

@@ -1,83 +1,188 @@
 # 路线图
 
-> **v2 revision** — 2026-07-23：从 v1 平面阶段（M0→M1→M2+M3→M4→M5）改为 v2 纵向切片（M0→M1 POC→M2 content layer→M3 notes slice→M4 projects+BI slice→M5 aux pages→M6 SEO+QA），每个切片包含路由、组件、SEO、测试。
+> **v5 revision** — 2026-07-27：第一阶段功能骨架已完成；第二轮迭代已推进至 M4。M5 前新增 C0–C4 真实内容更新门禁；博客最终不部署在线 Agent 页面、API 或后端服务。
 
-## 当前阶段：功能骨架
+## 第一阶段：功能骨架（已完成）
 
-**状态：进行中**
+**状态：完成**
 
 - [x] 环境准备（Git/pnpm/Node/Playwright/Skills）
 - [x] 文档规划（AGENTS.md、README.md、docs/）
 - [x] M0：工程初始化（Next.js 项目创建、依赖安装、配置）
-- [ ] M1：POC 垂直切片（notes 第一条路由通顶，打通 MDX→Content Loader→Server Component→路由→Metadata→E2E）
-- [ ] M2：内容系统层（MDX、Zod Schema、Content Loader、示例内容、搜索索引）
-- [ ] M3：笔记切片（15 个公开页面路由 + 1 个 not-found 边界，notes/ 全部页面 + ToC + Shiki + Mermaid + SEO）
-- [ ] M4：项目 + BI 切片（projects/ + dashboards/ 全部页面 + ECharts + SEO）
-- [ ] M5：辅助页面（首页、Agent 占位页、简历页、404 以及全局导航状态）
-- [ ] M6：SEO + 质量门（Metadata、Sitemap、结构化数据、lint、typecheck、单测、E2E、构建验收）
+- [x] M1：POC 垂直切片（notes 第一条路由通顶，打通 MDX→Content Loader→Server Component→路由→Metadata→E2E）
+- [x] M2：内容系统层（MDX、Zod Schema、Content Loader、示例内容、搜索索引）
+- [x] M3：笔记切片（15 个公开页面路由 + 1 个 not-found 边界，notes/ 全部页面 + ToC + Shiki + Mermaid + SEO）
+- [x] M4：项目 + BI 切片（projects/ + dashboards/ 全部页面 + ECharts + SEO）
+- [x] M5：辅助页面（首页、Agent 占位页、简历页、404 以及全局导航状态）
+- [x] M6：SEO + 质量门（Metadata、Sitemap、结构化数据、lint、typecheck、单测、E2E、构建验收）
 
-## 下一阶段：视觉设计
+历史产出：15 个公开页面类型 + 1 个 not-found 边界全部功能骨架通过验收，其中包含 `/agent` 占位页。最终部署目标调整为 14 个公开页面类型 + 1 个 not-found 边界；历史验收记录不回写。
 
-**状态：待定**
+## 当前阶段：第二轮迭代（v2 视觉与体验升级）
 
-需要用户提供：
-- 品牌色板和字体方案
-- 组件设计稿（桌面端 + 移动端）
-- 首页布局设计
-- 设计参考网站
+**状态：进行中**
+**决策文档：[`docs/iteration-v2.md`](./iteration-v2.md) v2.3 Approved**
 
-完成后启用 `frontend-visual-implementation` Skill。
+视觉与功能切片并行推进，严格保持第一阶段契约（content-model / page-contracts / architecture / mdx-pipeline）不被破坏。
 
-任务：
-- [ ] 创建设计 Token 系统
-- [ ] 实现深色模式
-- [ ] 重新设计所有页面视觉
-- [ ] 添加合理动画（尊重 `prefers-reduced-motion`）
-- [ ] 响应式视觉细节调整
-- [ ] 视觉 QA（Playwright 多视口截图比对）
+- [x] **P0：契约一致性检查**
+  - 核验视觉方案需要的字段是否已存在于 content-model 与 page-contracts
+  - 已存在的：本轮纯消费
+  - 不存在的（`role` / `granularity` / `dataStatus` / `series` / `seriesOrder` 等）：记录到下一轮内容模型迭代，本轮视觉层用可选占位或已存在字段的展示别名实现
+  - 禁止视觉任务直接修改 Schema / Query / URL 参数
+  - 产出：[`docs/p0-contract-check.md`](./p0-contract-check.md)
+- [x] **M1：Token、字体与主题**
+  - 修正 duration / ease 语义分离（时长直接用 `duration-150 / duration-200`，不新增定制时长 token；`--ease-standard` 仅保留为缓动函数）
+  - `next/font/google` CSS Variable 接入 Geist（`--font-geist-sans` / `--font-geist-mono`，不字面引用字体名）
+  - next-themes Light / Dark / System 三态（`enableSystem` + `disableTransitionOnChange`，删除任何自定义防闪 IIFE）
+  - accent / success / warning / error / info 成对 token（bg / border / text）落入 `@theme inline`
+  - `viewport.themeColor` 导出双色（light/dark），不跟随用户选项
+  - `lib/charts/palette.ts` 浅深两套 ECharts hex 数组（Canvas 不解析 CSS 变量）
+- [x] **M1.5：在真实项目中做 POC**
+  - Shiki 单主题服务端高亮（`codeToHtml(code, { theme: 'github-dark-dimmed' })` + Remark/Rehype 提取原始 code/lang/meta + clipboard 复制按钮）
+  - Mermaid fenced code 分流（`language-mermaid` 先于 Shiki 处理；解析失败显示原始代码 + 错误提示不阻塞正文）
+  - Heading ID 与静态 TOC（`rehype-slug` 接入，`break-inside: avoid` 移动端折叠到顶部）
+  - **不做搜索 POC**（搜索逻辑本轮契约冻结）
+  - POC 实现代码改当前项目真实文件或临时 Git 分支；测试内容放 `content/notes/__poc__.mdx` 与 `app/dev/poc/`，并加 `.gitignore`
+  - 验收报告：[`docs/poc/M1.5-report.md`](./poc/M1.5-report.md)
+- [x] **M2：笔记视觉**
+  - `/notes` 列表（左侧分类与标签轻量 + 右侧文本列表，内容少时不堆庞大标签云）
+  - `/notes/[slug]` 详情（中间 760px prose + 右侧 220px 静态 TOC，移动端 TOC 折叠到顶部）
+  - Code / Mermaid / Callout 视觉重设计
+- [x] **M3：项目与 BI**
+  - `ProjectItem` / `DashboardItem` 强类型 access
+  - 项目详情右侧资料栏（`role` / `status` / `stack` / `period` / `repo` / `demo` 字段映射）
+  - BI 详情右侧资料栏（`domain` / `tools` / `metrics` / `granularity` / `dataStatus`）
+  - ECharts 主题切换（按当前主题读 `chartPalettes.light` / `chartPalettes.dark`）
+  - 项目状态展示 record（从 `ProjectMeta["status"]` 派生，视觉层不重定义枚举）
+- [x] **M4：首页 + About + Resume**
+  - 首页六屏节奏化长页（个人定位 / 精选项目 / BI 案例两列 / 核心能力 / 最新笔记 / 关于简历入口）
+  - About 普通垂直时间线（不折叠，不引入额外组件库）
+  - Resume 可打印 stylesheet（`break-inside: avoid` + `print-color-adjust: exact` + 链接保留下划线 + URL 打印）
+- [x] **C0：真实内容资料盘点与方案沉淀**
+  - 确认个人资料、项目、BI 与技术问答的事实来源和公开尺度
+  - 产出：[`docs/content-refresh-plan.md`](./content-refresh-plan.md)
+- [ ] **C1：个人资料与简历**
+  - 更新首页、About、Resume 与 `profileData`
+  - 公开真实姓名、城市和求职邮箱；单位泛化且不公开手机号
+- [ ] **C2：真实项目与 BI 案例**
+  - 用智能问数与数据仓库重构替换两个模拟项目
+  - 用两个脱敏经营分析案例替换模拟 BI 案例
+- [ ] **C3：面试问答专题**
+  - 将 7 组技术问答合并去重为三篇脱敏专题笔记
+  - 检查三篇既有笔记的事实与公开边界
+- [ ] **C4：内容质量门**
+  - 事实复核、脱敏扫描、链接和内容 Schema 检查
+  - 执行 lint、typecheck、单测、构建与 E2E
+- [ ] **M5：视觉 QA**
+  - 前置条件：C4 已完成，使用最终真实内容进行视觉验收
+  - Playwright 多视口截图比对
+  - 390px 硬性验收（无横向溢出）
+  - `prefers-reduced-motion` 验收
+  - 键盘验收（焦点顺序、目标尺寸按 WCAG 2.2 AA 分级：主要按钮 44×44、次级 24×24、正文链接不强制）
+  - Light / Dark / System 三态验收
+  - Print 验收
+  - 可访问性对比度验收
+  - 生产路由表与 Sitemap 不包含 `/agent`
+  - 首页、Header、Footer、About、Resume 不包含 Agent Demo / Coming Soon 入口
+  - Agent 技术文章和项目案例保持可访问
 
-## 后续阶段：内容扩充
+完成后启用 `release-quality-gate` Skill 做一轮收尾。
+
+详见 [`docs/iteration-v2.md`](./iteration-v2.md) §二十实施阶段切片、§二十一最终视觉验收、§二十五全部决策清单。
+
+## 后续阶段：持续内容扩充
 
 **状态：待定**
 
 - [ ] 补充更多学习笔记（5-10 篇）
 - [ ] 补充更多项目案例（2-3 个）
 - [ ] 补充更多 BI 案例（2-3 个）
-- [ ] 完善简历内容
-- [ ] 添加 PDF 简历
+- [ ] 真实内容上线后继续扩充学习笔记与案例；PDF 简历单独评审
 - [ ] 配置 Google Analytics
+- [ ] 视觉轮迭代中关闭的"下一轮内容模型"字段（`role` / `granularity` / `dataStatus` / `series` / `seriesOrder`）经评估后纳入 content-model 与 page-contracts
 
-## 后续阶段：Agent 功能
+## Agent 部署范围
 
-**状态：待定（低优先级）**
+**状态：已排除**
 
-- [ ] 搭建 FastAPI Agent 后端服务
-- [ ] 实现 LangGraph Agent 工作流
-- [ ] 实现 `/api/agent/run` API Route
-- [ ] 更新 `/agent` 页面为真实交互界面
-- [ ] 实施 rate limiting 和 Token 上限
-- [ ] 添加会话管理
+本博客不部署在线 Agent 页面、API 或后端服务。Agent、RAG、LangGraph 和智能问数仍作为技术内容、项目案例与真实能力描述保留。详细边界与后续代码清理验收见 [`agent-deployment-decision.md`](./agent-deployment-decision.md)。
 
-## 后续阶段：部署
+## 后续阶段：GitHub Pages 部署
 
-**状态：待定**
+**状态：平台已选择，实施未开始**
 
-- [ ] 选择部署平台（推荐 Vercel）
-- [ ] 配置自定义域名
-- [ ] 设置 CI/CD 流水线
-- [ ] 监控和错误追踪
-- [ ] CDN 和缓存策略
+部署目标为公开的 GitHub 用户根站点 `<GitHub用户名>.github.io`。首期不使用自定义域名，博客以 Next.js 静态导出方式运行，不部署 Node.js、API、数据库、登录或在线 Agent 服务。
+
+- [x] **D0：部署决策与本地文档沉淀**
+  - 决策文档：[`github-pages-deployment-plan.md`](./github-pages-deployment-plan.md)
+  - 同步 README、路线图与架构部署口径
+- [ ] **D1：静态导出适配**
+  - 启用 Next.js `output: "export"`
+  - 将搜索、项目筛选与 BI 筛选改为客户端查询参数处理
+  - 对齐正式站点 URL、Metadata、Sitemap、robots 与静态 E2E
+- [ ] **D2：GitHub Pages CI/CD**
+  - `main` 推送自动发布，同时保留手动触发
+  - 构建、质量门、静态 artifact 与 Pages 部署
+- [ ] **D3：创建仓库与首次发布**
+  - 创建公开仓库 `<GitHub用户名>.github.io`
+  - 配置 GitHub Pages；经用户明确确认后提交和推送
+- [ ] **D4：线上验收**
+  - HTTPS、深层链接、静态资源、SEO、390px、主题、Mermaid、ECharts
+  - 确认线上无 `/agent` 页面、Sitemap 条目或公开入口
+
+D1 必须在 C4 内容质量门和 M5 视觉 QA 均完成后开始，避免内容、视觉与部署适配并行改变同一批页面。任何仓库创建、登录、提交、推送和部署都不属于 D0。
 
 ## 不做事项
 
 以下功能被明确排除（除非用户明确要求）：
 
 - 用户注册和登录系统
-- 评论系统
+- 评论系统（Giscus 等本轮不引）
 - CMS 管理后台
-- 邮件订阅
+- 邮件订阅 / Newsletter
 - 多语言支持（i18n）
-- 暗色模式自动切换（手动切换在视觉设计阶段做）
 - PWA / Service Worker
-- RSS Feed（可在内容丰富后考虑）
+- Contentlayer2 / Pliny / next-mdx-remote / Content Collections 内容管线
+- prism / sugar-high / 客户端 `useEffect`+DOMParser Shiki
+- `@once-ui-system/core` 全套（CC BY-NC 许可风险 + 强绑）
+- motion / framer-motion + 内联 Magic UI 组件 / typed.js / plyr / react-medium-image-zoom / react-share
+- Prisma + Postgres（不论内容存储还是访问量统计）
+- Mailchimp / Spotify now-playing / GitHub API / npm API（外部服务依赖）
+- LiquidGlass 玻璃拟态 / FlickeringGrid Canvas
+- `<Projects range exclude />` 切片复用模式（与 Queries / 组件分层冲突）
+- per-post `layout` frontmatter 字段（与按内容类型自动选布局重复）
+- 多作者内容系统（单作者过度工程）
+- kbar 命令面板（长期 beta + 增 bundle）
+- 生成索引产物放 `content/index/`（混入内容源）
+- 外部链接全部强制 `target="_blank"`
+- `body-scroll-lock` / `cookie` 鉴权 / `protectedRoutes`
+- bun / yarn Berry（本项目 pnpm 单一 lockfile）
+- 全局 `.prose` 巨型 CSS 块（用 `mdx-components.tsx` 重映射 + Tailwind 4 `@theme`）
+- TS `strict:false` / `as any` / `@ts-ignore`
+- SCSS modules + `sass`
+- content 内嵌 `app/blog/posts/`（内容放顶层 `content/` 与路由树解耦）
+- 列表分页 `/notes/page/[page]`（笔记数 > 20 后再做）
+- 嵌套 catch-all 路由 `/notes/[...slug]`（真正出现系列目录后；当前系列用 frontmatter 实现）
+- Active TOC IntersectionObserver（长文章稳定后再做，本轮先静态 TOC）
+- 9 平台分享（本轮仅"复制链接"）
+- GitHub stars / npm 下载量社会证明（当前不做）
+- RSS Feed（可在内容上线后再做）
+- 动态 OG 图（SEO 基础完成后）
 - 社交媒体集成
+
+## 与第一阶段文档的关系
+
+第二轮迭代严格以上游契约为先。以下文档保持不变，作为本轮不可绕过的上游契约：
+
+- [`architecture.md`](./architecture.md) — 系统架构、组件边界、技术债务演进
+- [`mdx-pipeline.md`](./mdx-pipeline.md) — `@next/mdx` + gray-matter + Zod 内容渲染流程
+- [`content-model.md`](./content-model.md) — frontmatter Schema、字段定义、敏感数据规则
+- [`page-contracts.md`](./page-contracts.md) — 每页数据契约、状态契约、组件契约（v4 增订已对齐 iteration-v2 修正）
+- [`functional-requirements.md`](./functional-requirements.md) — 最终部署的 14 个公开页面类型 + 1 个 not-found 边界功能清单
+- [`design-handoff.md`](./design-handoff.md) — 第一阶段交接清单（作为历史参照保留）
+- [`agent-deployment-decision.md`](./agent-deployment-decision.md) — 在线 Agent 排除范围、历史与最终路由口径
+- [`content-refresh-plan.md`](./content-refresh-plan.md) — 真实个人资料、项目、BI、专题笔记与脱敏发布规则
+- [`github-pages-deployment-plan.md`](./github-pages-deployment-plan.md) — GitHub Pages 静态部署决策、阶段、质量门与发布边界
+
+第二轮迭代总决策文档为 [`docs/iteration-v2.md`](./iteration-v2.md) v2.3 Approved；内容公开与脱敏以 [`content-refresh-plan.md`](./content-refresh-plan.md) 为准，Agent 部署范围以 [`agent-deployment-decision.md`](./agent-deployment-decision.md) 为准。
