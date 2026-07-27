@@ -59,7 +59,6 @@ jobs:
         with:
           path: out
           retention-days: 1
-          include-hidden-files: true
 
   deploy:
     if: github.ref == 'refs/heads/main'
