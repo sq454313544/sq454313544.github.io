@@ -137,7 +137,7 @@ BI 案例分析...
 
 ## 页面设计状态
 
-第一阶段功能骨架与第二轮 M1–M5、C1–C4 已完成。三篇专题笔记已通过内容质量门并公开发布，M5 已完成用户人工视觉验收；D1 静态导出适配和 D2 GitHub Pages CI/CD 工作流已完成，下一步为 D3 创建仓库与首次发布（需用户明确确认）。内容公开规则见 [`docs/content-refresh-plan.md`](./docs/content-refresh-plan.md)，总体进度见 [`docs/roadmap.md`](./docs/roadmap.md)。
+第一阶段功能骨架与第二轮 M1–M5、C1–C4 已完成。三篇专题笔记已通过内容质量门并公开发布，M5 已完成用户人工视觉验收；D1 静态导出、D2 CI/CD 和 D3 首次发布已完成，下一步为 D4 线上完整验收。内容公开规则见 [`docs/content-refresh-plan.md`](./docs/content-refresh-plan.md)，总体进度见 [`docs/roadmap.md`](./docs/roadmap.md)。
 
 ## Agent 部署范围
 
@@ -147,7 +147,7 @@ BI 案例分析...
 
 ## 部署
 
-部署平台已选择 GitHub Pages，当前仅完成本地方案沉淀，尚未创建远程仓库或执行发布。计划使用公开的 GitHub 用户根站点 `<GitHub用户名>.github.io`，通过 Next.js 静态导出和 GitHub Actions 发布。
+网站已发布到 [sq454313544.github.io](https://sq454313544.github.io/)，使用 GitHub 用户根站点、Next.js 静态导出和 GitHub Actions 发布。
 
 部署实施前需完成 C4 内容质量门与 M5 视觉 QA，并在 D1 处理搜索、项目筛选和 BI 筛选的静态导出兼容性。Power BI 真实演示版的 iframe 嵌入不阻塞首次发布，安排在 D4 线上验收完成后的 B1 阶段，并需独立完成公开性与脱敏复核。完整决策、阶段、验收与回滚方案见 [`docs/github-pages-deployment-plan.md`](./docs/github-pages-deployment-plan.md)。
 

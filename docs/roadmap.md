@@ -117,9 +117,9 @@
   - 已添加 GitHub Pages Actions 工作流：`main` 推送自动发布，同时保留手动触发
   - 已配置构建、质量门、静态 artifact、最小部署权限和 `github-pages` environment
   - 尚未创建仓库、推送或触发线上工作流
-- [ ] **D3：创建仓库与首次发布**
-  - 创建公开仓库 `<GitHub用户名>.github.io`
-  - 配置 GitHub Pages；经用户明确确认后提交和推送
+- [x] **D3：创建仓库与首次发布**
+  - 已创建公开仓库 [`sq454313544/sq454313544.github.io`](https://github.com/sq454313544/sq454313544.github.io)
+  - 已配置 GitHub Pages Actions 发布源、HTTPS 与 `origin`；首次部署成功
 - [ ] **D4：线上验收**
   - HTTPS、深层链接、静态资源、SEO、390px、主题、Mermaid、ECharts
   - 确认线上无 `/agent` 页面、Sitemap 条目或公开入口

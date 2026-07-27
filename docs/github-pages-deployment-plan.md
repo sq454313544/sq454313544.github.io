@@ -1,9 +1,9 @@
 # GitHub Pages 部署方案
 
-> 版本：v1.1
+> 版本：v1.2
 > 日期：2026-07-28
-> 决策状态：D1 已完成；D2–D4 尚未实施
-> 当前边界：本地静态导出适配已完成；不创建仓库、不登录 GitHub、不提交、不推送、不部署
+> 决策状态：D1–D3 已完成；D4 尚未实施
+> 当前边界：已发布到 `https://sq454313544.github.io/`；D4 线上完整验收尚未开始
 
 ## 一、目标
 
@@ -139,11 +139,10 @@ Sitemap、robots、canonical、Open Graph 和 JSON-LD 必须基于该地址生�
   - 已添加 `.github/workflows/deploy-pages.yml`；`main` 推送自动触发，并保留 `workflow_dispatch`。
   - 已配置 Node.js 22、pnpm 11、内容/代码质量门、静态构建、Chrome 静态 E2E 和 Pages artifact。
   - 已配置最小权限、`github-pages` environment 与同组串行部署；本地尚未创建仓库或触发工作流。
-- [ ] **D3：首次发布**
-  - 用户完成 GitHub 登录。
-  - 创建公开仓库 `<GitHub用户名>.github.io`。
-  - 配置 `origin` 与 Pages 发布源。
-  - 经用户明确确认后提交、推送并首次部署。
+- [x] **D3：首次发布**
+  - 已完成 GitHub 登录，并创建公开仓库 `sq454313544/sq454313544.github.io`。
+  - 已配置 `origin`、GitHub Pages Actions 发布源与 HTTPS。
+  - 已提交并推送首次发布；Actions 构建、静态 E2E、artifact 与部署均成功。
 - [ ] **D4：线上验收**
   - 验证 HTTPS、深层链接、404、静态资源和 SEO 文件。
   - 验证搜索、筛选、主题、Mermaid、ECharts、Resume 打印和移动端。
