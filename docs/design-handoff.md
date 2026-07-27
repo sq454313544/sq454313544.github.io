@@ -3,7 +3,6 @@
 
 > **本文档供后续视觉设计师 / 前端开发者使用。**
 > 当前所有页面只有功能骨架和中性基础样式。以下说明哪些已固定、哪些可改、需要提供什么。
-> **历史说明（2026-07-27）：** 本文保留第一阶段交接快照；其中 `/agent`、Agent 数据字段与 AgentCard 已排除出最终部署范围，不再进入视觉实施。当前口径见 [`agent-deployment-decision.md`](./agent-deployment-decision.md)。
 
 ## 当前页面状态总览
 
@@ -21,7 +20,6 @@
 | 分类 | `/categories` + `/categories/[category]` | 功能骨架 | 完整 | 是 |
 | 关于 | `/about` | 功能骨架 | 完整 | 是 |
 | 简历 | `/resume` | 功能骨架 | 完整 | 是 |
-| Agent | `/agent` | 第一阶段历史占位 | 排除部署 | 否 |
 | 404 | `/not-found` | 功能骨架 | 完整 | 是 |
 
 ## 每个页面的稳定数据字段
@@ -60,10 +58,6 @@
 - 封面图片路径（`string`）
 - 截图列表（`string[]`）
 
-### Agent（历史占位，不再实施）
-- `agents: AgentSummary[]`
-- 示例问题列表（`string[]`）
-
 ## 每个页面的交互状态
 
 所有页面需支持四种状态：
@@ -95,7 +89,6 @@
 12. **Loading / Empty / Error** — 通用状态组件
 13. **EChartsWrapper** — 图表容器（只改容器样式，不改 option 逻辑）
 14. **MermaidDiagram** — Mermaid 容器
-15. **AgentCard（历史）** — 已排除部署，不进入后续设计
 
 ## 哪些功能契约不能被视觉设计破坏
 

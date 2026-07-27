@@ -1,6 +1,6 @@
 # 路线图
 
-> **v5 revision** — 2026-07-28：第一阶段功能骨架已完成；第二轮迭代的 M1–M5 与 C0–C4 已完成。博客最终不部署在线 Agent 页面、API 或后端服务。
+> **v5 revision** — 2026-07-28：第一阶段功能骨架已完成；第二轮迭代的 M1–M5 与 C0–C4 已完成。
 
 ## 第一阶段：功能骨架（已完成）
 
@@ -13,10 +13,10 @@
 - [x] M2：内容系统层（MDX、Zod Schema、Content Loader、示例内容、搜索索引）
 - [x] M3：笔记切片（15 个公开页面路由 + 1 个 not-found 边界，notes/ 全部页面 + ToC + Shiki + Mermaid + SEO）
 - [x] M4：项目 + BI 切片（projects/ + dashboards/ 全部页面 + ECharts + SEO）
-- [x] M5：辅助页面（首页、Agent 占位页、简历页、404 以及全局导航状态）
+- [x] M5：辅助页面（首页、简历页、404 以及全局导航状态）
 - [x] M6：SEO + 质量门（Metadata、Sitemap、结构化数据、lint、typecheck、单测、E2E、构建验收）
 
-历史产出：15 个公开页面类型 + 1 个 not-found 边界全部功能骨架通过验收，其中包含 `/agent` 占位页。最终部署目标调整为 14 个公开页面类型 + 1 个 not-found 边界；历史验收记录不回写。
+最终部署目标为 14 个公开页面类型 + 1 个 not-found 边界。
 
 ## 当前阶段：第二轮迭代（v2 视觉与体验升级）
 
@@ -77,7 +77,6 @@
 - [x] **M5：视觉 QA**
   - 已基于 C4 最终内容完成自动化回归与用户人工视觉验收，未发现阻塞问题。
   - 已验证 390px 无横向溢出、主题切换、关键路由、标签聚合与项目/BI 内容路径。
-  - `/agent` 不在生产路由、Sitemap 或公开导航中；Agent 技术文章和项目案例保持可访问。
 
 已在 C4 中完成 `release-quality-gate` 收尾；D1 可在用户确认后开始。
 
@@ -94,17 +93,11 @@
 - [ ] 配置 Google Analytics
 - [ ] 视觉轮迭代中关闭的"下一轮内容模型"字段（`role` / `granularity` / `dataStatus` / `series` / `seriesOrder`）经评估后纳入 content-model 与 page-contracts
 
-## Agent 部署范围
-
-**状态：已排除**
-
-本博客不部署在线 Agent 页面、API 或后端服务。Agent、RAG、LangGraph 和智能问数仍作为技术内容、项目案例与真实能力描述保留。详细边界与后续代码清理验收见 [`agent-deployment-decision.md`](./agent-deployment-decision.md)。
-
 ## 后续阶段：GitHub Pages 部署
 
 **状态：平台已选择，实施未开始**
 
-部署目标为公开的 GitHub 用户根站点 `<GitHub用户名>.github.io`。首期不使用自定义域名，博客以 Next.js 静态导出方式运行，不部署 Node.js、API、数据库、登录或在线 Agent 服务。
+部署目标为公开的 GitHub 用户根站点 `<GitHub用户名>.github.io`。首期不使用自定义域名，博客以 Next.js 静态导出方式运行，不部署 Node.js、API、数据库或登录服务。
 
 - [x] **D0：部署决策与本地文档沉淀**
   - 决策文档：[`github-pages-deployment-plan.md`](./github-pages-deployment-plan.md)
@@ -122,7 +115,7 @@
   - 已配置 GitHub Pages Actions 发布源、HTTPS 与 `origin`；首次部署成功
 - [ ] **D4：线上验收**
   - HTTPS、深层链接、静态资源、SEO、390px、主题、Mermaid、ECharts
-  - 确认线上无 `/agent` 页面、Sitemap 条目或公开入口
+  - 确认线上路由、Sitemap 与公开导航一致
 
 - [ ] **B1：Power BI 公开演示嵌入（D4 后）**
   - 首次发布和线上验收完成后再评估；不阻塞 D1–D4。
@@ -179,8 +172,7 @@ D1 必须在 C4 内容质量门和 M5 视觉 QA 均完成后开始，避免内�
 - [`page-contracts.md`](./page-contracts.md) — 每页数据契约、状态契约、组件契约（v4 增订已对齐 iteration-v2 修正）
 - [`functional-requirements.md`](./functional-requirements.md) — 最终部署的 14 个公开页面类型 + 1 个 not-found 边界功能清单
 - [`design-handoff.md`](./design-handoff.md) — 第一阶段交接清单（作为历史参照保留）
-- [`agent-deployment-decision.md`](./agent-deployment-decision.md) — 在线 Agent 排除范围、历史与最终路由口径
 - [`content-refresh-plan.md`](./content-refresh-plan.md) — 真实个人资料、项目、BI、专题笔记与脱敏发布规则
 - [`github-pages-deployment-plan.md`](./github-pages-deployment-plan.md) — GitHub Pages 静态部署决策、阶段、质量门与发布边界
 
-第二轮迭代总决策文档为 [`docs/iteration-v2.md`](./iteration-v2.md) v2.3 Approved；内容公开与脱敏以 [`content-refresh-plan.md`](./content-refresh-plan.md) 为准，Agent 部署范围以 [`agent-deployment-decision.md`](./agent-deployment-decision.md) 为准。
+第二轮迭代总决策文档为 [`docs/iteration-v2.md`](./iteration-v2.md) v2.3 Approved；内容公开与脱敏以 [`content-refresh-plan.md`](./content-refresh-plan.md) 为准。

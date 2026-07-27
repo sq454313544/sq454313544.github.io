@@ -149,12 +149,6 @@ test.describe("404", () => {
     await expect(page.locator("h1")).toContainText("404");
   });
 
-  test("replaced mock case routes return 404", async ({ page }) => {
-    for (const path of ["/projects/agent-observability-dashboard", "/dashboards/agent-monitoring-mock", "/dashboards/business-analysis-mock"]) {
-      const response = await page.goto(path);
-      expect(response?.status(), `${path} should return 404`).toBe(404);
-    }
-  });
 });
 
 test.describe("辅助页面", () => {

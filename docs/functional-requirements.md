@@ -1,7 +1,7 @@
 # 功能需求
 
 > **v2 修订（2026-07-23）**：路由数量修正为 15 个公开页面 + 1 个 not-found 边界。搜索改为真正的 searchText 全文索引（非仅 200 字摘要）。
-> **v3 修订（2026-07-27）**：第一阶段“15 + 1”为历史验收口径；最终部署排除 `/agent`，目标为 14 个公开页面类型 + 1 个 not-found 边界。详见 [`agent-deployment-decision.md`](./agent-deployment-decision.md)。
+> **v3 修订（2026-07-27）**：最终部署目标为 14 个公开页面类型 + 1 个 not-found 边界。
 > 分类体系：笔记=category, 项目=projectType, BI=businessDomain，不统一映射。
 
 ## 页面功能清单
@@ -131,14 +131,6 @@
 - 语义化 404 页面
 - 返回首页链接
 - 建议搜索功能
-
-### 排除项：在线 Agent
-
-- 不部署 `/agent` 页面、`/api/agent/*` API Route 或独立 Agent 后端服务
-- 不在首页、Header、Footer、About、Resume 或项目详情提供 Agent Demo / Coming Soon 入口
-- Sitemap、SEO 页面清单和 E2E 关键路径不包含 `/agent`
-- Agent、RAG、LangGraph、智能问数等内容主题与 `projectType: "agent"` 项目案例继续保留
-- 代码清理完成后，访问 `/agent` 应返回 404
 
 ## 全局功能
 

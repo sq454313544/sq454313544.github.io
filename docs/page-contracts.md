@@ -1,7 +1,6 @@
 <!-- v2 修订：状态契约分层化，不再强制所有组件实现四种状态 (2026-07) -->
 <!-- v3 增订：补 /projects /dashboards /about /resume 四页契约；新增导航入口契约段 (2026-07-24) -->
 <!-- v4 增订：项目/BI 字段恢复 content-model 语义（ProjectItem/DashboardItem 强类型，URL 参数改 type/domain）；ProjectDetailMeta.status 从 ProjectMeta 派生、不重定义 (2026-07-24) -->
-<!-- v5 修订：最终部署排除 /agent 路由与入口，页面目标改为 14 + 1 (2026-07-27) -->
 # 页面契约
 
 本文档定义每个页面的数据契约、状态契约和组件契约。后续视觉设计或重构必须遵守这些契约。
@@ -27,12 +26,9 @@
 约束：
 
 1. `/resume` 是独立同级路由，不是下载按钮，也不是 `/about` 页内锚点。
-2. `/agent` 不属于最终部署路由，不在主导航、次级入口、首页、About、Resume 或项目详情中提供 Agent Demo / Coming Soon 链接。
-3. 移动端菜单同时展示 主导航 5 项 + "简历"，搜索与主题切换作为独立操作控件。
-4. 任何后续视觉阶段决定不得改变本契约中的 URL 路径与一级入口数量。新增页面入口须经本文档与 `docs/iteration-v2.md` 同步更新。
-5. 最终部署目标为 14 个公开页面类型 + 1 个 not-found 边界；Agent 技术内容和 `projectType: "agent"` 项目案例不受影响。
-
-Agent 部署边界详见 [`agent-deployment-decision.md`](./agent-deployment-decision.md)。
+2. 移动端菜单同时展示 主导航 5 项 + "简历"，搜索与主题切换作为独立操作控件。
+3. 任何后续视觉阶段决定不得改变本契约中的 URL 路径与一级入口数量。新增页面入口须经本文档与 `docs/iteration-v2.md` 同步更新。
+4. 最终部署目标为 14 个公开页面类型 + 1 个 not-found 边界。
 
 ---
 
@@ -440,17 +436,6 @@ interface ProjectHighlightRef {
 - 简历页面与 About 页面共享 Profile / WorkExperience / SkillGroup / Contact 数据源，但模板与版式互不嵌套。
 
 ---
-
-## 排除路由 `/agent`
-
-`/agent` 不属于最终部署页面契约，不定义页面数据、视觉或交互状态。后续代码清理完成后必须满足：
-
-- 生产构建路由表与 Sitemap 不包含 `/agent`；
-- 访问 `/agent` 返回 404；
-- 公开页面和全局导航不存在 Agent Demo / Coming Soon 链接；
-- Agent、RAG、LangGraph 等学习内容和 Agent 项目案例保持正常访问。
-
-历史占位实现及清理范围见 [`agent-deployment-decision.md`](./agent-deployment-decision.md)。
 
 ---
 

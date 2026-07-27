@@ -51,7 +51,6 @@ Next.js App Router 没有独立的 `server.ts`。开发与生产服务均由 `pa
 | `docs/roadmap.md` | 当前迭代与任务状态 |
 | `docs/iteration-v2.md` | 第二轮视觉与体验的批准方案 |
 | `docs/p0-contract-check.md` | 本轮字段与契约边界 |
-| `docs/agent-deployment-decision.md` | 在线 Agent 排除范围与后续清理验收 |
 
 ## 整理原则与后续步骤
 
@@ -61,5 +60,4 @@ Next.js App Router 没有独立的 `server.ts`。开发与生产服务均由 `pa
 2. 新增全局 UI 时放入 `components/navigation/` 或 `components/primitives/`，不要堆在 `app/`。
 3. 页面专属展示组件可放在对应路由旁；跨页面复用后再提升到 `components/`。
 4. `data/profile.ts` 已作为 About 与 Resume 的共享个人资料数据源；后续补充真实公开资料时仅维护这一处。
-5. Agent 遗留代码已经清理，不重新引入 `/agent`、Agent API 或在线后端；边界见 `docs/agent-deployment-decision.md`。
-6. 每完成一个里程碑再评估是否需要 Route Group；不为整理而改变公开 URL。
+5. 每完成一个里程碑再评估是否需要 Route Group；不为整理而改变公开 URL。

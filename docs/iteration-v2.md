@@ -2,10 +2,9 @@
 
 > 版本：v2.4 Completed
 > 日期：2026-07-28
-> 状态：M1–M5 与 C0–C4 已完成；在线 Agent 已排除出博客部署范围；下一阶段为 GitHub Pages D1 静态导出适配
-> 范围：第一阶段功能性骨架已完成（历史验收为 15 个公开页面类型 + 1 个 not-found 边界，包含 `/agent` 占位页）。最终部署目标为 14 个公开页面类型 + 1 个 not-found 边界。本轮迭代在不动现有内容系统、Queries、既有内容 URL 参数、MDX Schema、ECharts 数据接口的前提下，完成视觉系统、深色模式、设计与开发的工程化对接，以及 Shiki/Mermaid/TOC 三项前置 POC。
+> 状态：M1–M5 与 C0–C4 已完成；下一阶段为 GitHub Pages D4 线上验收
+> 范围：最终部署目标为 14 个公开页面类型 + 1 个 not-found 边界。本轮迭代在不动现有内容系统、Queries、既有内容 URL 参数、MDX Schema、ECharts 数据接口的前提下，完成视觉系统、深色模式、设计与开发的工程化对接，以及 Shiki/Mermaid/TOC 三项前置 POC。
 > 上游契约（本轮不得破坏）：[`architecture.md`](./architecture.md)、[`content-model.md`](./content-model.md)、[`page-contracts.md`](./page-contracts.md)、[`functional-requirements.md`](./functional-requirements.md)、[`mdx-pipeline.md`](./mdx-pipeline.md)、[`design-handoff.md`](./design-handoff.md)。
-> Agent 部署决策：[`agent-deployment-decision.md`](./agent-deployment-decision.md)。
 
 ---
 
@@ -15,8 +14,7 @@
 2. 落地深色模式（class 策略 + Tailwind 4 `@theme inline`），与第一阶段已预留 `dark:` 前缀自动对接。
 3. 完成三项前置技术验证（Shiki、Mermaid、TOC Heading ID），为 M3 笔记切片的代码块、图、目录做好端到端通路。
 4. 完成首页节奏化长页 IA、项目/BI 详情右侧资料栏、About 普通垂直时间线、Resume 可打印文档模板。
-5. 明确博客不部署在线 Agent；Agent、RAG、LangGraph 和智能问数仅作为技术内容、项目案例与真实能力描述保留。
-6. **保持第一阶段成果不被破坏**：内容 Schema、Queries、既有内容路由与 URL 参数、搜索逻辑、MDX 模型、ECharts 数据接口均不修改；仅按独立清理任务移除 `/agent` 历史占位及其无调用方代码。
+5. **保持第一阶段成果不被破坏**：内容 Schema、Queries、既有内容路由与 URL 参数、搜索逻辑、MDX 模型、ECharts 数据接口均不修改。
 
 ---
 
@@ -538,7 +536,6 @@ export const viewport: Viewport = {
 
 - 桌面端：左侧"仔伟 / Data & AI" + 中间 5 项主导航 + 右侧搜索 + 主题切换 + 简历。
 - 移动端菜单：左侧站点名 + 右侧搜索 + 菜单按钮，菜单展开后包含 首页 / 学习笔记 / 项目 / BI 案例 / 关于 / 简历，**搜索和主题切换不并入菜单列表项**，作为独立控件。
-- `/agent` 不属于最终部署路由，不设置 Agent Demo / Coming Soon 次级入口。Agent 技术方向只通过学习笔记、项目案例与真实能力描述呈现，不链接到在线体验页。
 - Header 纯实色（不透明 100%，**不带玻璃效果**），底部 1px 边框。
 - `About` 与 `Resume` 为独立同级路由 `/about` 与 `/resume`，互不锚点，互不嵌入。
 
@@ -801,14 +798,6 @@ interface ResumePageData {
 
 ---
 
-## 十五、Agent 部署边界
-
-- 不部署 `/agent`、`/api/agent/*`、聊天界面、会话管理或 FastAPI / LangGraph 在线后端。
-- 不设计 Agent Coming Soon 页面、Badge 或公开入口。
-- Agent、RAG、LangGraph、智能问数等技术内容与 `projectType: "agent"` 项目案例继续保留。
-- `/agent` 占位页面、`lib/agent/`、Sitemap 与 E2E 引用已清理；访问 `/agent` 返回 404。
-- 完整边界与清理验收见 [`agent-deployment-decision.md`](./agent-deployment-decision.md)。
-
 ---
 
 ## 十六、按钮与控件
@@ -837,7 +826,7 @@ interface ResumePageData {
 
 **视觉实现阶段可以改**：颜色 / 字体 / 间距 / 圆角 / 卡片布局 / 页面区块顺序（首页六屏偏离原顺序需在 visual-spec 修记；其余页区块顺序可在视觉层调整但须保持 page-contracts 字段集合不缺失）/ 响应式布局 / Hover 与动效。
 
-**不得修改**（由 [`page-contracts.md`](./page-contracts.md) 强制契约）：内容 Schema / 内容查询接口 / 最终部署路由与 URL 参数 / 搜索逻辑 / MDX 内容模型 / ECharts 数据接口。`/agent` 历史占位及其类型不属于稳定契约，按部署决策另行清理。
+**不得修改**（由 [`page-contracts.md`](./page-contracts.md) 强制契约）：内容 Schema / 内容查询接口 / 最终部署路由与 URL 参数 / 搜索逻辑 / MDX 内容模型 / ECharts 数据接口。
 
 **与第一阶段成果的接口**：本轮既有业务字段已在 page-contracts v4 + content-model v2 + architecture v2 中冻结。page-contracts 中存在但 content-model 尚未提供的视图字段，按 [`p0-contract-check.md`](./p0-contract-check.md) 使用占位、静态说明或暂不展示；视觉实现不能改变 URL 路径与既有 key 名。
 
@@ -922,7 +911,7 @@ POC 通过后回填本文件对应行从"POC"升级为"Adopt now"。POC 不通�
 | **M3 项目与 BI** | `ProjectItem` / `DashboardItem` 强类型 access；详情资料栏 + 右侧栏字段映射；ECharts 主题切换；项目状态展示映射 record | M2 |
 | **M4 首页 + About + Resume** | 六屏首页、About 普通垂直时间线、Resume 可打印 stylesheet | M3 |
 | **C0–C4 真实内容更新门禁** | C0 资料盘点与方案沉淀；C1 个人资料与简历；C2 真实项目与脱敏 BI 案例；C3 三篇面试问答专题；C4 事实、脱敏、链接、Schema 与完整质量门 | M4 |
-| **M5 视觉 QA** | Playwright 多视口截图比对、390px 硬性验收、`prefers-reduced-motion` 验收、键盘验收、Light/Dark/System 三态验收、Print 验收；确认路由表/Sitemap 无 `/agent` 且 Agent 内容与案例可访问 | C4 |
+| **M5 视觉 QA** | Playwright 多视口截图比对、390px 硬性验收、`prefers-reduced-motion` 验收、键盘验收、Light/Dark/System 三态验收、Print 验收；确认路由表、Sitemap 与导航一致 | C4 |
 
 ### P0 的执行细节
 
@@ -983,7 +972,6 @@ POC 通过后回填本文件对应行从"POC"升级为"Adopt now"。POC 不通�
 
 ## 二十二、不做项（本轮迭代明确排除）
 
-- 在线 Agent 页面、`/api/agent/*`、FastAPI / LangGraph 博客后端、Agent Demo / Coming Soon 公开入口
 - Contentlayer2 / Pliny / next-mdx-remote / Content Collections / prism / sugar-high / 客户端 Shiki 加 DOMParser
 - `@once-ui-system/core` 全套（CC BY-NC 许可风险 + 强绑）
 - motion / framer-motion + 内联 Magic UI 组件 / typed.js / plyr / react-medium-image-zoom / react-share
@@ -1009,7 +997,7 @@ POC 通过后回填本文件对应行从"POC"升级为"Adopt now"。POC 不通�
 - 9 平台分享（本轮仅"复制链接"）
 - Newsletter / RSS / 动态 OG 图 / Giscus / GitHub stars npm downloads 社会证明 / ProfileCard / Work Accordion / ScrollTop 浮动按钮 / 客户端搜索 Fuse.js MiniSearch
 
-除在线 Agent（已按长期部署范围排除）外，上述可延后项在条件触达 milestones（笔记数 > 20、内容规模明显增长、纯静态导出需求出现等）后，再单独评审是否展开。
+上述可延后项在条件触达 milestones（笔记数 > 20、内容规模明显增长、纯静态导出需求出现等）后，再单独评审是否展开。
 
 ---
 
@@ -1078,13 +1066,12 @@ ConvertTo-OKLCH "#2563EB"
 | 搜索索引生成 | 本轮**不做**搜索 POC，搜索逻辑契约冻结 | §十九已决 |
 | About 工作经历形式 | 普通垂直时间线，不折叠，不引入额外组件库 | §十四已决 |
 | About 是否设 ProfileCard 视觉中心 | **不**，使用普通长页面 | §十四已决 |
-| Agent 部署范围 | 博客不部署在线 Agent 页面、API 或后端；保留技术内容与项目案例 | [`agent-deployment-decision.md`](./agent-deployment-decision.md) |
 
 ---
 
 ## 二十六、与第一阶段文档的关系
 
-本文件是第二轮视觉与体验迭代的主决策文档。Agent 是否进入博客部署范围由独立的 [`agent-deployment-decision.md`](./agent-deployment-decision.md) 决定。以下第一阶段文档作为上游契约：
+本文件是第二轮视觉与体验迭代的主决策文档。以下第一阶段文档作为上游契约：
 
 - [`architecture.md`](./architecture.md) — 系统架构、组件边界、技术债务演进
 - [`mdx-pipeline.md`](./mdx-pipeline.md) — `@next/mdx` + gray-matter + Zod 内容渲染流程
@@ -1092,9 +1079,8 @@ ConvertTo-OKLCH "#2563EB"
 - [`page-contracts.md`](./page-contracts.md) — 每页数据契约、状态契约、组件契约（已 v3 增订补 `/projects`、`/dashboards`、`/about`、`/resume` 列表 + 详情 + ProjectDetailMeta / DashboardDetailMeta 字段）
 - [`functional-requirements.md`](./functional-requirements.md) — 最终部署的 14 个公开页面类型 + 1 not-found 边界功能清单
 - [`design-handoff.md`](./design-handoff.md) — 第一阶段"哪些已固定、哪些可改、需要提供什么"的交接清单（本文件 §四、§六、§九、§十八 视觉层决策已覆盖 design-handoff § 11 "后续设计需要提供的输入"，design-handoff 仅作为历史参照保留）
-- [`agent-deployment-decision.md`](./agent-deployment-decision.md) — 在线 Agent 排除范围、历史与最终路由口径
 
-本文件与上述任一文档冲突时，以上游契约（content-model / page-contracts / architecture）优先，本文件仅就"视觉 / 体验 / 工程 token / POC"层面决策；涉及在线 Agent 页面、API 或后端范围时，以 `agent-deployment-decision.md` 为准。
+本文件与上述任一文档冲突时，以上游契约（content-model / page-contracts / architecture）优先，本文件仅就"视觉 / 体验 / 工程 token / POC"层面决策。
 
 ---
 
@@ -1104,6 +1090,5 @@ ConvertTo-OKLCH "#2563EB"
 |---|---|---|
 | 2026-07-24 | v2 草案 | 集成 5 仓开源调研结论 + 用户视觉方案 + 视觉方案补充决策；落地 Tailwind 4 `@theme inline` CSS 骨架与 OKLCH 双轨色板；合并原 `docs/design/visual-spec.md`、`docs/design/design-tokens.md`、`docs/design-reference-decisions.md`、`docs/research/reference-sites-review.md` 为本单一迭代方案文档；删除上述四份中间产物文件，保留 docs 树整洁。 |
 | 2026-07-24 | v2.1 Approved | 修复 15 项阻塞问题：(1) 删除本轮"M2 内容系统层升级"，改 P0 契约一致性检查；(2) 项目/BI 字段与 URL 参数恢复 content-model 语义（`type` / `domain` 而非 `category`，字段用 `ProjectItem` / `DashboardItem` 而非 `ContentItem`）；(3) 项目状态枚举从 content-model import 不重新定义，删除 `'planning' / 'in-progress'` 改动；(4) 修正 Tailwind duration / ease 命名空间混淆，时长直接用 `duration-150 / duration-200` 不新增定制 token；(5) 删除与 `next-themes` 重复的自定义 IIFE 防闪脚本，确定 Light/Dark/System 三态；(6) Geist 通过 `next/font/google` 生成的 CSS Variable（`--font-geist-sans`）而非字面字体名；(7) ECharts 主题色作为 TypeScript `lib/charts/palette.ts` 浅深两套数组，不再依赖 CSS 变量（Canvas 不解析）；(8) Shiki / Mermaid / TOC POC 改在真实项目中做而非 `.agent-temp/poc/` 里跑 standalone demo；(9) fenced code 分流顺序明确（mermaid 优先于 Shiki）；(10) Shiki 失败回退方案修正（Tailwind Typography 不做高亮）；(11) 删除搜索索引 POC（与"搜索逻辑不可改"自相矛盾）；(12) Resume 打印分页改为 `break-inside: avoid` 自然分页 + `print-color-adjust: exact` 保留灰度 + 链接下划线 + URL 打印；(13) 无障碍 44×44 改为按 WCAG 2.2 AA 分级（44 / 24 / 正文链接不强制）；(14) 静态 Callout 不设 `aria-live` 澄清；(15) 进入实现前关闭全部"待第二轮决定"未决项。 |
-| 2026-07-27 | v2.2 Approved | 根据 Agent 部署范围决策移除 `/agent` 次级入口、About `agentPreview`、M4 Coming Soon 视觉和后续上线条件；M4 调整为首页 + About + Resume，M5 增加无 `/agent` 路由/Sitemap/公开链接以及保留 Agent 技术内容与项目案例的验收。 |
 | 2026-07-27 | v2.3 Approved | 在 M4 与 M5 之间增加 C0–C4 真实内容更新门禁：公开真实姓名、城市和求职邮箱，单位与业务泛化且不公开手机号；用真实智能问数、数据仓库和脱敏 BI 方法替换模拟案例；将 7 组技术问答整理为三篇专题笔记。M5 改为基于 C4 最终内容执行视觉验收。 |
 | 2026-07-28 | v2.4 Completed | C0–C4 已完成，三篇专题公开发布并通过内容质量门；M5 已完成自动化回归与用户人工视觉验收，未发现阻塞问题。下一阶段为 GitHub Pages D1 静态导出适配。 |

@@ -139,12 +139,6 @@ BI 案例分析...
 
 第一阶段功能骨架与第二轮 M1–M5、C1–C4 已完成。三篇专题笔记已通过内容质量门并公开发布，M5 已完成用户人工视觉验收；D1 静态导出、D2 CI/CD 和 D3 首次发布已完成，下一步为 D4 线上完整验收。内容公开规则见 [`docs/content-refresh-plan.md`](./docs/content-refresh-plan.md)，总体进度见 [`docs/roadmap.md`](./docs/roadmap.md)。
 
-## Agent 部署范围
-
-本博客不部署在线 Agent 页面、Agent API 或 Agent 后端服务。Agent、RAG、LangGraph、智能问数仍作为学习笔记、项目案例和能力描述保留。
-
-第一阶段遗留的 `/agent`、`lib/agent/`、Sitemap 与 E2E 占位引用已清理。详见 [`docs/agent-deployment-decision.md`](./docs/agent-deployment-decision.md)。
-
 ## 部署
 
 网站已发布到 [sq454313544.github.io](https://sq454313544.github.io/)，使用 GitHub 用户根站点、Next.js 静态导出和 GitHub Actions 发布。
@@ -157,7 +151,7 @@ BI 案例分析...
 NEXT_PUBLIC_SITE_URL=https://<GitHub用户名>.github.io
 ```
 
-首期不配置自定义域名，不部署 Node.js、API、数据库、登录或在线 Agent 服务。任何 GitHub 登录、仓库创建、提交、推送和部署都需要用户明确确认。
+首期不配置自定义域名，不部署 Node.js、API、数据库或登录服务。任何 GitHub 登录、仓库创建、提交、推送和部署都需要用户明确确认。
 
 ---
 

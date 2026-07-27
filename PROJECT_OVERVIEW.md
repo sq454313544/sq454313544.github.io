@@ -15,17 +15,16 @@
 5. [系统架构](#5-系统架构)
 6. [内容模型](#6-内容模型)
 7. [搜索方案](#7-搜索方案)
-8. [Agent 接口预留](#8-agent-接口预留)
-9. [功能需求清单](#9-功能需求清单)
-10. [页面契约](#10-页面契约)
-11. [设计交接](#11-设计交接)
-12. [实施计划](#12-实施计划)
-13. [Skills 配置](#13-skills-配置)
-14. [项目治理规则](#14-项目治理规则)
-15. [风险与约束](#15-风险与约束)
-16. [路线图](#16-路线图)
-17. [完成标准](#17-完成标准)
-18. [问题清单（供评审 AI 回答）](#18-问题清单供评审-ai-回答)
+8. [功能需求清单](#8-功能需求清单)
+9. [页面契约](#9-页面契约)
+10. [设计交接](#10-设计交接)
+11. [实施计划](#11-实施计划)
+12. [Skills 配置](#12-skills-配置)
+13. [项目治理规则](#13-项目治理规则)
+14. [风险与约束](#14-风险与约束)
+15. [路线图](#15-路线图)
+16. [完成标准](#16-完成标准)
+17. [问题清单（供评审 AI 回答）](#17-问题清单供评审-ai-回答)
 
 ---
 
@@ -139,11 +138,6 @@ Next.js App Router（Server Component 优先）
   ├─ 搜索系统（lib/search/）
   │   ├─ 索引（构建时生成）
   │   └─ 匹配器（请求时匹配）
-  │
-  ├─ Agent 接口预留（lib/agent/）
-  │   ├─ types.ts  →  类型定义
-  │   ├─ client.ts  →  抽象接口（当前抛 NotImplementedError）
-  │   └─ mock.ts  →  占位数据
   │
   └─ 内容源（content/）
       ├─ notes/      →  学习笔记 MDX
@@ -420,72 +414,13 @@ URL: `/search?q=关键词`
 
 ---
 
-## 8. Agent 接口预留
+## 8. 功能需求清单
 
-### 8.1 类型定义（`lib/agent/types.ts`）
-
-```typescript
-export interface AgentSummary {
-  id: string
-  name: string
-  description: string
-  status: "coming_soon" | "available" | "offline"
-}
-
-export interface AgentRunRequest {
-  agentId: string
-  message: string
-  sessionId?: string
-}
-
-export type AgentEvent =
-  | { type: "run_started"; runId: string }
-  | { type: "status"; message: string }
-  | { type: "token"; content: string }
-  | { type: "usage"; inputTokens: number; outputTokens: number }
-  | { type: "limit_reached"; message: string }
-  | { type: "error"; message: string }
-  | { type: "run_completed"; runId: string }
-```
-
-### 8.2 客户端（`lib/agent/client.ts`）
-
-只定义抽象接口签名，所有方法抛出 `NotImplementedError`：
-
-```typescript
-export interface AgentClient {
-  listAgents(): Promise<AgentSummary[]>
-  runAgent(request: AgentRunRequest): AsyncIterable<AgentEvent>
-  cancelRun(runId: string): Promise<void>
-}
-```
-
-### 8.3 Mock 数据（`lib/agent/mock.ts`）
-
-3 个示例 Agent（全部 `status: "coming_soon"`）：
-- 智能问数助手：NL2SQL + 可视化
-- 指标治理 Agent：口径梳理 + 不一致检测
-- 数据分析 Agent：探索性分析 + 洞察提炼
-
-4 个示例问题供 `/agent` 占位页面展示。
-
-### 8.4 `/agent` 页面要求
-
-- 展示 Agent 未来定位和能力
-- "建设中" 状态标识
-- 示例问题展示
-- 隐私和数据安全说明
-- 不调用模型 API、不创建后端、不保存对话
-
----
-
-## 9. 功能需求清单
-
-### 9.1 页面路由（15 public pages + 1 not-found boundary）
+### 8.1 页面路由（14 public pages + 1 not-found boundary）
 
 | # | 路由 | 页面 | 关键功能 |
 |---|---|---|---|
-| 1 | `/` | 首页 | 8 个功能区块（定位/能力/精选项目/精选BI/最新笔记/关于摘要/简历入口/Agent入口） |
+| 1 | `/` | 首页 | 7 个功能区块（定位/能力/精选项目/精选BI/最新笔记/关于摘要/简历入口） |
 | 2 | `/notes` | 笔记列表 | 分类筛选、标签筛选、日期/阅读时间、空状态 |
 | 3 | `/notes/[slug]` | 笔记详情 | ToC、代码高亮、Mermaid、前后篇、相关文章、结构化数据 |
 | 4 | `/projects` | 项目列表 | 类型/状态筛选、技术栈标签、空状态 |
@@ -499,23 +434,22 @@ export interface AgentClient {
 | 12 | `/categories/[category]` | 分类详情 | 该分类下的内容列表 |
 | 13 | `/about` | 关于我 | 个人简介、技能、经验 |
 | 14 | `/resume` | 简历 | 结构化简历、PDF 下载预留（无 PDF 时明确提示） |
-| 15 | `/agent` | Agent 占位 | 定位说明、示例问题、隐私说明 |
 | — | `not-found` | 404 边界 | 返回首页链接 |
 
 `generateStaticParams` 仅用于 5 条动态路由（`/notes/[slug]`、`/projects/[slug]`、`/dashboards/[slug]`、`/tags/[tag]`、`/categories/[category]`），并设置 `dynamicParams = false`。
 
-### 9.2 全局功能
+### 8.2 全局功能
 
 - **导航**：Header（Logo + 主导航 + 搜索入口）+ Footer（版权 + 链接）+ 移动端汉堡菜单
 - **SEO**：全局 Metadata、页面级 Metadata、Canonical URL、Open Graph、Sitemap、robots.txt、结构化数据（JSON-LD）
 - **样式**：中性基础排版、响应式（390px 无横向溢出）、Tailwind dark: 前缀预留、组件接受 className
-- **状态**：每个页面/组件按自身类型支持对应状态（详见 §10.2）
+- **状态**：每个页面/组件按自身类型支持对应状态（详见 §9.2）
 
 ---
 
-## 10. 页面契约
+## 9. 页面契约
 
-### 10.1 通用组件契约
+### 9.1 通用组件契约
 
 所有组件必须遵守：
 
@@ -525,7 +459,7 @@ interface ComponentProps {
 }
 ```
 
-### 10.2 组件状态分层（按组件类型）
+### 9.2 组件状态分层（按组件类型）
 
 组件状态不是统一的四种状态，而是按组件性质分层：
 
@@ -533,10 +467,10 @@ interface ComponentProps {
 |---|---|---|
 | **数据列表**（笔记列表、项目列表、BI 列表、标签列表等） | normal / empty | 有数据时渲染列表；无数据时渲染"暂无内容"空状态 |
 | **异步图表**（EChartsWrapper） | loading / normal / error / empty | 数据加载中→加载完成→出错→无数据，各状态独立视图 |
-| **纯展示**（About、Resume、Agent 占位等） | normal only | 无异步数据依赖，直接渲染 |
+| **纯展示**（About、Resume 等） | normal only | 无异步数据依赖，直接渲染 |
 | **路由段** | loading.tsx / error.tsx | Next.js App Router 文件约定：Suspense 边界和 Error Boundary 由页面级文件提供 |
 
-### 10.3 各页面数据契约（摘要）
+### 9.3 各页面数据契约（摘要）
 
 | 页面 | 核心数据 | URL 参数 |
 |---|---|---|
@@ -549,9 +483,8 @@ interface ComponentProps {
 | 分类列表 | `{name, count}[]` | — |
 | 分类详情 | `category`, `items[]` | category |
 | BI 详情 | `dashboard`, `chartData[]`（ECharts option） | slug |
-| Agent | `agents[]`（来自 mock） | — |
 
-### 10.4 不能破坏的契约
+### 9.4 不能破坏的契约
 
 1. 所有页面数据接口（props 类型和必需字段不能改变）
 2. URL 参数格式（`?q=`、`?category=` 等参数名不能改变）
@@ -563,26 +496,26 @@ interface ComponentProps {
 
 ---
 
-## 11. 设计交接
+## 10. 设计交接
 
-### 11.1 当前页面状态
+### 10.1 当前页面状态
 
 所有页面当前仅实现**功能骨架和中性基础样式**。品牌色、字体方案、卡片样式、动画和最终视觉设计将在后续阶段完成。
 
-### 11.2 可重新设计的组件
+### 10.2 可重新设计的组件
 
 以下组件可以完全重新设计（样式、布局、动画），但必须保持 props 签名：
-Header、Footer、NoteCard、ProjectCard、DashboardCard、SearchInput、TagCloud、CategoryList、Toc、PrevNextNav、RelatedArticles、Loading/Empty/Error、EChartsWrapper、MermaidDiagram、AgentCard
+Header、Footer、NoteCard、ProjectCard、DashboardCard、SearchInput、TagCloud、CategoryList、Toc、PrevNextNav、RelatedArticles、Loading/Empty/Error、EChartsWrapper、MermaidDiagram
 
-### 11.3 后续设计需要的输入
+### 10.3 后续设计需要的输入
 
 品牌色板、字体方案、间距系统、圆角系统、阴影系统、组件设计稿（桌面+移动端）、首页布局、卡片样式、代码块样式、响应式断点、深色模式配色、动画规范
 
 ---
 
-## 12. 实施计划
+## 11. 实施计划
 
-### 12.1 总阶段结构（v2.1）
+### 11.1 总阶段结构（v2.1）
 
 ```
 M0（工程初始化）✅ → M1（POC）→ M2（内容层）→ M3（笔记切片）→ M4（项目+BI 切片）→ M5（辅助页面）→ M6（SEO+QA）
@@ -590,7 +523,7 @@ M0（工程初始化）✅ → M1（POC）→ M2（内容层）→ M3（笔记�
 
 阶段间串行执行（无并行）。每个阶段完成后验证方可进入下一阶段。
 
-### 12.2 M0：工程初始化 ✅
+### 11.2 M0：工程初始化 ✅
 
 | # | 操作 | 验证 |
 |---|---|---|
@@ -604,33 +537,33 @@ M0（工程初始化）✅ → M1（POC）→ M2（内容层）→ M3（笔记�
 | M0.8 | 创建空目录结构 | 目录树完整 |
 | M0.9-11 | 创建 AGENTS.md、README.md、docs/ | 内容完整 |
 
-### 12.3 M1：POC（概念验证）
+### 11.3 M1：POC（概念验证）
 
 验证关键技术链路：MDX 编译 + frontmatter 访问 + Shiki 高亮 + Mermaid + ECharts + searchText 提取。实现一到两条路由作为端到端验证。
 
-### 12.4 M2：内容服务层
+### 11.4 M2：内容服务层
 
 构建完整内容管道：schema → loader → queries → reading-time → search index → 示例 MDX。涵盖 `docs/mdx-pipeline.md` 中定义的全部萃取规则。
 
-### 12.5 M3：笔记切片
+### 11.5 M3：笔记切片
 
 笔记列表页 + 详情页 + 分类/标签筛选 + ToC + 代码高亮 + 前后篇导航 + 相关文章。
 
-### 12.6 M4：项目 + BI 切片
+### 11.6 M4：项目 + BI 切片
 
 项目列表/详情 + BI 列表/详情 + Mermaid + ECharts + 完整的 loading/error/empty 状态。
 
-### 12.7 M5：辅助页面
+### 11.7 M5：辅助页面
 
-搜索、标签页、分类页、关于我、简历、Agent 占位、404、导航组件、全局 Header/Footer。
+搜索、标签页、分类页、关于我、简历、404、导航组件、全局 Header/Footer。
 
-### 12.8 M6：SEO + QA
+### 11.8 M6：SEO + QA
 
 Metadata、Sitemap、robots、结构化数据、语义 HTML、单元测试、E2E、lint/typecheck/build 最终验证。
 
 ---
 
-## 13. Skills 配置
+## 12. Skills 配置
 
 项目级 Skills（`.agents/skills/`）：
 
@@ -647,7 +580,7 @@ Metadata、Sitemap、robots、结构化数据、语义 HTML、单元测试、E2E
 
 ---
 
-## 14. 项目治理规则
+## 13. 项目治理规则
 
 详见 `AGENTS.md`，核心规则摘要：
 
@@ -665,7 +598,7 @@ Metadata、Sitemap、robots、结构化数据、语义 HTML、单元测试、E2E
 
 ---
 
-## 15. 风险与约束
+## 14. 风险与约束
 
 | # | 风险 | 影响 | 缓解措施 |
 |---|---|---|---|
@@ -676,19 +609,18 @@ Metadata、Sitemap、robots、结构化数据、语义 HTML、单元测试、E2E
 | 5 | Chrome 150.x 兼容性 | Playwright 可能版本不匹配 | M5 实际验证，失败则报告原因而非下载 Chromium |
 | 6 | 无代理/VPN | 外网资源（CDN、npm）下载慢或失败 | 使用 npmmirror 国内镜像 |
 
-### 15.1 硬性约束
+### 14.1 硬性约束
 
 - 不下载 Playwright Chromium（使用系统 Chrome）
 - 不创建付费资源
 - 不自动 push / deploy / PR
-- 不实现 Agent 后端
 - 不连接数据库
 - 不擅自确定品牌色/字体/动画等最终视觉设计
 - 页面功能、内容数据和样式必须解耦
 
 ---
 
-## 16. 路线图
+## 15. 路线图
 
 | 阶段 | 状态 | 内容 |
 |---|---|---|
@@ -698,29 +630,27 @@ Metadata、Sitemap、robots、结构化数据、语义 HTML、单元测试、E2E
 | M2：内容服务层 | 📋 待执行 | Schema + Loader + Queries + searchText 提取 + 示例内容 |
 | M3：笔记切片 | 📋 待执行 | 笔记列表 + 详情 + 分类/标签 + ToC + Shiki |
 | M4：项目+BI 切片 | 📋 待执行 | 项目列表/详情 + BI 列表/详情 + Mermaid + ECharts |
-| M5：辅助页面 | 📋 待执行 | 搜索/标签/分类/About/Resume/Agent/404 + 导航组件 |
+| M5：辅助页面 | 📋 待执行 | 搜索/标签/分类/About/Resume/404 + 导航组件 |
 | M6：SEO + QA | 📋 待执行 | Metadata/Sitemap/结构化数据/lint/typecheck/test/e2e/build |
 | 视觉设计 | 🔮 后续 | 需要用户提供设计稿/参考；启用 frontend-visual-implementation skill |
 | 内容扩充 | 🔮 后续 | 补充更多文章和案例 |
-| Agent 功能 | 🔮 后续 | 搭建 FastAPI + LangGraph 后端 |
-| 部署上线 | 🔮 后续 | Vercel / 自托管 |
+| 部署上线 | 🔮 后续 | GitHub Pages 静态站点 |
 
 ---
 
-## 17. 完成标准
+## 16. 完成标准
 
 本轮（M0-M6）同时满足以下条件才算完成：
 
 - [x] `pnpm install` 成功
 - [x] `pnpm dev` 可启动
-- [ ] 所有 15 条路由 + 1 not-found 边界可访问
+- [ ] 所有 14 条路由 + 1 not-found 边界可访问
 - [ ] MDX 正常渲染（含代码高亮、Mermaid、ECharts）
 - [ ] Zod Schema 校验有效，故意错误内容触发构建失败
 - [x] `pnpm typecheck` 零错误
 - [ ] 搜索可用（含 searchText 全文匹配 + URL 参数恢复）
 - [ ] 分类和标签可用（含中文路径编码）
 - [x] `mdx-components.tsx` 已创建并可用
-- [ ] `/agent` 页面明确为占位状态，未调用真实模型
 - [ ] 页面功能与视觉样式解耦，`className` 接口可用
 - [ ] `docs/design-handoff.md` 存在且内容完整
 - [ ] `pnpm lint` 零错误
@@ -737,7 +667,7 @@ Metadata、Sitemap、robots、结构化数据、语义 HTML、单元测试、E2E
 
 ---
 
-## 18. 问题清单（供评审 AI 回答）
+## 17. 问题清单（供评审 AI 回答）
 
 请评审以下方面并给出意见：
 

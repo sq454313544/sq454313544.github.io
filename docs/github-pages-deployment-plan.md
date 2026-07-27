@@ -24,15 +24,12 @@
 
 GitHub Pages 不承载以下能力：
 
-- `/agent` 在线页面、Agent API、FastAPI 或 LangGraph 后端
 - 数据库、登录、会话和服务端鉴权
 - Server Actions、请求时动态渲染和依赖服务器的 Route Handler
 - 在线内容管理后台
 - 需要密钥才能在浏览器运行的第三方服务
 
 首期 D1–D4 也不实施 Power BI iframe 嵌入；现有 BI 案例继续使用已脱敏的图表、方法说明和静态内容。真实 Power BI 演示版的嵌入安排在站点首次发布并完成线上验收之后，作为独立的 B1 阶段。
-
-Agent、RAG、LangGraph 和智能问数仍可作为公开技术内容、项目案例与能力描述保留。Agent 部署边界以 [`agent-deployment-decision.md`](./agent-deployment-decision.md) 为准。
 
 ## 三、当前兼容性结论
 
@@ -42,7 +39,7 @@ Agent、RAG、LangGraph 和智能问数仍可作为公开技术内容、项目�
 - 笔记、项目、BI、标签和分类详情路由已提供 `generateStaticParams()`。
 - Shiki 在服务端构建阶段生成高亮 HTML。
 - Mermaid、ECharts、主题切换等功能在浏览器端运行。
-- 项目不依赖数据库、登录或线上 Agent 服务。
+- 项目不依赖数据库或登录服务。
 
 静态导出前仍需处理以下兼容项：
 
@@ -146,7 +143,7 @@ Sitemap、robots、canonical、Open Graph 和 JSON-LD 必须基于该地址生�
 - [ ] **D4：线上验收**
   - 验证 HTTPS、深层链接、404、静态资源和 SEO 文件。
   - 验证搜索、筛选、主题、Mermaid、ECharts、Resume 打印和移动端。
-  - 确认线上无 `/agent` 页面、Sitemap 条目或导航入口。
+  - 确认线上路由、Sitemap 与导航入口一致。
 
 - [ ] **B1：Power BI 公开演示嵌入（首次发布后）**
   - 仅在 D4 完成、用户明确确认并完成单独脱敏复核后评估实施。
@@ -179,7 +176,6 @@ pnpm test:e2e
 - Light、Dark、System 三态正常。
 - Mermaid 与 ECharts 正常渲染，控制台无错误。
 - Sitemap 与 robots 使用正式 HTTPS 地址。
-- `/agent` 不存在，Agent 技术内容和项目案例仍可访问。
 - B1 不属于本轮静态导出、CI/CD 或首次发布验收范围。
 
 线上质量门：
