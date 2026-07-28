@@ -67,6 +67,14 @@ pnpm test
 pnpm test:e2e
 ```
 
+## Git 提交规则
+
+- 只提交公开源码、脱敏内容、公开静态资源、测试、必要配置和 CI；不提交 `docs/` 本地规划材料、构建产物、缓存、测试报告、工具会话文件或 `.env`。
+- 使用按路径暂存的方式，不使用 `git add .`；每次提交只包含一个逻辑变更。
+- 提交前执行：`git status --short`、`git diff --cached --check`、`git diff --cached --name-only`，以及适用的 `pnpm lint`、`pnpm typecheck`、`pnpm test`、`pnpm build`、`pnpm test:e2e:static`。
+- 提交信息采用 `feat(scope):`、`fix(scope):`、`test(scope):`、`content(scope):` 或 `chore(scope):`。推送和部署必须经用户明确确认。
+- 不得提交密钥、Token、连接串、真实客户/业务数据、Power BI 私有文件或截图、手机号、内部账号和本机绝对路径。
+
 ## 添加内容
 
 ### 新增学习笔记

@@ -49,7 +49,7 @@ yarn-error.log*
 # test results
 test-results/
 
-# docs (iteration/planning only)
+# docs（本地规划材料，不纳入公开仓库）
 docs/
 
 # project planning files

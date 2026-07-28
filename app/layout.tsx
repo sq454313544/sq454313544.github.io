@@ -6,12 +6,18 @@ import { ThemeProvider } from "./theme-provider";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://sq454313544.github.io"),
   title: {
     default: "个人技术博客",
     template: "%s | 个人技术博客",
   },
   description:
     "数据产品工程师的个人技术平台，涵盖数据分析、Power BI、SQL、Python、RAG、LangGraph 与 Agent 工程。",
+  openGraph: {
+    title: "金仔伟 · 数据产品工程师",
+    description: "数据产品、数据工程与 AI 数据应用的个人技术平台。",
+    images: [{ url: "/og-default.svg", width: 1200, height: 630, alt: "金仔伟的数据产品工程作品集" }],
+  },
 };
 
 export const viewport: Viewport = {

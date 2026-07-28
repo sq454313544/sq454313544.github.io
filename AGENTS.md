@@ -36,6 +36,14 @@
 - 不创建付费资源。
 - 不自动创建 PR。
 
+### Git 提交规则
+- 仅提交公开站点源码、脱敏内容、公开静态资源、测试、必要配置、CI 工作流、`README.md`、`AGENTS.md`、`.env.example` 与 `.gitignore`。
+- 禁止使用 `git add .`；必须按文件路径精确暂存，并先检查 `git diff --cached --name-only`。
+- `docs/`、`PROJECT_OVERVIEW.md`、构建产物、缓存、测试报告、工具会话文件和环境文件均不提交。
+- 一次提交只包含一个可说明的逻辑变更；建议使用 `feat(scope):`、`fix(scope):`、`test(scope):`、`content(scope):` 或 `chore(scope):`。
+- 提交前必须依次检查：`git status --short`、`git diff --cached --check`、`git diff --cached --name-only`，并执行适用的 lint、类型检查、测试、构建与静态 E2E。
+- 暂存内容不得包含密钥、Token、连接串、真实客户或业务数据、Power BI 私有文件/截图、手机号、数据库地址、内部账号或本机绝对路径。
+
 ### 安全
 - 禁止提交密钥、Token、连接串、密码。
 - 禁止提交真实客户名称、案件数据、身份证、手机号、数据库地址、内部账号、未脱敏公司数据。

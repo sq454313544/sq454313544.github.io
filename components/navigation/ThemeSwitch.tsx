@@ -39,3 +39,35 @@ export function ThemeSwitch({ className }: { className?: string }) {
     </label>
   );
 }
+
+export function ThemeToggle({ className }: { className?: string }) {
+  const { setTheme, theme } = useTheme();
+  const mounted = useSyncExternalStore(
+    () => () => undefined,
+    () => true,
+    () => false,
+  );
+  const themes = ["system", "light", "dark"] as const;
+  const labels = { system: "跟随系统", light: "浅色", dark: "深色" } as const;
+  const currentTheme = themes.includes(theme as (typeof themes)[number])
+    ? (theme as (typeof themes)[number])
+    : "system";
+
+  if (!mounted) {
+    return <span aria-hidden="true" className={`block h-10 w-10 ${className ?? ""}`} />;
+  }
+
+  const nextTheme = themes[(themes.indexOf(currentTheme) + 1) % themes.length];
+
+  return (
+    <button
+      type="button"
+      onClick={() => setTheme(nextTheme)}
+      aria-label={`当前主题：${labels[currentTheme]}。切换至${labels[nextTheme]}`}
+      className={`inline-flex h-10 w-10 items-center justify-center rounded-button border border-border bg-surface text-text-secondary transition-colors duration-150 ease-standard hover:bg-surface-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${className ?? ""}`}
+    >
+      {currentTheme === "light" ? "☀" : currentTheme === "dark" ? "◐" : "◌"}
+      <span className="sr-only">当前主题：{labels[currentTheme]}</span>
+    </button>
+  );
+}

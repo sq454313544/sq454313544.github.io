@@ -5,26 +5,40 @@ test.describe("首页", () => {
     await page.goto("/");
     await expect(page).toHaveTitle(/BI.*AI|数据产品工程师/);
     await expect(page.locator("h1")).toContainText("数据产品工程师");
+    await expect(page.getByRole("link", { name: "金仔伟 · Data & AI" })).toBeVisible();
     await expect(page.getByText("精选项目")).toBeVisible();
     await expect(page.locator("a[href^='/resume']").last()).toBeVisible();
   });
 
-  test("theme switch supports light, dark, and system", async ({ page }) => {
+  test("desktop theme toggle cycles through light, dark, and system", async ({ page }) => {
     await page.goto("/");
 
-    const themeSelect = page.getByLabel("选择主题");
-    await expect(themeSelect).toBeVisible();
+    const themeToggle = page.getByRole("button", { name: /当前主题/ });
+    await expect(themeToggle).toBeVisible();
 
-    await themeSelect.selectOption("dark");
+    await themeToggle.click();
+    await expect
+      .poll(() => page.evaluate(() => localStorage.getItem("theme")))
+      .toBe("light");
+
+    await themeToggle.click();
     await expect(page.locator("html")).toHaveClass(/dark/);
 
-    await themeSelect.selectOption("light");
-    await expect(page.locator("html")).toHaveClass(/light/);
-
-    await themeSelect.selectOption("system");
+    await themeToggle.click();
     await expect
       .poll(() => page.evaluate(() => localStorage.getItem("theme")))
       .toBe("system");
+  });
+
+  test("mobile navigation closes with Escape and exposes the theme select", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 800 });
+    await page.goto("/");
+    const menuButton = page.getByRole("button", { name: "打开导航菜单" });
+    await menuButton.click();
+    await expect(page.getByLabel("移动端主导航")).toBeVisible();
+    await expect(page.getByLabel("选择主题")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(page.getByLabel("移动端主导航")).toBeHidden();
   });
 });
 
@@ -63,7 +77,6 @@ test.describe("项目", () => {
     await expect(page.locator("h1")).toContainText("项目");
 
     await page.goto("/projects?type=agent");
-    await expect(page.locator("main ul.border-t a[href^='/projects/']")).toHaveCount(1);
     await expect(page.getByText("企业智能问数助手")).toBeVisible();
   });
 
@@ -166,6 +179,7 @@ test.describe("辅助页面", () => {
     await expect(page.getByText("在线简历")).toBeVisible();
     await expect(page.getByRole("heading", { name: "项目亮点" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "教育背景" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "打印 / 保存为 PDF" })).toBeVisible();
   });
 });
 

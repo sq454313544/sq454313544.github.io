@@ -24,6 +24,14 @@ export interface ProjectMeta {
   demo?: string;
 }
 
+export const PROJECT_TYPE_LABELS: Record<ProjectMeta["projectType"], string> = {
+  agent: "智能应用",
+  dashboard: "数据看板",
+  pipeline: "数据管道",
+  tool: "工具",
+  other: "其他",
+};
+
 export interface DashboardMeta {
   title: string;
   description: string;

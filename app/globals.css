@@ -25,6 +25,8 @@
   --radius-code: 12px;
   --radius-tag: 999px;
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --shadow-card: 0 4px 16px -2px rgb(0 0 0 / 0.08);
+  --shadow-card-hover: 0 10px 24px -6px rgb(0 0 0 / 0.14);
 
   --color-background: var(--theme-background);
   --color-surface: var(--theme-surface);
@@ -106,7 +108,15 @@
   --theme-info-border: oklch(0.7137 0.1433 254.8);
   --theme-info-text: oklch(0.8091 0.0955 252);
   color-scheme: dark;
+  --shadow-card: 0 4px 16px -2px rgb(0 0 0 / 0.32);
+  --shadow-card-hover: 0 10px 24px -6px rgb(0 0 0 / 0.42);
 }
+
+@keyframes fade-in-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fade-in-up { animation: fade-in-up 300ms var(--ease-standard) both; }
+.animate-delay-120 { animation-delay: 120ms; }
+.animate-delay-160 { animation-delay: 160ms; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; } }
 
 html {
   scrollbar-gutter: stable;
@@ -173,4 +183,16 @@ pre {
 pre code {
   white-space: pre;
   word-break: normal;
+}
+
+.shiki,
+.shiki span {
+  color: var(--shiki-light) !important;
+  background-color: var(--shiki-light-bg) !important;
+}
+
+.dark .shiki,
+.dark .shiki span {
+  color: var(--shiki-dark) !important;
+  background-color: var(--shiki-dark-bg) !important;
 }

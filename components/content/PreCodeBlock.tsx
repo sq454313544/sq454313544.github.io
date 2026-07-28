@@ -48,7 +48,7 @@ export async function PreCodeBlock({ children, className }: PreCodeBlockProps) {
   try {
     highlightedHtml = await codeToHtml(code, {
       lang,
-      theme: "github-dark-dimmed",
+      themes: { light: "github-light", dark: "github-dark-dimmed" },
     });
   } catch {
     highlightedHtml = null;

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { profileData } from "@/data/profile";
+import { PrintButton } from "@/components/resume/PrintButton";
 
 export const metadata: Metadata = {
   title: "在线简历",
@@ -12,7 +13,7 @@ export default function ResumePage() {
     <main className="resume-page mx-auto w-full max-w-[52rem] px-4 py-10 sm:py-14">
       <article className="resume-card border border-border bg-surface p-6 sm:p-10">
         <header className="border-b border-border pb-6">
-          <p className="text-sm font-medium text-primary">在线简历</p>
+          <div className="flex flex-wrap items-start justify-between gap-4"><p className="text-sm font-medium text-primary">在线简历</p><PrintButton className="print:hidden" /></div>
           <h1 className="mt-2 text-h1 font-semibold leading-tight text-text-primary">{profileData.profile.name}</h1>
           <p className="mt-2 text-lg text-text-secondary">{profileData.profile.headline}</p>
           <p className="mt-5 leading-relaxed text-text-secondary">{profileData.resumeSummary}</p>

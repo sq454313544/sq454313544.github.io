@@ -37,6 +37,12 @@ export interface Contact {
   href: string;
 }
 
+export interface SiteHighlight {
+  label: string;
+  value: string;
+  unit?: string;
+}
+
 export interface EducationEntry {
   school: string;
   degree: string;
@@ -59,6 +65,7 @@ const profileDataSchema = z.object({
     location: z.string().optional(),
   }),
   heroSkills: z.array(z.string()),
+  siteHighlights: z.array(z.object({ label: z.string(), value: z.string(), unit: z.string().optional() })),
   workExperiences: z.array(
     z.object({
       company: z.string(),
@@ -98,6 +105,12 @@ export const profileData = profileDataSchema.parse({
       "具备数据产品、BI、数据工程与 AI 数据应用的端到端实践经验，擅长把业务问题转化为可验证、可维护的数据产品：从指标口径与建模、Power BI 语义模型，到受控的智能问数与工程化交付。",
   },
   heroSkills: ["数据产品", "Power BI", "数据工程", "智能问数", "SQL", "Python"],
+  siteHighlights: [
+    { label: "核心项目", value: "2", unit: "个" },
+    { label: "数据资产", value: "250+", unit: "张表 / 视图" },
+    { label: "智能问数项目测试", value: "100+", unit: "条" },
+    { label: "智能问数 Recall", value: "40% → 80%+" },
+  ],
   workExperiences: [
     {
       company: "专业服务行业数据团队",
@@ -168,7 +181,10 @@ export const profileData = profileDataSchema.parse({
     { title: "工程质量", items: ["Git", "自动化测试", "代码审查", "发布与回滚"] },
   ],
   interests: ["数据产品", "指标治理", "智能问数", "RAG 工程", "技术复盘"],
-  contacts: [{ label: "454313544@qq.com", href: "mailto:454313544@qq.com" }],
+  contacts: [
+    { label: "454313544@qq.com", href: "mailto:454313544@qq.com" },
+    { label: "GitHub", href: "https://github.com/sq454313544" },
+  ],
   resumeSummary:
     "数据产品工程师，具备数据分析、Power BI、数据工程与 AI 数据应用实践经验，擅长在业务目标和工程可行性之间建立清晰、可维护的交付路径。",
   education: [

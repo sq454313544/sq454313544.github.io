@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { profileData } from "@/data/profile";
 import { loadDashboards, loadNotes, loadProjects } from "@/lib/content/loaders";
+import { PROJECT_TYPE_LABELS } from "@/lib/content/types";
+import { ContentCover } from "@/components/content/ContentCover";
 
 export const metadata: Metadata = {
   title: "金仔伟 · 数据产品工程师",
@@ -34,22 +36,18 @@ export default function HomePage() {
           <p className="mt-5 max-w-2xl text-body leading-body text-text-secondary">
             {profileData.profile.summary}
           </p>
-          <div className="mt-7 flex flex-wrap gap-3">
+          <div className="mt-7 flex flex-wrap gap-3 animate-fade-in-up animate-delay-120">
             <Link href="/projects" className="rounded-button bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors duration-150 ease-standard hover:bg-primary-hover">
               查看项目
             </Link>
             <Link href="/notes" className="rounded-button border border-border px-4 py-2.5 text-sm font-medium text-text-primary transition-colors duration-150 ease-standard hover:bg-surface-soft">
               阅读笔记
             </Link>
+            <a href="https://github.com/sq454313544" target="_blank" rel="noopener noreferrer" className="rounded-button border border-border px-4 py-2.5 text-sm font-medium text-text-primary transition-colors duration-150 ease-standard hover:bg-surface-soft">GitHub</a>
           </div>
         </div>
-        <aside aria-label="能力概览" className="border border-border bg-surface p-5">
-          <h2 className="text-sm font-semibold text-text-primary">能力概览</h2>
-          <ul className="mt-4 grid grid-cols-2 gap-3 text-sm text-text-secondary">
-            {profileData.heroSkills.map((skill) => (
-              <li key={skill} className="border-l-2 border-accent-border pl-3">{skill}</li>
-            ))}
-          </ul>
+        <aside aria-label="项目成果概览" className="grid grid-cols-2 gap-3 animate-fade-in-up animate-delay-160">
+          {profileData.siteHighlights.map((highlight) => <article key={highlight.label} className="flex flex-col items-center justify-center rounded-card border border-border bg-surface p-4 text-center shadow-card"><p className="text-h3 font-semibold leading-tight text-primary">{highlight.value}</p>{highlight.unit && <p className="mt-1 text-xs text-text-muted">{highlight.unit}</p>}<p className="mt-2 text-xs text-text-secondary">{highlight.label}</p></article>)}
         </aside>
       </section>
 
@@ -63,14 +61,15 @@ export default function HomePage() {
         </div>
         <div className="mt-7 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           {projects.map((project) => (
-            <article key={project.slug} className="flex min-h-56 flex-col border border-border bg-surface p-5">
-              <p className="text-tag text-text-muted">{project.meta.projectType}</p>
+            <article key={project.slug} className="group flex min-h-56 flex-col overflow-hidden rounded-card border border-border bg-surface p-5 shadow-card transition duration-150 ease-standard hover:-translate-y-0.5 hover:shadow-card-hover">
+              <ContentCover slug={project.slug} priority className="mb-5 aspect-[2/1]" />
+              <p className="text-tag text-text-muted">{PROJECT_TYPE_LABELS[project.meta.projectType]}</p>
               <h3 className="mt-3 text-card-title font-semibold text-text-primary">{project.meta.title}</h3>
               <p className="mt-3 flex-1 text-sm leading-relaxed text-text-secondary">{project.meta.description}</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {project.meta.techStack.slice(0, 3).map((item) => <span key={item} className="rounded-tag bg-surface-soft px-2 py-1 text-tag text-text-secondary">{item}</span>)}
               </div>
-              <Link href={`/projects/${project.slug}`} className="mt-5 text-sm font-medium text-primary hover:text-primary-hover">查看案例 →</Link>
+              <Link href={`/projects/${project.slug}`} className="mt-5 text-sm font-medium text-primary hover:text-primary-hover">查看案例 <span className="inline-block transition-transform duration-150 group-hover:translate-x-1">→</span></Link>
             </article>
           ))}
         </div>
@@ -109,9 +108,10 @@ export default function HomePage() {
         </ol>
       </section>
 
-      <section className="border-t border-border py-12">
-        <p className="max-w-2xl text-body leading-body text-text-secondary">{profileData.profile.summary}</p>
-        <div className="mt-6 flex flex-wrap gap-4"><Link href="/about" className="text-sm font-medium text-primary hover:text-primary-hover">关于我 →</Link><Link href="/resume" className="text-sm font-medium text-primary hover:text-primary-hover">查看在线简历 →</Link></div>
+      <section className="border-t border-border py-12 text-center">
+        <h2 className="text-h3 font-semibold text-text-primary">正在寻找新的机会</h2>
+        <p className="mt-2 text-text-secondary">期待数据产品工程、BI 数据应用或 AI 应用工程方向的合作机会。</p>
+        <div className="mt-6 flex flex-wrap justify-center gap-3"><Link href="/resume" className="rounded-button bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors duration-150 ease-standard hover:bg-primary-hover">查看简历</Link><a href="https://github.com/sq454313544" target="_blank" rel="noopener noreferrer" className="rounded-button border border-border px-4 py-2.5 text-sm font-medium text-text-primary transition-colors duration-150 ease-standard hover:bg-surface-soft">GitHub</a><a href="mailto:454313544@qq.com" className="rounded-button border border-border px-4 py-2.5 text-sm font-medium text-text-primary transition-colors duration-150 ease-standard hover:bg-surface-soft">邮件联系</a></div>
       </section>
     </main>
   );

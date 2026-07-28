@@ -6,6 +6,8 @@ import { PrevNextNav } from "@/components/content/PrevNextNav";
 import { RelatedArticles } from "@/components/content/RelatedArticles";
 import { DetailMeta, type DetailMetaItem } from "@/components/content/DetailMeta";
 import type { Metadata } from "next";
+import { PROJECT_TYPE_LABELS } from "@/lib/content/types";
+import { ContentCover } from "@/components/content/ContentCover";
 
 export const dynamicParams = false;
 
@@ -36,7 +38,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   };
   const metaItems: DetailMetaItem[] = [
     { label: "项目状态", value: statusLabels[project.meta.status] },
-    { label: "项目类型", value: project.meta.projectType },
+    { label: "项目类型", value: PROJECT_TYPE_LABELS[project.meta.projectType] },
     { label: "技术栈", value: project.meta.techStack.join(" · ") },
     { label: "发布于", value: project.meta.publishedAt },
     ...(project.meta.updatedAt !== project.meta.publishedAt ? [{ label: "更新于", value: project.meta.updatedAt }] : []),
@@ -49,7 +51,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
       <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_13.75rem] lg:gap-12">
         <article className="min-w-0">
           <header className="border-b border-border pb-7">
-            <p className="text-auxiliary font-medium text-primary">{project.meta.projectType}</p>
+            <ContentCover slug={project.slug} className="mb-7 aspect-[2/1]" />
+            <p className="text-auxiliary font-medium text-primary">{PROJECT_TYPE_LABELS[project.meta.projectType]}</p>
             <h1 className="mt-2 text-h2 font-semibold leading-tight text-text-primary sm:text-h1">{project.meta.title}</h1>
             <p className="mt-4 text-body leading-body text-text-secondary">{project.meta.description}</p>
             <ul className="mt-5 flex flex-wrap gap-2" aria-label="项目技术栈">
