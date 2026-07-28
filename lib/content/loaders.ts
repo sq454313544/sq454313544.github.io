@@ -29,12 +29,30 @@ function calcReadingTime(body: string, wordsPerMinute = 300): number {
   return Math.max(1, Math.ceil(cleaned.length / wordsPerMinute));
 }
 
-function loadContentType(type: ContentType, dir: string): ContentItem[] {
+function isDirectoryMissing(error: unknown): boolean {
+  return (
+    error instanceof Error &&
+    "code" in error &&
+    (error as NodeJS.ErrnoException).code === "ENOENT"
+  );
+}
+
+export function loadContentType(type: ContentType, dir: string): ContentItem[] {
   const items: ContentItem[] = [];
+
+  let files: string[];
   try {
-    const files = readdirSync(dir).filter((f) => extname(f) === ".mdx");
-    for (const file of files) {
-      const filePath = join(dir, file);
+    files = readdirSync(dir).filter((file) => extname(file) === ".mdx");
+  } catch (error) {
+    if (isDirectoryMissing(error)) {
+      return items;
+    }
+    throw error;
+  }
+
+  for (const file of files) {
+    const filePath = join(dir, file);
+    try {
       const content = readFileSync(filePath, "utf-8");
       const { data, content: body } = matter(content);
       const slug = generateSlug(file);
@@ -42,25 +60,22 @@ function loadContentType(type: ContentType, dir: string): ContentItem[] {
       const searchText = generateSearchText(body);
       const readingTime = calcReadingTime(body);
 
-      try {
-        if (type === "note") {
-          const meta = validateNoteMeta(data);
-          items.push({ type: "note", slug, meta, body, excerpt, searchText, readingTime });
-        } else if (type === "project") {
-          const meta = validateProjectMeta(data);
-          items.push({ type: "project", slug, meta, body, excerpt, searchText, readingTime });
-        } else if (type === "dashboard") {
-          const meta = validateDashboardMeta(data);
-          items.push({ type: "dashboard", slug, meta, body, excerpt, searchText, readingTime });
-        }
-      } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        throw new Error(`${filePath}: ${message}`);
+      if (type === "note") {
+        const meta = validateNoteMeta(data);
+        items.push({ type: "note", slug, meta, body, excerpt, searchText, readingTime });
+      } else if (type === "project") {
+        const meta = validateProjectMeta(data);
+        items.push({ type: "project", slug, meta, body, excerpt, searchText, readingTime });
+      } else if (type === "dashboard") {
+        const meta = validateDashboardMeta(data);
+        items.push({ type: "dashboard", slug, meta, body, excerpt, searchText, readingTime });
       }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`${filePath}: ${message}`);
     }
-  } catch {
-    // Directory does not exist — return empty
   }
+
   return items;
 }
 

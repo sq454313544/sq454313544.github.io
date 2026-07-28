@@ -46,6 +46,9 @@ describe("NoteMetaSchema", () => {
 
   it("rejects empty tags array", () => {
     expect(() =>
+      NoteMetaSchema.parse({ ...valid, tags: [] })
+    ).toThrow();
+    expect(() =>
       NoteMetaSchema.parse({ ...valid, tags: [""] })
     ).toThrow();
   });
@@ -106,6 +109,12 @@ describe("ProjectMetaSchema", () => {
       ProjectMetaSchema.parse({ ...valid, updatedAt: "2025-01-01" })
     ).toThrow(/updatedAt/);
   });
+
+  it("rejects empty tech stack", () => {
+    expect(() =>
+      ProjectMetaSchema.parse({ ...valid, techStack: [] })
+    ).toThrow();
+  });
 });
 
 describe("DashboardMetaSchema", () => {
@@ -123,9 +132,13 @@ describe("DashboardMetaSchema", () => {
     expect(() => DashboardMetaSchema.parse(valid)).not.toThrow();
   });
 
-  it("accepts empty tools (min validation on element, not array)", () => {
-    const result = DashboardMetaSchema.parse({ ...valid, tools: [] });
-    expect(result.tools).toEqual([]);
+  it("rejects empty tools and metrics", () => {
+    expect(() =>
+      DashboardMetaSchema.parse({ ...valid, tools: [] })
+    ).toThrow();
+    expect(() =>
+      DashboardMetaSchema.parse({ ...valid, metrics: [] })
+    ).toThrow();
   });
 
   it("rejects updatedAt before publishedAt", () => {
