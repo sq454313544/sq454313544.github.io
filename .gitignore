@@ -40,6 +40,21 @@ yarn-error.log*
 # vercel
 .vercel
 
+# tool config / logs
+.codex/
+.playwright-cli/
+.omo/
+.codegraph/
+
+# test results
+test-results/
+
+# docs (iteration/planning only)
+docs/
+
+# project planning files
+PROJECT_OVERVIEW.md
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
