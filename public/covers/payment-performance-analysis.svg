@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600">
+  <rect width="1200" height="600" fill="#f0fdfa"/>
+  <path d="M0 96h1200M0 216h1200M0 336h1200M0 456h1200M120 0v600M360 0v600M600 0v600M840 0v600M1080 0v600" stroke="#99f6e4" stroke-width="2" opacity=".72"/>
+  <rect x="70" y="56" width="146" height="42" rx="21" fill="#0f766e"/><text x="143" y="83" fill="#fff" font-family="system-ui, sans-serif" font-size="20" font-weight="700" text-anchor="middle">BI CASE · MOCK</text>
+  <g fill="#fff" stroke="#0f766e" stroke-width="4"><rect x="160" y="230" width="190" height="140" rx="20"/><rect x="505" y="230" width="190" height="140" rx="20"/><rect x="850" y="230" width="190" height="140" rx="20"/></g>
+  <path d="M350 300h155m190 0h155" stroke="#0f766e" stroke-width="8" stroke-linecap="round"/><g fill="#115e59" font-family="system-ui, sans-serif" font-size="25" font-weight="700" text-anchor="middle"><text x="255" y="308">目标</text><text x="600" y="308">回款</text><text x="945" y="308">追踪</text></g>
+  <text x="72" y="534" fill="#0f766e" font-family="system-ui, sans-serif" font-size="34" font-weight="700">回款与绩效分析</text><text x="1128" y="534" fill="#475569" font-family="system-ui, sans-serif" font-size="24" text-anchor="end">模拟数据 · Power Query</text>
+</svg>

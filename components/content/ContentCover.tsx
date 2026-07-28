@@ -3,9 +3,8 @@ import Image from "next/image";
 const covers = {
   "enterprise-qa-assistant": { src: "/covers/enterprise-qa-assistant.svg", alt: "智能问数项目的受控查询流程示意" },
   "data-warehouse-modernization": { src: "/covers/data-warehouse-modernization.svg", alt: "数据仓库分层与治理流程示意" },
-  "registry-first-for-enterprise-analytics": { src: "/covers/registry-first.svg", alt: "企业分析指标注册表专题封面" },
-  "controlled-query-mcp-security": { src: "/covers/controlled-query.svg", alt: "受控查询与安全边界专题封面" },
-  "enterprise-analytics-agent-architecture": { src: "/covers/agent-architecture.svg", alt: "企业分析智能应用架构专题封面" },
+  "operations-process-analysis": { src: "/covers/operations-process-analysis.svg", alt: "业务流程分析案例的抽象指标路径封面" },
+  "payment-performance-analysis": { src: "/covers/payment-performance-analysis.svg", alt: "回款与团队绩效案例的抽象分析路径封面" },
 } as const;
 
 export type CoverSlug = keyof typeof covers;

@@ -15,7 +15,7 @@ export default function ProjectsPage() {
 
   return (
     <main className="mx-auto w-full max-w-default px-5 py-10 sm:px-8 sm:py-14">
-      <header className="border-b border-border pb-6"><p className="text-auxiliary font-medium text-primary">PROJECT WORK</p><h1 className="mt-2 text-h2 font-semibold leading-tight text-text-primary sm:text-h1">项目作品集</h1><p className="mt-3 text-body leading-body text-text-secondary">数据产品、自动化流程与智能应用的项目复盘。</p></header>
+      <header className="border-b border-border pb-6"><p className="text-auxiliary font-medium text-primary">PROJECT WORK</p><h1 className="mt-2 text-h1 font-semibold leading-tight text-text-primary">项目作品集</h1><p className="mt-3 text-body leading-body text-text-secondary">数据产品、自动化流程与智能应用的项目复盘。</p></header>
       <Suspense fallback={<Loading className="py-10" />}>
         <ProjectList projects={published} tags={tags} />
       </Suspense>

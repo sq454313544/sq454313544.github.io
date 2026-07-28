@@ -56,7 +56,7 @@ export default async function NotePage({
         <article className="min-w-0">
           <header className="border-b border-border pb-7">
             <p className="text-auxiliary font-medium text-primary">{note.meta.category}</p>
-            <h1 className="mt-2 text-h2 font-semibold leading-tight text-text-primary sm:text-h1">{note.meta.title}</h1>
+            <h1 className="mt-2 text-h1 font-semibold leading-tight text-text-primary">{note.meta.title}</h1>
             <p className="mt-4 text-body leading-body text-text-secondary">{note.meta.description}</p>
             <div className="mt-5 flex flex-wrap items-center gap-x-2 gap-y-1 text-auxiliary text-text-muted">
               <time dateTime={note.meta.publishedAt}>{note.meta.publishedAt}</time>

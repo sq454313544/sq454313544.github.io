@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 import { ThemeSwitch, ThemeToggle } from "./ThemeSwitch";
+import { CloseIcon, MenuIcon } from "./icons/SiteIcons";
 
 const NAV_ITEMS = [
   { href: "/notes", label: "笔记" },
@@ -52,7 +53,7 @@ export function Header({ className }: { className?: string }) {
           <Link href="/resume" className="hidden h-10 items-center rounded-button px-2 text-sm text-text-secondary transition-colors duration-150 ease-standard hover:bg-surface-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:inline-flex">简历</Link>
           <ThemeToggle className="hidden sm:inline-flex" />
           <button type="button" className="inline-flex h-10 w-10 items-center justify-center rounded-button border border-border text-text-secondary transition-colors duration-150 ease-standard hover:bg-surface-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:hidden" aria-expanded={isOpen} aria-controls={drawerId} aria-label={isOpen ? "关闭导航菜单" : "打开导航菜单"} onClick={() => setIsOpen((open) => !open)}>
-            <span aria-hidden="true" className="text-lg">{isOpen ? "×" : "☰"}</span>
+            {isOpen ? <CloseIcon aria-hidden="true" className="size-5" /> : <MenuIcon aria-hidden="true" className="size-5" />}
           </button>
         </div>
       </div>

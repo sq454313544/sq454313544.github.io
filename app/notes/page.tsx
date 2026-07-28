@@ -4,7 +4,6 @@ import { getPublished, getAllCategories, getAllTags } from "@/lib/content/querie
 import type { NoteItem } from "@/lib/content/types";
 import { Empty } from "@/components/primitives/states";
 import type { Metadata } from "next";
-import { ContentCover } from "@/components/content/ContentCover";
 
 export const metadata: Metadata = {
   title: "学习笔记",
@@ -23,7 +22,7 @@ export default function NotesPage() {
     <main className="mx-auto w-full max-w-default px-5 py-10 sm:px-8 sm:py-14">
       <header className="mb-10 border-b border-border pb-6">
         <p className="text-auxiliary font-medium text-primary">KNOWLEDGE BASE</p>
-        <h1 className="mt-2 text-h2 font-semibold leading-tight text-text-primary sm:text-h1">学习笔记</h1>
+        <h1 className="mt-2 text-h1 font-semibold leading-tight text-text-primary">学习笔记</h1>
         <p className="mt-3 max-w-2xl text-body leading-body text-text-secondary">
           技术学习、方法沉淀与数据产品实践的持续记录。
         </p>
@@ -80,7 +79,6 @@ export default function NotesPage() {
                     href={`/notes/${note.slug}`}
                     className="group block py-6 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
                   >
-                    {note.meta.cover && <ContentCover slug={note.slug} className="mb-5 aspect-[2/1] max-w-xl" />}
                     <h2 className="text-card-title font-semibold leading-tight text-text-primary transition-colors duration-150 ease-standard group-hover:text-primary">
                       {note.meta.title}
                     </h2>

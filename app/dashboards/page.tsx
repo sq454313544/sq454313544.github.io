@@ -13,5 +13,5 @@ export default function DashboardsPage() {
   const published = getPublished(dashboards).filter((item): item is DashboardItem => item.type === "dashboard");
   const tags = getAllTags(dashboards);
   const domains = [...new Set(published.map((item) => item.meta.businessDomain))];
-  return <main className="mx-auto w-full max-w-default px-5 py-10 sm:px-8 sm:py-14"><header className="border-b border-border pb-6"><p className="text-auxiliary font-medium text-primary">BUSINESS INTELLIGENCE</p><h1 className="mt-2 text-h2 font-semibold leading-tight text-text-primary sm:text-h1">BI 案例</h1><p className="mt-3 text-body leading-body text-text-secondary">数据分析、指标体系与商业智能看板的案例记录。</p></header><Suspense fallback={<Loading className="py-10" />}><DashboardList dashboards={published} domains={domains} tags={tags} /></Suspense></main>;
+  return <main className="mx-auto w-full max-w-default px-5 py-10 sm:px-8 sm:py-14"><header className="border-b border-border pb-6"><p className="text-auxiliary font-medium text-primary">BUSINESS INTELLIGENCE</p><h1 className="mt-2 text-h1 font-semibold leading-tight text-text-primary">BI 案例</h1><p className="mt-3 text-body leading-body text-text-secondary">数据分析、指标体系与商业智能看板的案例记录。</p></header><Suspense fallback={<Loading className="py-10" />}><DashboardList dashboards={published} domains={domains} tags={tags} /></Suspense></main>;
 }

@@ -8,8 +8,8 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL("https://sq454313544.github.io"),
   title: {
-    default: "个人技术博客",
-    template: "%s | 个人技术博客",
+    default: "金仔伟 · 数据产品工程师",
+    template: "%s | 金仔伟",
   },
   description:
     "数据产品工程师的个人技术平台，涵盖数据分析、Power BI、SQL、Python、RAG、LangGraph 与 Agent 工程。",

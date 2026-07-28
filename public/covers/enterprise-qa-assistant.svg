@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" role="img"><rect width="1200" height="600" fill="#eef2ff"/><g fill="none" stroke="#4f46e5" stroke-width="12"><path d="M150 300h210m120 0h210m120 0h210"/><rect x="360" y="220" width="120" height="160" rx="20"/><rect x="690" y="220" width="120" height="160" rx="20"/></g><g fill="#312e81" font-family="system-ui" font-size="40" text-anchor="middle"><text x="255" y="260">问题</text><text x="420" y="310">校验</text><text x="750" y="310">查询</text><text x="945" y="260">解释</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600">
+  <rect width="1200" height="600" fill="#eef2ff"/>
+  <path d="M0 96h1200M0 216h1200M0 336h1200M0 456h1200M120 0v600M360 0v600M600 0v600M840 0v600M1080 0v600" stroke="#c7d2fe" stroke-width="2" opacity=".65"/>
+  <rect x="70" y="56" width="142" height="42" rx="21" fill="#3730a3"/><text x="141" y="83" fill="#fff" font-family="system-ui, sans-serif" font-size="20" font-weight="700" text-anchor="middle">AI DATA APP</text>
+  <g fill="#fff" stroke="#6366f1" stroke-width="4"><rect x="120" y="246" width="170" height="108" rx="20"/><rect x="430" y="206" width="170" height="108" rx="20"/><rect x="740" y="246" width="170" height="108" rx="20"/></g>
+  <path d="M290 300h140m170-40 140 40" stroke="#6366f1" stroke-width="8" stroke-linecap="round"/><path d="m410 280 20 20-20 20m290-60 40 40-40 40" fill="none" stroke="#6366f1" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#312e81" font-family="system-ui, sans-serif" font-size="24" font-weight="700" text-anchor="middle"><text x="205" y="306">问题</text><text x="515" y="266">校验</text><text x="825" y="306">查询</text></g>
+  <text x="72" y="534" fill="#4338ca" font-family="system-ui, sans-serif" font-size="34" font-weight="700">Registry First</text><text x="1128" y="534" fill="#475569" font-family="system-ui, sans-serif" font-size="24" text-anchor="end">Recall 40% → 80%+</text>
+</svg>

@@ -1,1 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" role="img"><rect width="1200" height="600" fill="#ecfeff"/><g fill="#0f766e"><rect x="140" y="180" width="150" height="240" rx="24"/><rect x="360" y="140" width="150" height="320" rx="24"/><rect x="580" y="100" width="150" height="400" rx="24"/><rect x="800" y="140" width="150" height="320" rx="24"/></g><g fill="white" font-family="system-ui" font-size="34" text-anchor="middle"><text x="215" y="310">接入</text><text x="435" y="310">标准</text><text x="655" y="310">建模</text><text x="875" y="310">应用</text></g></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600">
+  <rect width="1200" height="600" fill="#ecfeff"/>
+  <path d="M0 96h1200M0 216h1200M0 336h1200M0 456h1200M120 0v600M360 0v600M600 0v600M840 0v600M1080 0v600" stroke="#a5f3fc" stroke-width="2" opacity=".72"/>
+  <rect x="70" y="56" width="158" height="42" rx="21" fill="#0f766e"/><text x="149" y="83" fill="#fff" font-family="system-ui, sans-serif" font-size="20" font-weight="700" text-anchor="middle">DATA PLATFORM</text>
+  <g fill="#fff" stroke="#0f766e" stroke-width="4"><rect x="128" y="258" width="132" height="94" rx="18"/><rect x="330" y="226" width="132" height="126" rx="18"/><rect x="532" y="194" width="132" height="158" rx="18"/><rect x="734" y="226" width="132" height="126" rx="18"/><rect x="936" y="258" width="132" height="94" rx="18"/></g>
+  <g fill="#115e59" font-family="system-ui, sans-serif" font-size="20" font-weight="700" text-anchor="middle"><text x="194" y="312">接入</text><text x="396" y="296">标准</text><text x="598" y="280">建模</text><text x="800" y="296">治理</text><text x="1002" y="312">应用</text></g>
+  <path d="M260 305h70m132 0h70m132 0h70m132 0h70" stroke="#14b8a6" stroke-width="7" stroke-linecap="round"/>
+  <text x="72" y="534" fill="#0f766e" font-family="system-ui, sans-serif" font-size="34" font-weight="700">五层数据架构</text><text x="1128" y="534" fill="#475569" font-family="system-ui, sans-serif" font-size="24" text-anchor="end">250+ 表 / 视图</text>
+</svg>

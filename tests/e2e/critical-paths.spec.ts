@@ -3,10 +3,12 @@ import { test, expect } from "@playwright/test";
 test.describe("首页", () => {
   test("homepage renders", async ({ page }) => {
     await page.goto("/");
-    await expect(page).toHaveTitle(/BI.*AI|数据产品工程师/);
+    await expect(page).toHaveTitle("金仔伟 · 数据产品工程师");
     await expect(page.locator("h1")).toContainText("数据产品工程师");
     await expect(page.getByRole("link", { name: "金仔伟 · Data & AI" })).toBeVisible();
     await expect(page.getByText("精选项目")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "经营分析与数据表达" })).toBeVisible();
+    await expect(page.getByText("模拟数据").first()).toBeVisible();
     await expect(page.locator("a[href^='/resume']").last()).toBeVisible();
   });
 
@@ -34,6 +36,7 @@ test.describe("首页", () => {
     await page.setViewportSize({ width: 390, height: 800 });
     await page.goto("/");
     const menuButton = page.getByRole("button", { name: "打开导航菜单" });
+    await expect(menuButton.locator("svg")).toBeVisible();
     await menuButton.click();
     await expect(page.getByLabel("移动端主导航")).toBeVisible();
     await expect(page.getByLabel("选择主题")).toBeVisible();
@@ -48,6 +51,7 @@ test.describe("笔记", () => {
     await expect(page.locator("h1")).toContainText("学习笔记");
     const links = page.locator("a[href^='/notes/']");
     await expect(links.first()).toBeVisible();
+    await expect(page.locator("main img")).toHaveCount(0);
   });
 
   test("note detail page", async ({ page }) => {
@@ -121,8 +125,9 @@ test.describe("BI 案例", () => {
     await expect(page.locator("h1")).toContainText("回款与团队绩效");
 
     await page.goto("/dashboards?tool=Power%20Query");
-    await expect(page.locator("main ul.border-t a[href^='/dashboards/']")).toHaveCount(1);
+    await expect(page.locator("main ul[data-dashboard-results] a[href^='/dashboards/']")).toHaveCount(1);
     await expect(page.getByText("回款与团队绩效分析看板")).toBeVisible();
+    await expect(page.getByText("模拟数据")).toBeVisible();
   });
 });
 
@@ -186,7 +191,7 @@ test.describe("辅助页面", () => {
 test.describe("无横向溢出", () => {
   test("390px viewport", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 800 });
-    for (const path of ["/", "/about", "/resume", "/notes/langgraph-state-nodes"]) {
+    for (const path of ["/", "/about", "/resume", "/notes/langgraph-state-nodes", "/dashboards"]) {
       await page.goto(path);
       const bodyWidth = await page.evaluate(() => document.body.scrollWidth);
       const viewportWidth = await page.evaluate(() => window.innerWidth);

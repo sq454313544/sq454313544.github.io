@@ -41,6 +41,7 @@ export interface SiteHighlight {
   label: string;
   value: string;
   unit?: string;
+  emphasis?: "primary" | "standard" | "quiet";
 }
 
 export interface EducationEntry {
@@ -65,7 +66,7 @@ const profileDataSchema = z.object({
     location: z.string().optional(),
   }),
   heroSkills: z.array(z.string()),
-  siteHighlights: z.array(z.object({ label: z.string(), value: z.string(), unit: z.string().optional() })),
+  siteHighlights: z.array(z.object({ label: z.string(), value: z.string(), unit: z.string().optional(), emphasis: z.enum(["primary", "standard", "quiet"]).optional() })),
   workExperiences: z.array(
     z.object({
       company: z.string(),
@@ -106,10 +107,10 @@ export const profileData = profileDataSchema.parse({
   },
   heroSkills: ["数据产品", "Power BI", "数据工程", "智能问数", "SQL", "Python"],
   siteHighlights: [
-    { label: "核心项目", value: "2", unit: "个" },
-    { label: "数据资产", value: "250+", unit: "张表 / 视图" },
-    { label: "智能问数项目测试", value: "100+", unit: "条" },
-    { label: "智能问数 Recall", value: "40% → 80%+" },
+    { label: "核心项目", value: "2", unit: "个", emphasis: "quiet" },
+    { label: "数据资产", value: "250+", unit: "张表 / 视图", emphasis: "standard" },
+    { label: "智能问数项目测试", value: "100+", unit: "条", emphasis: "standard" },
+    { label: "智能问数 Recall", value: "40% → 80%+", emphasis: "primary" },
   ],
   workExperiences: [
     {

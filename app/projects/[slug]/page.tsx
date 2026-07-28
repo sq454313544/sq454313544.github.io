@@ -53,7 +53,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           <header className="border-b border-border pb-7">
             <ContentCover slug={project.slug} className="mb-7 aspect-[2/1]" />
             <p className="text-auxiliary font-medium text-primary">{PROJECT_TYPE_LABELS[project.meta.projectType]}</p>
-            <h1 className="mt-2 text-h2 font-semibold leading-tight text-text-primary sm:text-h1">{project.meta.title}</h1>
+            <h1 className="mt-2 text-h1 font-semibold leading-tight text-text-primary">{project.meta.title}</h1>
             <p className="mt-4 text-body leading-body text-text-secondary">{project.meta.description}</p>
             <ul className="mt-5 flex flex-wrap gap-2" aria-label="项目技术栈">
               {project.meta.techStack.map((tech) => <li key={tech} className="rounded-tag border border-border px-2 py-0.5 text-tag text-text-secondary">{tech}</li>)}

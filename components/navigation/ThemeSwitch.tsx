@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from "react";
 import { useTheme } from "next-themes";
+import { MoonIcon, SunIcon, SystemIcon } from "./icons/SiteIcons";
 
 const THEME_OPTIONS = [
   { value: "light", label: "浅色" },
@@ -58,6 +59,11 @@ export function ThemeToggle({ className }: { className?: string }) {
   }
 
   const nextTheme = themes[(themes.indexOf(currentTheme) + 1) % themes.length];
+  const icon = currentTheme === "light"
+    ? <SunIcon aria-hidden="true" className="size-5" />
+    : currentTheme === "dark"
+      ? <MoonIcon aria-hidden="true" className="size-5" />
+      : <SystemIcon aria-hidden="true" className="size-5" />;
 
   return (
     <button
@@ -66,7 +72,7 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label={`当前主题：${labels[currentTheme]}。切换至${labels[nextTheme]}`}
       className={`inline-flex h-10 w-10 items-center justify-center rounded-button border border-border bg-surface text-text-secondary transition-colors duration-150 ease-standard hover:bg-surface-soft hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${className ?? ""}`}
     >
-      {currentTheme === "light" ? "☀" : currentTheme === "dark" ? "◐" : "◌"}
+      {icon}
       <span className="sr-only">当前主题：{labels[currentTheme]}</span>
     </button>
   );
