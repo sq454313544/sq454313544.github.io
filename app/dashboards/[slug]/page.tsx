@@ -5,7 +5,6 @@ import type { DashboardItem } from "@/lib/content/types";
 import { PrevNextNav } from "@/components/content/PrevNextNav";
 import { RelatedArticles } from "@/components/content/RelatedArticles";
 import { DetailMeta, type DetailMetaItem } from "@/components/content/DetailMeta";
-import { EChartsWrapper } from "@/components/charts/EChartsWrapper";
 import type { Metadata } from "next";
 
 export const dynamicParams = false;
@@ -18,16 +17,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const dashboard = loadDashboards().find((item) => item.slug === slug);
   return dashboard ? { title: dashboard.meta.title, description: dashboard.meta.description } : {};
-}
-
-function getChartOption(title: string): object {
-  return {
-    title: { text: title, left: "center" },
-    tooltip: {},
-    xAxis: { data: ["1月", "2月", "3月", "4月", "5月", "6月"] },
-    yAxis: {},
-    series: [{ name: title, type: "bar", data: [820, 932, 901, 934, 1290, 1330] }],
-  };
 }
 
 export default async function DashboardPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -43,7 +32,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ slug
     { label: "业务领域", value: dashboard.meta.businessDomain },
     { label: "使用工具", value: dashboard.meta.tools.join(" · ") },
     { label: "关键指标", value: dashboard.meta.metrics.join(" · ") },
-    { label: "数据说明", value: "模拟数据" },
+    { label: "数据说明", value: "真实项目 · 脱敏演示" },
     { label: "发布于", value: dashboard.meta.publishedAt },
   ];
 
@@ -59,11 +48,6 @@ export default async function DashboardPage({ params }: { params: Promise<{ slug
               {dashboard.meta.tools.map((tool) => <li key={tool} className="rounded-tag border border-border px-2 py-0.5 text-tag text-text-secondary">{tool}</li>)}
             </ul>
           </header>
-          <section className="mt-10" aria-labelledby="dashboard-chart-title">
-            <h2 id="dashboard-chart-title" className="text-h3 font-semibold leading-tight text-text-primary">指标示例</h2>
-            <p className="mt-2 text-sm text-text-muted">基于模拟数据的展示图表。</p>
-            <EChartsWrapper option={getChartOption(dashboard.meta.metrics[0] ?? "指标趋势")} height={300} className="mt-5 rounded-card border border-border p-3" />
-          </section>
           <div className="mt-10"><Content /></div>
           <PrevNextNav prev={prev} next={next} basePath="/dashboards" />
           <RelatedArticles items={related} />

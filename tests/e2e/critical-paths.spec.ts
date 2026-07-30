@@ -8,7 +8,8 @@ test.describe("首页", () => {
     await expect(page.getByRole("link", { name: "金仔伟 · Data & AI" })).toBeVisible();
     await expect(page.getByText("精选项目")).toBeVisible();
     await expect(page.getByRole("heading", { name: "经营分析与数据表达" })).toBeVisible();
-    await expect(page.getByText("模拟数据").first()).toBeVisible();
+    await expect(page.getByText("真实项目 · 脱敏演示").first()).toBeVisible();
+    await expect(page.locator("a[href^='/dashboards/operations-process-analysis']")).toHaveCount(1);
     await expect(page.locator("a[href^='/resume']").last()).toBeVisible();
   });
 
@@ -125,20 +126,26 @@ test.describe("项目", () => {
 });
 
 test.describe("BI 案例", () => {
-  test("dashboards page renders chart", async ({ page }) => {
-    await page.goto("/dashboards/operations-process-analysis");
-    await expect(page.locator("h1")).toContainText("业务流程");
-    const chart = page.locator(".echarts-for-react, canvas");
-    // ECharts may render as canvas
-    await expect(chart.first()).toBeVisible({ timeout: 10000 });
+  test("single dashboard case renders sanitized screenshots", async ({ page }) => {
+    await page.goto("/dashboards");
+    await expect(page.locator("main ul[data-dashboard-results] a[href^='/dashboards/']")).toHaveCount(1);
+    await expect(page.getByText("法律业务经营分析看板")).toBeVisible();
+    await expect(page.getByText("真实项目 · 脱敏演示")).toBeVisible();
 
-    await page.goto("/dashboards/payment-performance-analysis");
-    await expect(page.locator("h1")).toContainText("回款与团队绩效");
+    await page.goto("/dashboards/operations-process-analysis");
+    await expect(page.locator("h1")).toContainText("法律业务经营分析");
+    await expect(page.getByAltText(/案件运营总览脱敏截图/)).toBeVisible();
+    await expect(page.getByAltText(/地区法院分析脱敏截图/)).toBeVisible();
+    await expect(page.getByText("公开图片不包含真实客户")).toBeVisible();
+    await expect(page.locator(".echarts-for-react, canvas")).toHaveCount(0);
 
     await page.goto("/dashboards?tool=Power%20Query");
     await expect(page.locator("main ul[data-dashboard-results] a[href^='/dashboards/']")).toHaveCount(1);
-    await expect(page.getByText("回款与团队绩效分析看板")).toBeVisible();
-    await expect(page.getByText("模拟数据")).toBeVisible();
+    await expect(page.getByText("法律业务经营分析看板")).toBeVisible();
+
+    const oldResponse = await page.goto("/dashboards/payment-performance-analysis");
+    expect(oldResponse?.status()).toBe(404);
+    await expect(page.getByRole("heading", { name: "404" })).toBeVisible();
   });
 });
 

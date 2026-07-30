@@ -99,7 +99,7 @@ export default function HomePage() {
             {dashboards.map((dashboard) => (
               <article key={dashboard.slug} className="group flex min-h-56 flex-col overflow-hidden rounded-card border border-border bg-surface p-5 shadow-card transition duration-150 ease-standard hover:-translate-y-0.5 hover:shadow-card-hover">
                 <ContentCover slug={dashboard.slug} className="mb-5 aspect-[2/1]" />
-                <div className="flex flex-wrap gap-2"><span className="rounded-tag bg-surface-soft px-2 py-0.5 text-tag text-text-secondary">{dashboard.meta.businessDomain}</span><span className="rounded-tag bg-accent-bg px-2 py-0.5 text-tag text-accent-text">模拟数据</span></div>
+                <div className="flex flex-wrap gap-2"><span className="rounded-tag bg-surface-soft px-2 py-0.5 text-tag text-text-secondary">{dashboard.meta.businessDomain}</span><span className="rounded-tag bg-accent-bg px-2 py-0.5 text-tag text-accent-text">真实项目 · 脱敏演示</span></div>
                 <h3 className="mt-3 text-card-title font-semibold text-text-primary">{dashboard.meta.title}</h3>
                 <p className="mt-3 flex-1 text-sm leading-relaxed text-text-secondary">{dashboard.meta.description}</p>
                 <p className="mt-4 text-sm text-text-muted">{dashboard.meta.metrics.slice(0, 3).join(" · ")}</p>

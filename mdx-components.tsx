@@ -1,4 +1,5 @@
 import type { MDXComponents } from "mdx/types";
+import { DashboardScreenshot } from "@/components/content/DashboardScreenshot";
 import { MermaidDiagram } from "@/components/content/MermaidDiagram";
 import { PreCodeBlock } from "@/components/content/PreCodeBlock";
 
@@ -9,6 +10,7 @@ function joinClassNames(...values: Array<string | undefined>) {
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
     pre: PreCodeBlock as unknown as MDXComponents["pre"],
+    DashboardScreenshot,
     MermaidDiagram,
     h2: ({ className, ...props }) => (
       <h2
