@@ -12,6 +12,7 @@ const withMDX = createMDX({
     remarkPlugins: [
       ["remark-frontmatter", ["yaml"]],
       ["remark-mdx-frontmatter", { name: "meta" }],
+      ["remark-gfm", {}],
     ],
     rehypePlugins: [
       ["rehype-slug", {}],

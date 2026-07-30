@@ -77,6 +77,9 @@ test.describe("笔记", () => {
 
     await page.goto("/notes/agent-tool-calling-evaluation");
     await expect(page.locator("h1")).toContainText("工具调用质量");
+    const evaluationTable = page.locator("table").filter({ hasText: "工具选择" });
+    await expect(evaluationTable).toHaveCount(1);
+    await expect(evaluationTable).toContainText("端到端体验");
 
     await page.goto("/notes/agent-planner-optimization");
     await expect(page.locator("h1")).toContainText("Planner 优化");
