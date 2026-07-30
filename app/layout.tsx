@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: "%s | 金仔伟",
   },
   description:
-    "数据产品工程师的个人技术平台，涵盖数据分析、Power BI、SQL、Python、RAG、LangGraph 与 Agent 工程。",
+    "金仔伟的数据产品工程师个人技术平台，涵盖 Power BI、AI 数据应用、数据工程、智能问数与工程实践。",
   openGraph: {
     title: "金仔伟 · 数据产品工程师",
     description: "数据产品、数据工程与 AI 数据应用的个人技术平台。",

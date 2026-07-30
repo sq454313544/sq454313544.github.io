@@ -14,7 +14,11 @@ export default function AboutPage() {
         <p className="text-sm font-medium text-primary">关于我</p>
         <h1 className="mt-3 text-h1 font-semibold leading-tight text-text-primary">{profileData.profile.name}</h1>
         <p className="mt-3 text-xl text-text-secondary">{profileData.profile.headline}</p>
-        <p className="mt-6 max-w-3xl text-body leading-body text-text-secondary">{profileData.profile.summary}</p>
+        <div className="mt-6 max-w-3xl space-y-3">
+          {profileData.resumeSummary.map((paragraph) => (
+            <p key={paragraph} className="text-body leading-body text-text-secondary">{paragraph}</p>
+          ))}
+        </div>
       </header>
 
       <section className="py-12">
@@ -28,8 +32,7 @@ export default function AboutPage() {
                 <h3 className="text-card-title font-semibold text-text-primary">{experience.role}</h3>
                 <p className="text-sm text-text-muted">{experience.period.start} — {experience.period.end ?? "至今"}</p>
               </div>
-              <p className="mt-1 text-sm font-medium text-text-secondary">{experience.company}</p>
-              <p className="mt-4 leading-relaxed text-text-secondary">{experience.background}</p>
+              <p className="mt-1 text-sm font-medium text-text-secondary">{experience.company} · {experience.location}</p>
               <h4 className="mt-5 text-sm font-semibold text-text-primary">核心职责</h4>
               <ul className="mt-2 list-disc space-y-2 pl-5 text-sm leading-relaxed text-text-secondary">
                 {experience.responsibilities.map((item) => <li key={item}>{item}</li>)}
@@ -38,7 +41,7 @@ export default function AboutPage() {
                 {experience.keyProjects.map((project) => project.href ? (
                   <Link key={project.title} href={project.href} className="font-medium text-primary hover:text-primary-hover">{project.title} →</Link>
                 ) : (
-                  <span key={project.title} className="font-medium text-text-secondary">{project.title}（案例整理中）</span>
+                  <span key={project.title} className="font-medium text-text-secondary">{project.title}</span>
                 ))}
               </div>
               <div className="mt-4 flex flex-wrap gap-2">
@@ -58,7 +61,7 @@ export default function AboutPage() {
 
       <section className="border-t border-border py-12">
         <p className="text-sm text-text-muted">工具与技术</p>
-        <div className="mt-6 grid gap-6 sm:grid-cols-3">
+        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {profileData.toolsAndTech.map((group) => <article key={group.title}><h2 className="font-semibold text-text-primary">{group.title}</h2><ul className="mt-3 space-y-2 text-sm text-text-secondary">{group.items.map((item) => <li key={item}>{item}</li>)}</ul></article>)}
         </div>
       </section>

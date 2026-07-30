@@ -114,7 +114,7 @@ export default function HomePage() {
         <div className="mx-auto w-full max-w-6xl px-4 py-12">
           <p className="text-sm text-text-muted">核心能力</p>
           <h2 className="mt-1 text-h2 font-semibold text-text-primary">把分析能力落到产品和工程中</h2>
-          <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-7 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {profileData.skills.map((skill) => <article key={skill.title} className="border-t-2 border-accent-border pt-4"><h3 className="font-semibold text-text-primary">{skill.title}</h3><p className="mt-2 text-sm leading-relaxed text-text-secondary">{skill.boundaries}</p></article>)}
           </div>
         </div>
@@ -132,8 +132,8 @@ export default function HomePage() {
       <section>
         <div className="mx-auto w-full max-w-6xl px-4 py-12 text-center">
           <div className="border-t-2 border-accent-border pt-10">
-            <h2 className="text-h3 font-semibold text-text-primary">正在寻找新的机会</h2>
-            <p className="mt-2 text-text-secondary">期待数据产品工程、BI 数据应用或 AI 应用工程方向的合作机会。</p>
+            <h2 className="text-h3 font-semibold text-text-primary">{profileData.profile.availability}</h2>
+            <p className="mt-2 text-text-secondary">期待数据产品、Power BI、AI 数据应用或数据工程方向的机会。</p>
             <div className="mt-6 flex flex-wrap justify-center gap-3"><Link href="/resume" className="rounded-button bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors duration-150 ease-standard hover:bg-primary-hover">查看简历</Link><a href="https://github.com/sq454313544" target="_blank" rel="noopener noreferrer" className="rounded-button border border-border px-4 py-2.5 text-sm font-medium text-text-primary transition-colors duration-150 ease-standard hover:bg-surface-soft">GitHub</a><a href="mailto:454313544@qq.com" className="rounded-button border border-border px-4 py-2.5 text-sm font-medium text-text-primary transition-colors duration-150 ease-standard hover:bg-surface-soft">邮件联系</a></div>
           </div>
         </div>

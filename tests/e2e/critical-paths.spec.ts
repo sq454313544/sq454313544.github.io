@@ -69,9 +69,17 @@ test.describe("笔记", () => {
       "registry-first-for-enterprise-analytics",
       "controlled-query-mcp-security",
       "enterprise-analytics-agent-architecture",
+      "agent-tool-calling-evaluation",
+      "agent-planner-optimization",
     ]) {
       await expect(page.locator(`a[href^='/notes/${slug}']`)).toBeVisible();
     }
+
+    await page.goto("/notes/agent-tool-calling-evaluation");
+    await expect(page.locator("h1")).toContainText("工具调用质量");
+
+    await page.goto("/notes/agent-planner-optimization");
+    await expect(page.locator("h1")).toContainText("Planner 优化");
   });
 });
 
@@ -81,7 +89,7 @@ test.describe("项目", () => {
     await expect(page.locator("h1")).toContainText("项目");
 
     await page.goto("/projects?type=agent");
-    await expect(page.getByText("企业智能问数助手")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "企业智能问数助手" })).toBeVisible();
   });
 
   test("project detail pages", async ({ page }) => {
@@ -175,6 +183,8 @@ test.describe("辅助页面", () => {
     await expect(page.locator("h1")).toContainText("金仔伟");
     await expect(page.getByRole("heading", { name: "工作经历" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "核心能力" })).toBeVisible();
+    await expect(page.getByText("湖南昂承律师事务所")).toBeVisible();
+    await expect(page.getByText(/Codex、OpenCode/)).toBeVisible();
     await expect(page.getByRole("link", { name: "454313544@qq.com" })).toHaveAttribute("href", "mailto:454313544@qq.com");
   });
 
@@ -182,8 +192,12 @@ test.describe("辅助页面", () => {
     await page.goto("/resume");
     await expect(page.locator("h1")).toContainText("金仔伟");
     await expect(page.getByText("在线简历")).toBeVisible();
-    await expect(page.getByRole("heading", { name: "项目亮点" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "代表项目" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "教育背景" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /长沙恒顺智慧信息科技有限公司/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /北京途游科技有限公司/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Power BI 经营分析平台重构" })).toBeVisible();
+    await expect(page.getByText(/51 条离线评估集/)).toBeVisible();
     await expect(page.getByRole("button", { name: "打印 / 保存为 PDF" })).toBeVisible();
   });
 });
