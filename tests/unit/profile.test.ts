@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { profileData } from "@/data/profile";
 
 describe("profileData", () => {
-  it("preserves the complete July 2026 resume structure", () => {
+  it("preserves the complete August 2026 resume structure", () => {
     expect(profileData.profile.headline).toBe(
       "数据产品工程师｜Power BI｜AI 数据应用｜数据工程",
     );
@@ -43,13 +43,23 @@ describe("profileData", () => {
       "102 张可用表",
       "276 张表/视图",
       "150 个 DAX 度量值",
-      "51 条离线评估集",
+      "51 条离线检索评估集",
       "39.22% 提升至 82.35%",
       "MRR 从 0.412 提升至 0.833",
-      "246 项通过",
+      "32 项语义资产基线",
+      "20 条高风险确定性回放",
+      "超过 400 项",
+      "受控内部 Pilot",
     ]) {
       expect(serialized).toContain(value);
     }
+
+    expect(profileData.siteHighlights).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ label: "助手自动化回归", value: "400+" }),
+        expect.objectContaining({ label: "离线检索 Recall", value: "39.22% → 82.35%" }),
+      ]),
+    );
   });
 
   it("does not publish a phone number", () => {

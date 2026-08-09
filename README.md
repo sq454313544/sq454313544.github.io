@@ -145,7 +145,7 @@ BI 案例分析...
 
 ## 页面设计状态
 
-第一阶段功能骨架与第二轮 M1–M5、C1–C6 已完成。企业智能问数工程专题已扩展为五篇并公开发布，2026-07 版简历已完整同步至首页、About 与在线简历；D1 静态导出、D2 CI/CD 和 D3 首次发布已完成，下一步为 D4 线上完整验收。内容公开规则见 [`docs/content-refresh-plan.md`](./docs/content-refresh-plan.md)，总体进度见 [`docs/roadmap.md`](./docs/roadmap.md)。
+第一阶段功能骨架与第二轮 M1–M5、C1–C7 已完成。2026-08 数仓运行形态、智能问数分层架构与内部 Pilot 边界已经同步至首页、About、在线简历、项目案例和相关专题文章；D1 静态导出、D2 CI/CD 和 D3 首次发布已完成，下一步为 D4 线上完整验收。内容公开规则见 [`docs/content-refresh-plan.md`](./docs/content-refresh-plan.md)，总体进度见 [`docs/roadmap.md`](./docs/roadmap.md)。
 
 ## 部署
 

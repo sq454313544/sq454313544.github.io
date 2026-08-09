@@ -207,7 +207,7 @@ test.describe("辅助页面", () => {
     await expect(page.getByRole("heading", { name: /长沙恒顺智慧信息科技有限公司/ })).toBeVisible();
     await expect(page.getByRole("heading", { name: /北京途游科技有限公司/ })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Power BI 经营分析平台重构" })).toBeVisible();
-    await expect(page.getByText(/51 条离线评估集/)).toBeVisible();
+    await expect(page.getByText(/51 条离线检索评估集/)).toBeVisible();
     await expect(page.getByRole("button", { name: "打印 / 保存为 PDF" })).toBeVisible();
   });
 });

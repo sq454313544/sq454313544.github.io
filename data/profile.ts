@@ -126,7 +126,7 @@ export const profileData = profileDataSchema.parse({
     location: "长沙",
     availability: "在职，考虑机会",
     summary:
-      "具备数据产品、Power BI 与 AI 数据应用的端到端交付经验，能够从业务问题出发，完成需求拆解、指标口径梳理、数据建模、BI 语义模型建设、智能问数产品设计及工程落地。当前负责不良资产法律业务的数据仓库、经营分析看板和企业智能问数助手建设，已打通“业务 MySQL → 数据加工与治理 → Power BI / AI Agent”完整链路。",
+      "具备数据产品、Power BI 与 AI 数据应用的端到端交付经验，能够从业务问题出发，完成需求拆解、指标口径梳理、数据建模、BI 语义模型建设、智能问数产品设计及工程落地。当前负责不良资产法律业务的数据仓库、经营分析看板和企业智能问数助手建设，已打通“业务 MySQL → 全量与增量数据治理 → Power BI / 受控 AI 数据应用”完整链路。",
   },
   heroSkills: [
     "数据产品",
@@ -139,8 +139,8 @@ export const profileData = profileDataSchema.parse({
   siteHighlights: [
     { label: "数据资产", value: "276", unit: "张表 / 视图", emphasis: "standard" },
     { label: "DAX 度量值", value: "150", unit: "个", emphasis: "quiet" },
-    { label: "智能问数自动化测试", value: "246", unit: "项", emphasis: "standard" },
-    { label: "智能问数 Recall", value: "39.22% → 82.35%", emphasis: "primary" },
+    { label: "助手自动化回归", value: "400+", unit: "项", emphasis: "standard" },
+    { label: "离线检索 Recall", value: "39.22% → 82.35%", emphasis: "primary" },
   ],
   workExperiences: [
     {
@@ -150,11 +150,11 @@ export const profileData = profileDataSchema.parse({
       period: { start: "2026.04", end: null },
       responsibilities: [
         "负责案件、回款、催记、调解、开庭及执行等主题的数据产品建设，完成从业务需求、指标口径、数据模型到看板和智能问数应用的端到端交付。",
-        "建设统一数据仓库及自动化处理链路，推动业务源数据、Excel 补充数据与下游分析应用从分散直连转向分层治理和统一消费。",
+        "建设统一数据仓库及自动化处理链路，推动业务源数据、Excel 补充数据与下游分析应用从分散直连转向分层治理和统一消费，并落地日全量与日间增量协同刷新。",
         "主导 Power BI 新数仓切源及语义模型重构，持续交付案件总览、流程监控、回款分析、人员绩效和运营日报等经营分析看板。",
-        "设计并开发企业智能问数助手，实现企业微信和 Web 双入口的指标查询、案件明细、口径解释、上下文追问及结果导出。",
-        "建立数据字典、枚举字典、SQL/ETL 规范和指标/维度/明细数据契约，并通过只读查询、AST 校验、RLS、审计日志等机制控制数据访问风险。",
-        "将 Git、编程 Agent、自动化测试、发布清单和回滚方案纳入日常研发流程，完成测试环境端到端验收并持续进行稳定性与性能加固。",
+        "设计并开发企业智能问数助手，实现企业微信和 Web 双入口的指标查询、案件明细、口径解释、上下文追问及结果导出，并建设版本化元数据控制面。",
+        "建立数据字典、业务口径注册表和指标/维度/明细数据契约，通过只读查询、参数与 AST 校验、RLS、查询预算、最小权限和审计日志控制数据访问风险。",
+        "将 Git、编程 Agent、自动化测试、确定性回放、发布清单和回滚方案纳入日常研发流程；当前完成内部测试准入并进入受控 Pilot，尚未正式业务放量。",
       ],
       keyProjects: [
         { title: "企业数据仓库建设", href: "/projects/data-warehouse-modernization" },
@@ -209,7 +209,7 @@ export const profileData = profileDataSchema.parse({
     {
       title: "AI 数据应用",
       boundaries:
-        "Python、FastAPI、LangGraph、MCP、Registry First、Redis、SSE、企业微信 WebSocket、自然语言问数与上下文追问。",
+        "Python、FastAPI、LangGraph、MCP、Registry First、Metadata Control Plane、Redis、SSE、企业微信 WebSocket、自然语言问数与上下文追问。",
     },
     {
       title: "数据工程与治理",
@@ -238,6 +238,7 @@ export const profileData = profileDataSchema.parse({
         "LangGraph",
         "MCP",
         "Registry First",
+        "Metadata Control Plane",
         "Redis",
         "SSE",
         "企业微信 WebSocket",
@@ -275,7 +276,7 @@ export const profileData = profileDataSchema.parse({
     { label: "GitHub", href: "https://github.com/sq454313544" },
   ],
   resumeSummary: [
-    "具备数据产品、Power BI 与 AI 数据应用的端到端交付经验，能够从业务问题出发，完成需求拆解、指标口径梳理、数据建模、BI 语义模型建设、智能问数产品设计及工程落地。当前负责不良资产法律业务的数据仓库、经营分析看板和企业智能问数助手建设，已打通“业务 MySQL → 数据加工与治理 → Power BI / AI Agent”完整链路。",
+    "具备数据产品、Power BI 与 AI 数据应用的端到端交付经验，能够从业务问题出发，完成需求拆解、指标口径梳理、数据建模、BI 语义模型建设、智能问数产品设计及工程落地。当前负责不良资产法律业务的数据仓库、经营分析看板和企业智能问数助手建设，已打通“业务 MySQL → 全量与增量数据治理 → Power BI / 受控 AI 数据应用”完整链路。",
     "熟练使用 Codex、OpenCode 等编程 Agent 辅助需求分析、方案设计、代码实现、测试验证、代码审查和文档沉淀，并通过 Git diff、人工审查、自动化测试及回滚机制控制交付质量。",
   ],
   education: [
@@ -292,9 +293,9 @@ export const profileData = profileDataSchema.parse({
       role: "数据建模 / 数据治理 / 自动化调度",
       href: "/projects/data-warehouse-modernization",
       details: [
-        "梳理 143 张业务源表，通过 DataX 同步 102 张可用表，使用 dbt 建设 raw、stg、core、dws、ads 五层模型，形成 276 张表/视图的数据资产。",
-        "围绕案件、进展、审查、开庭、执行、回款和催记等主题建设事实表、维度表及应用汇总层，统一 Power BI 与智能问数助手的数据消费口径。",
-        "使用 Airflow 编排数据同步、dbt 建模与测试、中文注释同步和数据新鲜度写入，并建立数据契约检查及运行健康检查机制。",
+        "梳理 143 张业务源表，通过 DataX 同步 102 张可用表，使用 dbt 建设 raw、stg、core、ads 主链路与按需 dws 模型，形成 276 张表/视图的数据资产。",
+        "围绕案件、进展、审查、开庭、执行、回款和催记等主题建设事实表、维度表及应用汇总层，以业务口径注册表和数据契约统一 Power BI 与智能问数助手的消费口径。",
+        "使用 Airflow 编排日全量与日间增量协同刷新，通过水位线、任务互斥、变更检测、dbt 测试、中文注释和新鲜度发布门保障数据一致性，并完成服务器运行环境与下游切换。",
       ],
     },
     {
@@ -311,9 +312,9 @@ export const profileData = profileDataSchema.parse({
       role: "产品设计 / 架构设计 / 核心开发",
       href: "/projects/enterprise-qa-assistant",
       details: [
-        "基于 FastAPI、LangGraph 和 MCP 构建企业微信与 Web 双入口，支持自然语言指标查询、案件明细、指标解释、上下文追问、流式响应和结果导出。",
-        "采用 Registry First 管理 16 个业务指标及维度、明细映射，结合只读账号、参数校验、SQL AST、白名单、RLS、行数限制和审计日志实现受控查询。",
-        "构建 51 条离线评估集，将检索 Recall 从 39.22% 提升至 82.35%、MRR 从 0.412 提升至 0.833；进一步完善版本化元数据、请求追踪、查询预算、消息去重、并发与慢查询监控，全量自动化测试达到 246 项通过。",
+        "基于 FastAPI、LangGraph 和 MCP 构建企业微信与 Web 双入口，按 Kernel、Plugin、Capability 与 MCP 分层组织指标查询、案件明细、上下文追问、流式响应和结果导出。",
+        "采用 Registry First 管理 16 个业务指标及维度、明细映射，并建设 32 项语义资产基线与版本化元数据控制面；结合只读账号、参数与 SQL AST 校验、RLS、查询预算、最小权限和审计日志实现受控查询。",
+        "构建 51 条离线检索评估集，将阶段性 Recall 从 39.22% 提升至 82.35%、MRR 从 0.412 提升至 0.833；新增 20 条高风险确定性回放并达到 20/20，全量自动化回归超过 400 项，当前进入受控内部 Pilot，尚未正式业务放量。",
       ],
     },
   ],

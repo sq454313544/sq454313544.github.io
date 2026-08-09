@@ -1,66 +1,125 @@
 ---
-title: "RAG 多路召回与 Reranker 的作用"
-description: "深入解析 RAG 系统中的多路召回策略和 Reranker 重排序技术，理解如何提升检索质量。"
+title: "RAG 多路召回、混合检索与 Reranker 取舍"
+description: "从候选覆盖、错误候选、尾延迟和回退能力出发，说明多路召回、受控混合检索与 Reranker 应如何评测和取舍。"
 publishedAt: "2026-07-05"
-updatedAt: "2026-07-05"
+updatedAt: "2026-08-09"
 category: "rag"
-tags: ["rag", "retrieval", "reranker"]
+tags: ["rag", "retrieval", "reranker", "evaluation", "latency"]
 draft: false
 featured: false
 ---
 
-## 什么是多路召回
+## 先回答一个问题：检索质量只有 Recall 吗
 
-在 RAG 系统中，单一检索方式往往无法覆盖所有相关文档。多路召回通过**并行使用多种检索策略**来提高召回率：
+多路召回可以扩大候选覆盖，Reranker 可以重新排序候选，但企业应用不能只看 Recall。一个检索方案至少要同时回答：
 
-- **向量检索（Dense）**：基于语义相似度
-- **关键词检索（Sparse）**：基于 BM25 等算法
-- **混合检索**：结合两者优势
+- 原来找不到的正确候选是否被补回？
+- 是否引入了新的错误首位候选？
+- 精确名称、标准别名和多目标问题是否仍然稳定？
+- 冷启动、平均延迟和 P95 尾延迟是否符合交互预算？
+- 向量服务、索引或预热失败时能否安全回退？
+
+因此，“组件更多”不等于“系统更好”。检索策略必须通过质量、延迟和运行边界的联合 Gate。
+
+## 三类常见候选来源
+
+### 关键词检索
+
+关键词检索对标准名称、业务术语、编码和已维护别名通常很稳定，延迟也低。它的短板是对表达差异、同义改写和长问题的覆盖有限。
+
+### 向量检索
+
+向量检索擅长捕捉语义相似表达，但可能把语义相近、业务口径不同的资产挤到前面。模型加载、外部服务、文档向量复用和网络延迟也会直接影响运行预算。
+
+### 受控混合检索
+
+混合检索不应只是把两组结果相加。更稳妥的做法是先保留强关键词证据，再对关键词未覆盖的部分使用语义召回，并增加类型约束、标准资产族去重、多目标覆盖和歧义处理。
 
 ```python
-def multi_recall(query: str) -> list:
-    dense_results = vector_search(query, top_k=20)
-    sparse_results = bm25_search(query, top_k=20)
-    combined = merge_and_deduplicate(dense_results, sparse_results)
-    return combined
+def guarded_hybrid_search(query: str) -> list[Candidate]:
+    exact = exact_or_alias_match(query)
+    if exact.is_complete:
+        return exact.candidates
+
+    keyword = keyword_search(query)
+    semantic = semantic_search(query)
+    merged = merge_with_keyword_evidence(keyword, semantic)
+    constrained = apply_type_and_permission_guards(merged)
+    return allocate_multi_target_coverage(constrained)
 ```
 
-## Reranker 的核心作用
+这段示例表达的是决策顺序，不是生产实现：确定性命中先短路，语义召回负责补充，最终候选仍要经过类型、权限和覆盖约束。
 
-召回阶段得到大量候选文档后，Reranker 负责**精细化排序**，将最相关的文档排在前面：
+## Reranker 是可选项，不是必选项
 
-### Cross-Encoder 方式
+Reranker 适合在候选已经覆盖正确答案但排序不稳定时做精细比较。它尤其适用于文本较长、候选语义接近、可以接受额外推理开销的场景。
 
-```python
-from sentence_transformers import CrossEncoder
+但 Reranker 不是默认的“质量关键”：
 
-reranker = CrossEncoder("BAAI/bge-reranker-v2-m3")
+- 如果错误来自召回缺失，重排无法找回未进入候选集的答案。
+- 如果精确候选已经可以确定性短路，重排只会增加延迟。
+- 如果 CPU 或网络环境无法满足尾延迟预算，即使离线排序更好也不应进入主链路。
+- 如果候选类型和权限没有先过滤，Reranker 可能把不该比较的对象排到前面。
 
-pairs = [[query, doc] for doc in candidate_docs]
-scores = reranker.predict(pairs)
-ranked = sorted(zip(candidate_docs, scores), key=lambda x: x[1], reverse=True)
-```
+因此应先确认问题属于“召回不足”还是“排序不稳”，再决定是否引入 Reranker。
 
-## 完整流程
+## 一个可回退的检索流程
 
-<MermaidDiagram chart={`graph LR
-    A[Query] --> B[Dense Recall]
-    A --> C[Sparse Recall]
-    B --> D[Merge & Dedup]
-    C --> D
-    D --> E[Reranker]
-    E --> F[Top-K Results]`} />
+<MermaidDiagram chart={`flowchart LR
+    A[用户问题] --> B{精确或别名命中}
+    B -- 完整命中 --> C[确定性候选]
+    B -- 未完整命中 --> D[关键词证据]
+    D --> E[受控语义召回]
+    E --> F[类型、权限与资产族约束]
+    F --> G{Reranker 通过质量与延迟 Gate}
+    G -- 是 --> H[受控重排]
+    G -- 否 --> I[融合候选]
+    C --> J[结构化能力校验]
+    H --> J
+    I --> J
+    K[依赖异常] --> L[回退关键词链路]
+    L --> J`} />
 
-## 召回策略对比
+回退链路要在设计阶段就存在。语义服务不可用、索引未就绪、预热失败或审计条件不满足时，系统应回到经过验证的关键词候选，而不是绕过元数据版本和权限校验。
 
-| 策略 | 优势 | 劣势 | 适用场景 |
-|------|------|------|----------|
-| Dense | 语义理解强 | 计算成本高 | 长文问答 |
-| Sparse | 精确匹配好 | 缺乏语义 | 专业术语查询 |
-| Hybrid | 兼顾两者 | 实现复杂 | 通用场景 |
+## 如何设计联合 Gate
+
+| 维度 | 推荐检查 |
+|---|---|
+| 候选覆盖 | Recall@K、原有 miss 是否被补回 |
+| 排序质量 | Recall@1、MRR、错误首位候选数 |
+| 稳定性 | 精确命中、别名、多目标、上下文追问是否回归 |
+| 安全边界 | 类型、权限、不可见资产和歧义是否被正确处理 |
+| 性能 | 冷启动、热运行 P50/P95、内存与外部调用次数 |
+| 可恢复性 | 超时、服务异常、索引异常时是否回退且结果可解释 |
+
+评测集应区分 development、holdout 和真实 Pilot 样本。对同一批已见问题不断调参只能证明“适配了这批数据”，不能证明新问题上的泛化能力。
+
+## 常见决策结果
+
+### 向量召回通过、Reranker 不通过
+
+这是合理结果。可以保留向量召回用于补充关键词 miss，同时拒绝延迟或错误候选不达标的 Reranker。
+
+### 离线质量通过、运行延迟不通过
+
+仍然应该 No-Go。可以尝试确定性短路、文档向量复用、批量请求、降维或更合适的部署方式，再重新运行完整 Gate。
+
+### 真实流量不足以评估
+
+不要用工程冒烟请求代替真实样本。先限定为受控 Pilot，冻结最小样本量、场景覆盖、关键错误上限、延迟预算和回滚条件，达到门槛后再独立评审。
 
 ## 关键要点
 
-1. **多路互补**：Dense 和 Sparse 检索的结果常互补，合并后往往优于单一方法
-2. **Reranker 是质量关键**：Cross-Encoder 比 Bi-Encoder 更精确，但速度较慢
-3. **Top-K 截断**：召回阶段取较多结果，Reranker 后再截断到较小的 Top-K
+1. 多路召回解决候选覆盖，Reranker 解决候选排序，两者对应不同问题。
+2. 精确命中、类型约束和权限过滤应先于昂贵的语义推理。
+3. 质量提升必须和 P95 延迟、资源成本及错误候选一起评估。
+4. 被实验 Gate 否决的组件不应继续出现在现行架构中。
+5. 增强检索必须可回退，且回退不能改变业务口径和权限边界。
+
+## 更新记录
+
+- 2026-08-09：重写为质量、尾延迟与回退联合评测框架，明确 Reranker 是可选组件而非默认主链路。
+- 2026-07-05：首版发布，介绍 Dense、Sparse、多路召回与 Cross-Encoder Reranker。
+
+> 本文讨论通用检索工程方法；示例不包含真实查询、内部资产、模型凭证或生产评测数据。
