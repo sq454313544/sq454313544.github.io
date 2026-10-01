@@ -30,6 +30,7 @@ const roleLabels: Record<string, string> = {
 
 interface WecomSummary {
   title: string;
+  statusLabel: string;
   description: string;
   href: string;
   lines: string[];
@@ -104,7 +105,7 @@ export function ProjectList({ projects, wecom, tags, className }: { projects: Pr
         {showWecom && wecom ? <section aria-labelledby="wecom-delivery" className="mt-5 rounded-card border border-border bg-surface p-5 shadow-card">
           <div className="flex flex-wrap items-center gap-2">
             <h2 id="wecom-delivery" className="text-card-title font-semibold leading-tight text-text-primary">{wecom.title}</h2>
-            <span className="rounded-tag bg-accent-bg px-2 py-0.5 text-tag text-accent-text">生产使用</span>
+            <span className="rounded-tag bg-accent-bg px-2 py-0.5 text-tag text-accent-text">{wecom.statusLabel}</span>
             <span className="rounded-tag bg-surface-soft px-2 py-0.5 text-tag text-text-secondary">企业微信智能表格</span>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-text-secondary">{wecom.description}</p>

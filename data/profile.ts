@@ -59,6 +59,7 @@ export interface AgentCapability {
 export interface AgentWorkflow {
   title: string;
   summary: string;
+  resumeSummary: string[];
   capabilities: AgentCapability[];
   example: { title: string; paragraph: string };
 }
@@ -98,6 +99,7 @@ const profileDataSchema = z.object({
   agentWorkflow: z.object({
     title: z.string(),
     summary: z.string(),
+    resumeSummary: z.array(z.string()).min(1),
     capabilities: z.array(
       z.object({ title: z.string(), description: z.string() }),
     ).min(1),
@@ -184,6 +186,10 @@ export const profileData = profileDataSchema.parse({
     title: "Agent 工作流：研发工作方式",
     summary:
       "使用 Codex、OpenCode、DeepSeek Harness 辅助需求拆解、开发、评审与排障。结合 AGENTS.md 约束、可复用 Skills、MCP 与插件组织上下文和工具访问，通过代码审查、自动化测试与数据对账验证交付结果。",
+    resumeSummary: [
+      "使用 Codex、OpenCode、DeepSeek Harness 辅助需求拆解、开发、评审与排障。",
+      "将项目检查沉淀为 Skills，用 AGENTS.md 明确工程约束，结合 MCP 与插件接入工具，并通过测试、代码审查和数据对账验收结果。",
+    ],
     capabilities: [
       {
         title: "任务组织与上下文",
@@ -399,7 +405,7 @@ export const profileData = profileDataSchema.parse({
       title: "Power BI 经营分析平台（历史交付）",
       role: "从零搭建 / BI 建模 / 指标治理",
       details: [
-        "从零搭建经营分析平台（2026-05 起）：在旧数仓直连业务库的基础上重建语义模型与报表，2026-06 完成核心表重建与自建数仓切源，随后重构星型模型、关系主路径与日期角色；2026-07 完成老报表 8 页、135 个视觉对象的迁移复刻。",
+        "从零搭建经营分析平台（2026-05 起），基于旧数仓数据设计语义模型并开发报表；2026-06 完成核心表重建与自建数仓切源，随后优化星型模型、关系主路径与日期角色；2026-07 完成 8 页报表、135 个视觉对象的迁移复刻。",
         "统一管理 150 个 DAX 度量与 1 个计算组，交付案件总览、地区法院、案件流程、还款监控、人员看板与运营日报等 10 个正式看板页；该平台已于 2026-09 停止维护，作为历史交付保留。",
       ],
     },

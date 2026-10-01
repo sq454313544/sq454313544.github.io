@@ -176,6 +176,7 @@ body {
 
   .resume-card > header {
     break-after: avoid;
+    padding-bottom: 0.75rem !important;
   }
 
   .resume-section {
@@ -183,9 +184,21 @@ body {
     padding-top: 0.55rem !important;
   }
 
+  .resume-section > div {
+    margin-top: 0.5rem !important;
+  }
+
   /* 打印时收紧小节间距：排版略紧，避免差几像素时多出一整页空白 */
   .resume-experience + .resume-experience {
     margin-top: 0.35rem !important;
+  }
+
+  .resume-skills > article {
+    break-inside: avoid;
+  }
+
+  .resume-skills > article + article {
+    margin-top: 0.4rem !important;
   }
 
   .resume-card > footer {
@@ -214,7 +227,8 @@ body {
     font-size: 0.85em;
   }
 
-  .resume-page .resume-project-link[href]::after {
+  .resume-page .resume-project-link[href]::after,
+  .resume-page .resume-contact-link[href]::after {
     content: none;
   }
 

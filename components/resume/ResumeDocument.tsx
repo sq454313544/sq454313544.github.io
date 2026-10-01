@@ -22,9 +22,13 @@ export function ResumeDocument({ siteUrl, className = "" }: { siteUrl: string; c
               <li key={contact.href}>
                 <a
                   href={contact.href}
-                  className="font-medium text-primary hover:text-primary-hover"
+                  className="resume-contact-link font-medium text-primary hover:text-primary-hover"
                 >
-                  {contact.label}
+                  {contact.href.startsWith("mailto:")
+                    ? `邮箱：${contact.label}`
+                    : contact.label === "GitHub"
+                      ? `GitHub：${contact.href.replace(/^https?:\/\//, "")}`
+                      : contact.label}
                 </a>
               </li>
             ))}
@@ -43,7 +47,7 @@ export function ResumeDocument({ siteUrl, className = "" }: { siteUrl: string; c
 
         <section className="resume-section mt-8">
           <h2 className="text-h3 font-semibold text-text-primary">核心能力</h2>
-          <div className="mt-5 space-y-4">
+          <div className="resume-skills mt-5 space-y-4">
             {profileData.skills.map((skill) => (
               <article key={skill.title}>
                 <h3 className="font-semibold text-text-primary">
@@ -54,10 +58,17 @@ export function ResumeDocument({ siteUrl, className = "" }: { siteUrl: string; c
                 </p>
               </article>
             ))}
+            <article>
+              <h3 className="font-semibold text-text-primary">
+                Agent 辅助研发与流程沉淀
+              </h3>
+              {profileData.agentWorkflow.resumeSummary.map((paragraph) => (
+                <p key={paragraph} className="mt-1 text-sm leading-relaxed text-text-secondary">
+                  {paragraph}
+                </p>
+              ))}
+            </article>
           </div>
-          <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-            研发工作方式：{profileData.agentWorkflow.summary}
-          </p>
         </section>
 
         <section className="resume-section mt-8 border-t border-border pt-8">

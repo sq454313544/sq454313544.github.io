@@ -68,10 +68,14 @@ jobs:
               process.exit(1);
             }
             const text = readFileSync(".agent-temp/resume-pdf-check.txt", "utf8").replace(/\s+/g, "");
-            const required = ["金仔伟", "核心能力", "工作经历", "代表项目", "教育背景"];
+            const required = ["金仔伟", "核心能力", "工作经历", "代表项目", "教育背景", "Agent辅助研发与流程沉淀", "GitHub：github.com/sq454313544", "设计语义模型并开发报表"];
             const missing = required.filter((value) => !text.includes(value));
             if (missing.length > 0) {
               console.error(`Resume PDF Chinese text is missing: ${missing.join(", ")}`);
+              process.exit(1);
+            }
+            if (text.includes("(mailto:") || text.includes("重建语义模型与报表")) {
+              console.error("Resume PDF contains outdated contact formatting or BI project wording.");
               process.exit(1);
             }
             console.log(`Resume PDF OK: ${pages} pages, ${pdf.length} bytes, Chinese text verified`);

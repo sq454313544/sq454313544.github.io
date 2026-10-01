@@ -13,7 +13,8 @@ test.describe("静态导出可读性", () => {
     ).toBeVisible();
 
     await page.goto("/dashboards");
-    await expect(page.locator("main ul[data-dashboard-results] > li")).toHaveCount(1);
+    await expect(page.locator("main ul[data-dashboard-results] > li")).toHaveCount(2);
+    await expect(page.getByRole("heading", { name: "企业微信经营看板" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "法律业务经营分析看板" })).toBeVisible();
     await page.goto("/search");
     await expect(page.locator("input[type='search']")).toBeVisible();
@@ -396,8 +397,38 @@ test.describe("锚点", () => {
   });
 });
 
-test.describe("BI 案例", () => {
-  test("single dashboard case renders sanitized screenshots", async ({ page }) => {
+test.describe("BI 与经营看板", () => {
+  test("footer entry leads to current WeCom delivery and its warehouse section", async ({ page }) => {
+    await page.goto("/about");
+    await page.locator(".site-footer").getByRole("link", { name: "BI 与经营看板", exact: true }).click();
+    await expect(page.getByRole("heading", { name: "BI 与经营看板", exact: true })).toBeVisible();
+    const cards = page.locator("main ul[data-dashboard-results] > li");
+    await expect(cards).toHaveCount(2);
+    const wecom = cards.first();
+    await expect(wecom.getByRole("heading", { name: "企业微信经营看板" })).toBeVisible();
+    await expect(wecom.getByText("生产使用", { exact: true })).toHaveCount(2);
+    await expect(wecom.getByText("数据已上线 · 验收收尾", { exact: true })).toBeVisible();
+    await expect(wecom.getByText("正式验收与切换仍在收尾。", { exact: false })).toBeVisible();
+    await wecom.getByRole("link").click();
+    await expect(page).toHaveURL(/\/projects\/data-warehouse-modernization\/#wecom-dashboards$/);
+    await expect(page.locator("#wecom-dashboards")).toBeInViewport();
+  });
+
+  test("tool filters distinguish WeCom from historical Power BI", async ({ page }) => {
+    await page.goto("/dashboards");
+    await page.getByRole("navigation", { name: "BI 工具" }).getByRole("link", { name: /企业微信智能表格/ }).click();
+    await expect(page.locator("main ul[data-dashboard-results] > li")).toHaveCount(1);
+    await expect(page.getByRole("heading", { name: "企业微信经营看板" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "法律业务经营分析看板" })).toHaveCount(0);
+    await page.goto("/dashboards?tool=Power%20Query");
+    await expect(page.locator("main ul[data-dashboard-results] > li")).toHaveCount(1);
+    await expect(page.getByRole("heading", { name: "法律业务经营分析看板" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "企业微信经营看板" })).toHaveCount(0);
+    await page.goto("/dashboards?tool=unavailable");
+    await expect(page.getByText("暂无符合条件的 BI 与经营看板", { exact: true })).toBeVisible();
+  });
+
+  test("historical dashboard case renders sanitized screenshots", async ({ page }) => {
     await page.goto("/dashboards");
     await expect(page.locator("main ul[data-dashboard-results] a[href^='/dashboards/']")).toHaveCount(1);
     await expect(page.getByText("法律业务经营分析看板")).toBeVisible();

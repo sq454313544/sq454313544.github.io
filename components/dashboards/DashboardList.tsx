@@ -2,7 +2,7 @@
 
 import { Empty } from "@/components/primitives/states";
 import { ContentCover } from "@/components/content/ContentCover";
-import type { DashboardItem } from "@/lib/content/types";
+import type { DashboardCase } from "@/data/dashboard-cases";
 import Link from "next/link";
 import { useClientSearchParams } from "@/lib/hooks/useClientSearchParams";
 
@@ -11,11 +11,11 @@ function FilterLink({ href, label, active }: { href: string; label: string; acti
   return <a href={href} aria-current={active ? "page" : undefined} className={`block rounded-button px-2 py-1 text-sm ${active ? "bg-surface-soft font-medium text-primary" : "text-text-secondary hover:bg-surface-soft hover:text-primary"}`}>{label}</a>;
 }
 
-export function DashboardList({ dashboards, domains, tags, className }: { dashboards: DashboardItem[]; domains: string[]; tags: { name: string; count: number }[]; className?: string }) {
+export function DashboardList({ cases, domains, tags, className }: { cases: DashboardCase[]; domains: string[]; tags: { name: string; count: number }[]; className?: string }) {
   const searchParams = useClientSearchParams();
   const domain = searchParams.get("domain") ?? "";
   const tool = searchParams.get("tool") ?? "";
-  const filtered = dashboards.filter((dashboard) => (!domain || dashboard.meta.businessDomain === domain) && (!tool || dashboard.meta.tools.includes(tool)));
+  const filtered = cases.filter((dashboard) => (!domain || dashboard.businessDomain === domain) && (!tool || dashboard.tools.includes(tool)));
 
   return <div className={`mt-10 grid gap-10 lg:grid-cols-[13.75rem_minmax(0,1fr)] ${className ?? ""}`}>
     <aside className="space-y-7 lg:pr-6">
@@ -34,20 +34,27 @@ export function DashboardList({ dashboards, domains, tags, className }: { dashbo
       </nav>
     </aside>
     {filtered.length === 0
-      ? <Empty message="暂无符合条件的 BI 案例" />
+      ? <Empty message="暂无符合条件的 BI 与经营看板" />
       : <ul data-dashboard-results className="grid gap-5 sm:grid-cols-2">
-        {filtered.map((dashboard) => <li key={dashboard.slug}>
-          <Link href={`/dashboards/${dashboard.slug}`} className="group flex h-full flex-col overflow-hidden rounded-card border border-border bg-surface p-5 shadow-card transition duration-150 ease-standard hover:-translate-y-0.5 hover:shadow-card-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
-            <ContentCover slug={dashboard.slug} className="mb-5 aspect-[2/1]" />
+        {filtered.map((dashboard) => <li key={dashboard.id}>
+          <Link href={dashboard.href} className="group flex h-full flex-col overflow-hidden rounded-card border border-border bg-surface p-5 shadow-card transition duration-150 ease-standard hover:-translate-y-0.5 hover:shadow-card-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
+            {dashboard.coverSlug ? <ContentCover slug={dashboard.coverSlug} className="mb-5 aspect-[2/1]" /> : null}
             <div className="flex flex-wrap items-center gap-2">
-              <span className="rounded-tag bg-surface-soft px-2 py-0.5 text-tag text-text-secondary">{dashboard.meta.businessDomain}</span>
-              {dashboard.meta.statusLabel ? <span className="rounded-tag bg-surface-soft px-2 py-0.5 text-tag text-text-secondary">{dashboard.meta.statusLabel}</span> : null}
-              <span className="rounded-tag bg-accent-bg px-2 py-0.5 text-tag text-accent-text">真实项目 · 脱敏演示</span>
+              <span className="rounded-tag bg-surface-soft px-2 py-0.5 text-tag text-text-secondary">{dashboard.businessDomain}</span>
+              {dashboard.statusLabel ? <span className="rounded-tag bg-surface-soft px-2 py-0.5 text-tag text-text-secondary">{dashboard.statusLabel}</span> : null}
+              <span className="rounded-tag bg-accent-bg px-2 py-0.5 text-tag text-accent-text">{dashboard.badge}</span>
             </div>
-            <h2 className="mt-3 text-card-title font-semibold leading-tight text-text-primary group-hover:text-primary">{dashboard.meta.title}</h2>
-            <p className="mt-3 flex-1 text-sm leading-relaxed text-text-secondary">{dashboard.meta.description}</p>
-            <p className="mt-4 text-auxiliary text-text-muted">{dashboard.meta.metrics.slice(0, 3).join(" · ")}</p>
-            <span className="mt-5 text-sm font-medium text-primary">查看分析过程 <span className="inline-block transition-transform duration-150 group-hover:translate-x-1">→</span></span>
+            <h2 className="mt-3 text-card-title font-semibold leading-tight text-text-primary group-hover:text-primary">{dashboard.title}</h2>
+            <p className="mt-3 flex-1 text-sm leading-relaxed text-text-secondary">{dashboard.description}</p>
+            {dashboard.deliveryLines ? <ul className="mt-4 space-y-3 text-sm leading-relaxed text-text-secondary">
+              {dashboard.deliveryLines.map((line) => <li key={line.title}>
+                <p className="font-medium text-text-primary">{line.title}</p>
+                <p className="text-auxiliary text-primary">{line.status}</p>
+                <p className="text-auxiliary">{line.description}</p>
+              </li>)}
+            </ul> : null}
+            <p className="mt-4 text-auxiliary text-text-muted">{dashboard.metrics.slice(0, 3).join(" · ")}</p>
+            <span className="mt-5 text-sm font-medium text-primary">{dashboard.actionLabel} <span className="inline-block transition-transform duration-150 group-hover:translate-x-1">→</span></span>
           </Link>
         </li>)}
       </ul>}

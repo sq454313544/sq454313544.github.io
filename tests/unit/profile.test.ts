@@ -155,12 +155,11 @@ describe("profileData", () => {
     );
     const biText = biProject?.details.join("") ?? "";
     expect(biText).toContain("停止维护");
-    // 平台由本人从零搭建：最初跑在直连业务库的旧数仓上，
-    // 2026-06 完成核心表重建并切到自建数仓
+    // 初次搭建与后续切源分开说明，避免被误读为接手已有 BI 平台。
     expect(biText).toContain("从零搭建");
-    expect(biText).toContain("旧数仓直连业务库");
+    expect(biText).toContain("基于旧数仓数据设计语义模型并开发报表");
     expect(biText).toContain("自建数仓切源");
-    for (const wrong of ["从旧数仓及业务表直连切换", "迁移至数仓", "接手他人平台"]) {
+    for (const wrong of ["重建语义模型与报表", "从旧数仓及业务表直连切换", "迁移至数仓", "接手他人平台"]) {
       expect(biText).not.toContain(wrong);
     }
   });
