@@ -1,10 +1,10 @@
-import { existsSync, readdirSync, statSync, writeFileSync, readFileSync, unlinkSync } from "node:fs";
+import { existsSync, readdirSync, statSync, writeFileSync, readFileSync } from "node:fs";
 import { join, resolve, sep } from "node:path";
 
 /**
  * 静态导出 RSC 预取路径补全。
  *
- * 现象：Next.js 16 在静态导出下，部分 RSC 预取请求把 `__next.{segment}` 当成
+ * 现象：Next.js 16 在 Windows 静态导出下，部分 RSC 预取请求把 `__next.{segment}` 当成
  * 文件名前缀：`{route}/…/__next.{segment}.{name}.txt`，
  * 而实际产物是目录形式：`{route}/…/__next.{segment}/{name}.txt`。
  * 这些请求因此 404，浏览器退回整页 HTML 导航：功能正常，但产生大量无效请求与
@@ -12,6 +12,8 @@ import { join, resolve, sep } from "node:path";
  *
  * 规则：对导出目录里每一个 `__next.*` 目录，在其**父目录**补齐
  * `__next.{segment}.{name}.txt` 别名文件；其余目录继续递归。
+ * Linux 导出已生成同名的平铺文件，必须保留；不能仅凭文件名将它们视为旧别名删除。
+ * 目录形式的别名按源文件内容更新，重复运行时无需清理；旧路由由 Next 构建清理。
  *
  * 不修改 Next 源码、不关闭预取、不屏蔽错误；复制的是同一份内容，不引入不一致。
  */
@@ -27,24 +29,7 @@ if (!existsSync(outDir)) {
 const WANTED = new Set(["__PAGE__.txt", "$d$slug.txt", "$d$tag.txt", "$d$category.txt"]);
 
 const created = [];
-const removed = [];
 const skipped = [];
-
-/** 先清掉上一次运行留下的别名，保证脚本可重复执行且不残留旧路径 */
-function removeStaleAliases(dir) {
-  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-    if (!entry.isDirectory()) {
-      // 别名形态：__next.{segment}.{name}.txt
-      if (/^__next\..+\..+\.txt$/.test(entry.name)) {
-        unlinkSync(join(dir, entry.name));
-        removed.push(entry.name);
-      }
-      continue;
-    }
-    if (entry.name.startsWith("__next.")) continue;
-    removeStaleAliases(join(dir, entry.name));
-  }
-}
 
 function aliasNextDirs(parent) {
   for (const entry of readdirSync(parent, { withFileTypes: true })) {
@@ -95,14 +80,12 @@ function walk(dir) {
   }
 }
 
-removeStaleAliases(outDir);
 walk(outDir);
 
 console.log(
   JSON.stringify(
     {
       outDir,
-      removedStale: removed.length,
       aliasCount: created.length,
       skippedEmpty: skipped.length,
       sample: created.slice(0, 8),
