@@ -4,8 +4,7 @@ import { profileData } from "@/data/profile";
 
 export const metadata: Metadata = {
   title: "关于我",
-  description:
-    "金仔伟：数据工程与 AI 应用。了解我的能力、职业经历与 Agent 工作方式，查看项目案例、下载 PDF 简历或联系我。",
+  description: profileData.profile.summary,
   alternates: { canonical: "/about" },
 };
 

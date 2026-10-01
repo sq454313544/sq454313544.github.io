@@ -6,8 +6,7 @@ import { geistMono, geistSans } from "./fonts";
 import { ThemeProvider } from "./theme-provider";
 import "./globals.css";
 
-const SITE_DESCRIPTION =
-  "金仔伟的个人技术平台：数据工程与 AI 应用。数仓建设与数据治理、多源采集与调度、企业微信看板与报表交付，以及智能问数、知识库助手与 Agent 工作流实践。";
+const SITE_DESCRIPTION = profileData.profile.summary;
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://sq454313544.github.io"),

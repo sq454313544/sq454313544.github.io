@@ -11,9 +11,9 @@ describe("profileData", () => {
     expect(profileData.profile.availability).toBe("在职，考虑机会");
     expect(profileData.profile.location).toBe("长沙");
 
-    // 简介同时覆盖数据与 AI 两侧，并说明验证方式
+    // 简介同时覆盖数据、AI 与 Agent 辅助研发，并保留业务交付
     const summary = profileData.profile.summary;
-    for (const topic of ["数仓建模", "智能问数", "知识库", "Agent 工作流", "对账"]) {
+    for (const topic of ["数仓", "智能问数", "知识库", "Agent", "报表"]) {
       expect(summary).toContain(topic);
     }
 
