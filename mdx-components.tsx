@@ -46,7 +46,9 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       />
     ),
     table: ({ className, ...props }) => (
-      <table className={joinClassNames("mt-6 w-full border-collapse text-left text-sm text-text-secondary", className)} {...props} />
+      <div className="mt-6 max-w-full overflow-x-auto" role="region" aria-label="表格，可横向滚动" tabIndex={0}>
+        <table className={joinClassNames("w-full border-collapse text-left text-sm text-text-secondary", className)} {...props} />
+      </div>
     ),
     th: ({ className, ...props }) => (
       <th className={joinClassNames("border-b border-border bg-surface-soft px-3 py-2 font-semibold text-text-primary", className)} {...props} />

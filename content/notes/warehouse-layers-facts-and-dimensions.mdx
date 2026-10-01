@@ -1,0 +1,239 @@
+---
+title: "数仓分层怎么设计：从业务过程到事实表与维度表"
+description: "从四条通话记录推导人日与项目指标，说明事实粒度、维度连接、分层职责和比率汇总，并给出练习与预期结果。"
+publishedAt: "2026-10-01"
+updatedAt: "2026-10-01"
+category: "warehouse"
+tags: ["data-modeling", "sql", "data-warehouse", "data-contract"]
+draft: false
+featured: false
+---
+
+> 文中通话、人员与项目数据均为合成示例。
+
+给“人员每日通话看板”建模时，需要先确定记录什么业务过程、每行代表什么，再分配各层加工职责。
+
+我的理解是，先确定要记录的业务过程与事实粒度。分层帮助组织加工职责，粒度决定后面能否正确汇总。
+
+## 30 秒速览
+
+- 先定义事实表的一行，再确定维度、唯一键和指标。
+- 明细事实保留发生过的业务事件；维度解释人员、项目、日期等分析对象。
+- 汇总表服务明确的查询问题。分层名称可以不同，职责、依赖和质量检查要清楚。
+
+这里用“通话明细 → 人日看板”说明一种设计，不把它当作所有数仓必须采用的模板。
+
+## 从业务过程确定事实与维度
+
+假设业务问题是：“每天每个人拨了多少次电话、接通多少次、通话多长时间，还需要按项目查看。”
+
+**事实表**按确定的粒度保存业务度量与维度键。本例采用事件明细：一行是一条通话尝试，包含人员键、项目键、业务日期、是否接通、通话秒数。
+
+**维度表**提供分析所需的说明。例如，人员维度提供人员身份与组织属性，项目维度提供项目名称与分类，日期维度提供周、月等日历属性。
+
+**粒度声明**应该能读成一句完整的话：“每个来源系统中的每条通话尝试一行。”这里假设同一来源的 `call_id` 能唯一识别一次尝试，所以唯一键是 `(source_system, call_id)`。这个假设要向来源核实，不能仅凭字段名判断。
+
+Kimball 的维度建模方法强调，先声明粒度，候选事实与维度都要与它一致，不同粒度应分别建模。[Kimball：Grain](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/grain/)
+
+同一任务被拨打两次，是两次业务事件；同一条通话被采集两次，是采集重复。二者都可能表现为相似内容，但处理方式不同。
+
+复合唯一键只能防止同一来源内的重复。如果同一次通话也出现在另一个来源，来源键不同，仍能形成两行；跨来源是否重复，需要另外确认事件身份与主采来源规则。
+
+## 四条通话怎样变成人日指标
+
+下面是简化后的核心事实表。`business_date` 已按约定的业务时区确定；日期转换、原始来源保存和人员映射属于进入这张表之前的处理。
+
+本篇 SQL 也使用空的 SQLite 数据库，按顺序执行。四条记录都来自 S1，分别代表四次独立尝试。
+
+使用 Python 3.12 或更新版本时，可在终端运行 `python -m sqlite3 :memory:`，再按顺序执行文中 SQL。输入 `.quit` 退出；重新练习时打开新连接，避免重复建表或累积题目改动。[Python sqlite3 命令行文档](https://docs.python.org/3.12/library/sqlite3.html#command-line-interface)
+
+```sql
+CREATE TABLE demo_call_fact (
+    source_system TEXT NOT NULL,
+    call_id TEXT NOT NULL,
+    business_date TEXT NOT NULL,
+    person_id TEXT NOT NULL,
+    project_id TEXT NOT NULL,
+    connected INTEGER NOT NULL CHECK (connected IN (0, 1)),
+    duration_seconds INTEGER NOT NULL CHECK (duration_seconds >= 0),
+    PRIMARY KEY (source_system, call_id)
+);
+
+INSERT INTO demo_call_fact VALUES
+    ('S1', 'C01', '2026-09-29', 'P01', 'A', 1, 60),
+    ('S1', 'C02', '2026-09-29', 'P01', 'A', 0, 0),
+    ('S1', 'C03', '2026-09-29', 'P01', 'B', 1, 120),
+    ('S1', 'C04', '2026-09-29', 'P02', 'A', 0, 0);
+```
+
+先按“日期 × 人员 × 项目”汇总：
+
+```sql
+SELECT
+    business_date,
+    person_id,
+    project_id,
+    COUNT(*) AS call_count,
+    SUM(connected) AS connected_count,
+    SUM(duration_seconds) AS duration_seconds,
+    ROUND(1.0 * SUM(connected) / NULLIF(COUNT(*), 0), 4)
+        AS connected_rate
+FROM demo_call_fact
+GROUP BY business_date, person_id, project_id
+ORDER BY business_date, person_id, project_id;
+```
+
+| 日期 | 人员 | 项目 | 通话次数 | 接通次数 | 秒数 | 接通率 |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+| 2026-09-29 | P01 | A | 2 | 1 | 60 | 0.5 |
+| 2026-09-29 | P01 | B | 1 | 1 | 120 | 1.0 |
+| 2026-09-29 | P02 | A | 1 | 0 | 0 | 0.0 |
+
+如果看板只需要人日指标，粒度就变成“日期 × 人员”：
+
+```sql
+SELECT
+    business_date,
+    person_id,
+    COUNT(*) AS call_count,
+    SUM(connected) AS connected_count,
+    SUM(duration_seconds) AS duration_seconds,
+    ROUND(1.0 * SUM(connected) / NULLIF(COUNT(*), 0), 4)
+        AS connected_rate
+FROM demo_call_fact
+GROUP BY business_date, person_id
+ORDER BY business_date, person_id;
+```
+
+| 日期 | 人员 | 通话次数 | 接通次数 | 秒数 | 接通率 |
+| --- | --- | ---: | ---: | ---: | ---: |
+| 2026-09-29 | P01 | 3 | 2 | 180 | 0.6667 |
+| 2026-09-29 | P02 | 1 | 0 | 0 | 0.0 |
+
+P01 的接通率是 `(1 + 1) / (2 + 1)`，不是 `(0.5 + 1.0) / 2`。先保留分子、分母，再按目标范围求比率，才能避免把不同样本量当成相同权重。
+
+同样，保留秒数后再汇总并换算分钟，比把每条记录先取整为分钟更容易保留精度。是否取整、在哪里取整，应由指标口径决定。
+
+## 维度表怎样参与查询
+
+事实表里的 P01、P02 是稳定的人员键。展示名称可以通过一人一行的维度表补充：
+
+```sql
+CREATE TABLE demo_person_dim (
+    person_id TEXT NOT NULL PRIMARY KEY,
+    person_name TEXT NOT NULL
+);
+
+INSERT INTO demo_person_dim VALUES
+    ('P01', '人员甲'), ('P02', '人员乙');
+```
+
+```sql
+SELECT
+    f.business_date,
+    f.person_id,
+    d.person_name,
+    COUNT(*) AS call_count
+FROM demo_call_fact AS f
+LEFT JOIN demo_person_dim AS d ON d.person_id = f.person_id
+GROUP BY f.business_date, f.person_id, d.person_name
+ORDER BY f.business_date, f.person_id;
+```
+
+| 日期 | 人员键 | 展示名称 | 通话次数 |
+| --- | --- | --- | ---: |
+| 2026-09-29 | P01 | 人员甲 | 3 |
+| 2026-09-29 | P02 | 人员乙 | 1 |
+
+维度连接补上了名称，事实行数没有增加，因为每个人员键最多匹配一行。如果名称缺失，左连接会保留事实，并显示空名称，方便检查未匹配记录。这里是简化的当前名称维度；若维度包含历史版本，就必须按事件时间选中适用版本，不能只按人员键连接所有历史行。
+
+## 分层怎样分工
+
+围绕上面这组数据，可以这样分配职责：
+
+| 层 | 主要职责 | 本例的处理 |
+| --- | --- | --- |
+| raw | 保存可追溯的来源记录与采集信息 | 原始通话、来源标识、采集批次 |
+| stg | 统一格式与技术规则 | 时间解析、状态标准化、秒数单位转换、识别采集重复 |
+| core | 表达统一业务实体与事件 | 通话事实、人员与项目维度、经过确认的人员映射 |
+| ads | 提供面向具体应用的结果 | 人日指标、人日项目指标、供看板消费的字段 |
+| 按需 dws | 复用确实存在的公共主题汇总 | 多个应用都需要同一人员日汇总时，再评估建设 |
+
+分层不能代替规则。例如，去重不能只写“stg 去重”，还要写明重复键、保留规则、原始记录去向；人员映射也不能只写“关联人员表”，还要说明跨来源身份和历史归属。
+
+如果人员更换了坐席，不能把坐席字符串直接当作永久人员身份；如果要按事件发生时的组织归属分析，映射还需要明确有效时间。若选择按当前组织归属分析，则应在看板口径里说清楚。
+
+## 回到我的项目
+
+我的数仓主链路采用 `raw → stg → core → ads`，DWS 按明确需求建设。多源接入后的人员映射、指标口径和质量检查，比单纯凑齐层名更影响下游交付。
+
+企业微信人员看板涉及多来源的人日汇总。因此，各来源进入统一人员维度之前需要保留来源身份；不同来源的汇总行也要先确认是否能相加。完整背景见[数据仓库与多源数据交付](https://sq454313544.github.io/projects/data-warehouse-modernization/)。
+
+分层与刷新方式是两件事：模型定义数据怎样组织，刷新定义数据怎样更新。项目当前日常采用全量，增量链路保留待可靠水位条件恢复。不能因为分层建完，就推断增量同步已经稳定运行。
+
+## 怎样判断模型够不够用
+
+先检查三个问题：
+
+1. **事实是否唯一？** 同一来源通话键重复时，是重复采集，还是上游更新？处理规则是否明确？
+2. **连接是否保持粒度？** 每条通话按约定应映射到一个人员与一个项目；多重匹配和未匹配都应有可见的检查结果。
+3. **汇总是否能对账？** 在相同日期、人员范围和过滤条件下，明细的次数、接通数、秒数应能解释汇总结果；比率由这些量重新计算。
+
+新增一层之前，再问它有没有稳定的消费者、复用口径和独立质量检查。仅把已有表再复制一遍，通常不会增加清晰度。
+
+## 自测：先答，再展开
+
+### 1. 一个任务拨打两次，应算一行还是两行？
+
+<details>
+<summary>查看参考答案</summary>
+
+在“一次通话尝试一行”的事实表中算两行。如果另建“一项任务一行”的任务表，则是一行任务、对应两次通话。不能为了减少重复观感，把真实的多次尝试删成一次。
+
+</details>
+
+### 2. 人日表与人日项目表的唯一键分别是什么？
+
+<details>
+<summary>查看参考答案</summary>
+
+在本例范围内，分别是 `(business_date, person_id)` 和 `(business_date, person_id, project_id)`。如果又增加其他切分维度，粒度和唯一键也要重新声明。主键只是约束，不能代替业务定义。
+
+</details>
+
+### 3. P01 在 A 项目的接通率为 50%，B 项目为 100%。为什么总接通率不是 75%？
+
+<details>
+<summary>查看参考答案</summary>
+
+两组通话次数不同，A 有 2 次、B 有 1 次。合并后接通 2 次、总通话 3 次，结果约 66.67%。直接平均两个比率，相当于给两个项目相同权重，与“每次通话权重相同”的口径不一致。
+
+</details>
+
+### 4. 同一个坐席号在两个来源中都出现，能直接连接成同一个人吗？
+
+<details>
+<summary>查看参考答案</summary>
+
+不能仅凭号码相同判断。先确认来源、坐席身份和有效时间，通过权威人员映射得到统一人员键。不能把人名相同当作唯一身份，也不能用当前映射悄悄重写历史归属。
+
+</details>
+
+### 5. 没打电话的人也要显示 0，直接对通话事实分组够吗？
+
+<details>
+<summary>查看参考答案</summary>
+
+不够。事实表没有这个人的当天记录，分组不会凭空产生一行。需要先定义应展示的“日期 × 人员”范围，再左连接通话汇总，并把缺失次数填为 0。若直接左连接明细，要计非空通话键，不能用 `COUNT(*)` 把占位行当成一次通话；零分母的接通率则应明确显示为空、无数据或其他约定。
+
+</details>
+
+## 相关阅读与验证记录
+
+- 前一篇：[SQL 聚合为什么会算多](/notes/sql-join-grain-and-deduplication/)。
+- 实践复盘：[多源汇总的边界条件](https://sq454313544.github.io/notes/multi-source-person-day-boundaries/)。
+- 建模资料：[Kimball：粒度声明](https://www.kimballgroup.com/data-warehouse-business-intelligence-resources/kimball-techniques/dimensional-modeling-techniques/grain/)。
+
+验证环境：Python 3.12.14 / SQLite 3.53.1。示例已在内存数据库中运行，项目汇总与人员汇总均与预期一致；简化表不代表项目的真实表结构，也不包含完整维度历史实现。
+
+2026-10-01 更新：补充人员维度的建表、连接与预期结果，明确来源内唯一与跨来源重复的区别。

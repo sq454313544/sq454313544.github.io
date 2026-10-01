@@ -1,0 +1,240 @@
+---
+title: "SQL 聚合为什么会算多：JOIN、粒度与去重"
+description: "用两笔同额案件复现 JOIN 后重复求和，比较 EXISTS、预聚合与金额去重的适用边界，配有可运行 SQL 和自测题。"
+publishedAt: "2026-10-01"
+updatedAt: "2026-10-01"
+category: "warehouse"
+tags: ["sql", "data-modeling", "data-quality", "reconciliation"]
+draft: false
+featured: false
+---
+
+> 文中案件、金额与联系记录均为合成示例。
+
+两笔案件，各有金额 100，总额应该是 200。为什么连接联系记录以后，SQL 算出的总额变成了 300？
+
+这个问题不一定出在 `SUM`，而是求和之前，输入的行已经变了。
+
+## 30 秒速览
+
+- 先说清楚“一行代表什么”，再选择聚合方式。
+- 一对多连接会让一侧的数据重复出现在结果里；明细可以这样展示，金额却不一定可以直接相加。
+- `DISTINCT` 只对指定的值去重。修复业务重复，要围绕业务对象的身份，而不是恰好相同的金额。
+
+这篇适合排查案件金额、订单金额、人员指标等连接后的重复计算。示例不涉及多币种、金额变化历史或复杂分摊。
+
+## 一行代表什么
+
+**粒度**就是一行数据所表达的业务单位。案件表是一案一行，联系表是一条联系记录一行。
+
+**业务键**用来识别业务对象。这里用 `case_id` 识别案件，`contact_id` 识别联系记录。两个案件金额相同，并不代表它们是同一个案件。
+
+**连接关系**决定一行能匹配多少行。案件 A 有两条联系记录，连接后就会出现两行 A。连接不是把右表字段简单贴在左表后面，而是产生符合连接条件的行组合。聚合所看到的是这些组合后的行。[SQLite SELECT 文档](https://www.sqlite.org/lang_select.html)
+
+## 先亲手复现 200 变成 300
+
+以下 SQL 在一个空的 SQLite 数据库中按顺序执行。金额使用整数示例单位，不代表真实业务金额。
+
+```sql
+PRAGMA foreign_keys = ON;
+
+CREATE TABLE demo_cases (
+    case_id TEXT NOT NULL PRIMARY KEY,
+    amount INTEGER NOT NULL
+);
+
+CREATE TABLE demo_contacts (
+    contact_id TEXT NOT NULL PRIMARY KEY,
+    case_id TEXT NOT NULL REFERENCES demo_cases(case_id)
+);
+
+INSERT INTO demo_cases VALUES ('A', 100), ('B', 100);
+INSERT INTO demo_contacts VALUES
+    ('C1', 'A'), ('C2', 'A'), ('C3', 'B');
+```
+
+这里显式启用 SQLite 的外键检查，避免把“声明了关联”误当成“当前连接一定执行了约束”。业务键同时声明非空。[SQLite 外键文档](https://www.sqlite.org/foreignkeys.html)
+
+使用 Python 3.12 或更新版本时，可在终端运行 `python -m sqlite3 :memory:`，再按顺序执行文中 SQL。输入 `.quit` 退出；重新练习时打开新连接，避免重复建表或累积题目改动。[Python sqlite3 命令行文档](https://docs.python.org/3.12/library/sqlite3.html#command-line-interface)
+
+先检查案件表：
+
+```sql
+SELECT SUM(amount) AS case_amount
+FROM demo_cases;
+```
+
+预期结果：`case_amount = 200`。
+
+再展开连接结果，不急着求和：
+
+```sql
+SELECT c.case_id, c.amount, t.contact_id
+FROM demo_cases AS c
+JOIN demo_contacts AS t ON t.case_id = c.case_id
+ORDER BY c.case_id, t.contact_id;
+```
+
+| case_id | amount | contact_id |
+| --- | ---: | --- |
+| A | 100 | C1 |
+| A | 100 | C2 |
+| B | 100 | C3 |
+
+此时一行表达的是“一个案件与一条联系记录的匹配”。A 的金额出现了两次。
+
+```sql
+SELECT
+    COUNT(*) AS joined_rows,
+    COUNT(DISTINCT c.case_id) AS case_count,
+    SUM(c.amount) AS wrong_amount,
+    SUM(DISTINCT c.amount) AS another_wrong_amount
+FROM demo_cases AS c
+JOIN demo_contacts AS t ON t.case_id = c.case_id;
+```
+
+| joined_rows | case_count | wrong_amount | another_wrong_amount |
+| ---: | ---: | ---: | ---: |
+| 3 | 2 | 300 | 100 |
+
+`COUNT(DISTINCT case_id)` 得到了正确的案件数，但没有改变 `SUM(amount)` 的输入。
+
+`SUM(DISTINCT amount)` 则把所有相同的 100 合成一个值，连案件 B 的金额也一起去掉了。它按金额值去重，不按案件身份去重。[SQLite 聚合函数文档](https://www.sqlite.org/lang_aggfunc.html)
+
+## 按问题选择查询方式
+
+如果问题只是“联系过的案件总额是多少”，只需判断联系是否存在。保留案件表的一案一行即可：
+
+```sql
+SELECT SUM(c.amount) AS contacted_case_amount
+FROM demo_cases AS c
+WHERE EXISTS (
+    SELECT 1
+    FROM demo_contacts AS t
+    WHERE t.case_id = c.case_id
+);
+```
+
+预期结果：`contacted_case_amount = 200`。如果问题限定“本月联系过”，时间条件也要写入这个子查询。
+
+如果没有符合条件的案件，`SUM` 返回 `NULL`。只有口径明确把这种情况表示为 0 时，才用 `COALESCE(SUM(c.amount), 0)`；不要把“没有记录”与“采集失败”都无条件填成 0。[SQLite 聚合函数文档](https://www.sqlite.org/lang_aggfunc.html)
+
+如果需要“每个案件的金额和联系次数”，先把联系明细汇总到一案一行，再连接：
+
+```sql
+WITH contact_counts AS (
+    SELECT case_id, COUNT(*) AS contact_count
+    FROM demo_contacts
+    GROUP BY case_id
+)
+SELECT
+    c.case_id,
+    c.amount,
+    COALESCE(t.contact_count, 0) AS contact_count
+FROM demo_cases AS c
+LEFT JOIN contact_counts AS t ON t.case_id = c.case_id
+ORDER BY c.case_id;
+```
+
+| case_id | amount | contact_count |
+| --- | ---: | ---: |
+| A | 100 | 2 |
+| B | 100 | 1 |
+
+`WITH` 把前面的汇总命名为 `contact_counts`，供后面的查询引用；`COALESCE(t.contact_count, 0)` 把未匹配到联系汇总的空值表示为 0。
+
+现在左右两侧都是一案一行，可以计算这组案件的总额和联系总次数：
+
+```sql
+WITH contact_counts AS (
+    SELECT case_id, COUNT(*) AS contact_count
+    FROM demo_contacts
+    GROUP BY case_id
+)
+SELECT
+    SUM(c.amount) AS case_amount,
+    SUM(COALESCE(t.contact_count, 0)) AS contact_count
+FROM demo_cases AS c
+LEFT JOIN contact_counts AS t ON t.case_id = c.case_id;
+```
+
+预期结果：`case_amount = 200`，`contact_count = 3`。
+
+这依赖于案件表的唯一键有效、右侧确实每案只有一行。如果还要按联系人员展示金额，就需要先约定归属或分摊规则，不能默认给每位联系人员记一份完整案件金额。
+
+## 回到我的项目
+
+在数仓和企业微信经营看板中，案件、通话、人员、项目的数据可能来自不同来源。连接前需要明确各自粒度与人员映射规则，连接后再核对行数、唯一键和指标。
+
+比如，把“一人一天”的结果连接到“一人一天一个项目”的结果上，人员日指标可能在多个项目下重复出现。查询能成功执行，并不能证明口径正确。
+
+这里的两笔案件只是教学例子。实际项目的接入、建模和交付边界见[数据仓库与多源数据交付](https://sq454313544.github.io/projects/data-warehouse-modernization/)，来源粒度问题见[多源汇总的边界条件](https://sq454313544.github.io/notes/multi-source-person-day-boundaries/)。
+
+## 遇到重复计算，按这个顺序查
+
+1. 写出指标口径：统计哪些对象、哪个时间范围、金额属于谁。
+2. 写出每张表的粒度与唯一键，检查实际数据是否符合。
+3. 暂时去掉聚合，展开几笔业务对象，观察一次连接产生几行。
+4. 判断需要明细、存在性筛选，还是先聚合到同一粒度。
+5. 修复后同时核对行数、业务对象数和指标。只核对总额，可能让不同错误互相抵消。
+
+`LEFT JOIN` 也不会阻止一对多放大。另外，在 `WHERE` 中要求右表字段满足条件，可能把未匹配的左表记录过滤掉；是否应该这样处理，要看原始口径。[SQLite SELECT 文档](https://www.sqlite.org/lang_select.html)
+
+## 自测：先答，再展开
+
+每道题独立从 A=100、B=100 的初始数据开始，题目中的改动互不累积。
+
+### 1. 为什么案件数是 2，金额却是 300？
+
+<details>
+<summary>查看参考答案</summary>
+
+两种聚合处理了不同输入。`COUNT(DISTINCT case_id)` 把 A 的重复身份合并了；`SUM(amount)` 仍然对连接后的三行求和，即 100 + 100 + 100。去重计数不会自动修复其他指标。
+
+</details>
+
+### 2. 把金额改为 A=100、B=200，`SUM(DISTINCT amount)` 得到 300。这样能证明查询正确吗？
+
+<details>
+<summary>查看参考答案</summary>
+
+不能。这一次不同案件的金额恰好不同，按金额去重碰巧与按案件身份处理一致。应保留“两笔不同案件金额相同”的反例，验证方法不会误删独立业务对象。
+
+</details>
+
+### 3. 新增案件 C，金额为 50，没有联系记录。全部案件与联系过的案件，总额分别是多少？
+
+<details>
+<summary>查看参考答案</summary>
+
+“全部案件总额”是 250；“联系过的案件总额”仍是 200。前者用案件表或连接预聚合结果后的 `LEFT JOIN`，后者可以用 `EXISTS`。先明确统计范围，再比较 SQL 的结果。
+
+</details>
+
+### 4. 一个案件有 2 条联系和 3 条回款记录，同时连接两张明细表会产生几行？
+
+<details>
+<summary>查看参考答案</summary>
+
+如果两张明细都只按案件键连接，而且没有其他限制，就会产生 2 × 3 = 6 行。每条联系出现 3 次，每条回款出现 2 次。需要按案件统计时，分别聚合联系与回款，再与案件表连接；需要明细关联时，则要找真正的关联键或明确分配规则。
+
+</details>
+
+### 5. 对没有联系记录的案件，`LEFT JOIN` 后 `COUNT(*)` 和 `COUNT(t.contact_id)` 分别是多少？
+
+<details>
+<summary>查看参考答案</summary>
+
+按这个案件分组，结果分别是 1 和 0。左连接会保留一行右侧为空的结果；`COUNT(*)` 计这行，`COUNT(t.contact_id)` 只计非空联系键。[SQLite 聚合函数文档](https://www.sqlite.org/lang_aggfunc.html)
+
+</details>
+
+## 相关阅读与验证记录
+
+- 下一篇：[数仓分层怎么设计](/notes/warehouse-layers-facts-and-dimensions/)。
+- 实践复盘：[端到端成功不等于逐格一致](https://sq454313544.github.io/notes/multi-source-pipeline-self-audit/)。
+- 官方资料：[SQLite SELECT](https://www.sqlite.org/lang_select.html)、[聚合函数](https://www.sqlite.org/lang_aggfunc.html)。
+
+验证环境：Python 3.12.14 / SQLite 3.53.1。本文 SQL 已按顺序在内存数据库中运行，输出与文中结果一致；此处不包含真实项目数据库的运行记录。
+
+2026-10-01 更新：明确自测题的独立数据状态，补充非空键、外键启用和无记录时的聚合行为。
