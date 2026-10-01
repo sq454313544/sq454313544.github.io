@@ -146,4 +146,17 @@ describe("DashboardMetaSchema", () => {
       DashboardMetaSchema.parse({ ...valid, updatedAt: "2025-01-01" })
     ).toThrow(/updatedAt/);
   });
+
+  it("accepts an optional delivery status label", () => {
+    const result = DashboardMetaSchema.parse({
+      ...valid,
+      statusLabel: "历史交付 · 已停维",
+    });
+    expect(result.statusLabel).toBe("历史交付 · 已停维");
+
+    expect(DashboardMetaSchema.parse(valid).statusLabel).toBeUndefined();
+    expect(() =>
+      DashboardMetaSchema.parse({ ...valid, statusLabel: "" })
+    ).toThrow();
+  });
 });

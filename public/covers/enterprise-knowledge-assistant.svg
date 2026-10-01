@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600">
+  <rect width="1200" height="600" fill="#ecfdf5"/>
+  <path d="M0 96h1200M0 216h1200M0 336h1200M0 456h1200M120 0v600M360 0v600M600 0v600M840 0v600M1080 0v600" stroke="#a7f3d0" stroke-width="2" opacity=".7"/>
+  <rect x="70" y="56" width="176" height="42" rx="21" fill="#065f46"/><text x="158" y="83" fill="#fff" font-family="system-ui, sans-serif" font-size="20" font-weight="700" text-anchor="middle">KNOWLEDGE BASE</text>
+  <g fill="#fff" stroke="#10b981" stroke-width="4"><rect x="140" y="230" width="200" height="120" rx="20"/><rect x="500" y="230" width="200" height="120" rx="20"/><rect x="860" y="230" width="200" height="120" rx="20"/></g>
+  <path d="M340 290h160m200 0h160" stroke="#10b981" stroke-width="8" stroke-linecap="round"/><path d="m480 270 20 20-20 20m200-40 20 20-20 20" fill="none" stroke="#10b981" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#064e3b" font-family="system-ui, sans-serif" font-size="24" font-weight="700" text-anchor="middle"><text x="240" y="300">已发布资料</text><text x="600" y="300">受控问答</text><text x="960" y="300">出处引用</text></g>
+  <text x="72" y="534" fill="#047857" font-family="system-ui, sans-serif" font-size="34" font-weight="700">WeKnora 定制</text><text x="1128" y="534" fill="#475569" font-family="system-ui, sans-serif" font-size="24" text-anchor="end">作业系统单点登录</text>
+</svg>

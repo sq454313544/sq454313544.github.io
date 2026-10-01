@@ -6,7 +6,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "标签",
-  description: "按标签浏览内容",
+  description: "按标签浏览项目案例、实践笔记与 BI 案例",
+  alternates: { canonical: "/tags" },
 };
 
 export default function TagsPage() {

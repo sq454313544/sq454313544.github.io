@@ -4,26 +4,53 @@ interface TocItem {
   level: number;
 }
 
-export function extractToc(body: string): TocItem[] {
-  const headingRegex = /^(#{2,3})\s+(.+)$/gm;
-  const items: TocItem[] = [];
-  const slugCounts = new Map<string, number>();
-  let match: RegExpExecArray | null;
+function toId(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w\u4e00-\u9fff-]/g, "");
+}
 
-  while ((match = headingRegex.exec(body)) !== null) {
-    const level = match[1].length;
-    const text = match[2].trim();
-    const baseId = text
-      .toLowerCase()
-      .replace(/\s+/g, "-")
-      .replace(/[^\w\u4e00-\u9fff-]/g, "");
-    const count = slugCounts.get(baseId) ?? 0;
-    slugCounts.set(baseId, count + 1);
-    const id = count === 0 ? baseId : `${baseId}-${count}`;
-    items.push({ id, text, level });
+export function extractToc(body: string): TocItem[] {
+  const markdownHeadingRegex = /^(#{2,3})\s+(.+)$/gm;
+  const htmlHeadingRegex = /^<h([23])([^>]*)>([\s\S]*?)<\/h\1>\s*$/gm;
+  const slugCounts = new Map<string, number>();
+  const headings: { index: number; level: number; text: string; id?: string }[] = [];
+
+  let match: RegExpExecArray | null;
+  while ((match = markdownHeadingRegex.exec(body)) !== null) {
+    headings.push({ index: match.index, level: match[1].length, text: match[2] });
   }
 
-  return items;
+  let htmlMatch: RegExpExecArray | null;
+  while ((htmlMatch = htmlHeadingRegex.exec(body)) !== null) {
+    headings.push({
+      index: htmlMatch.index,
+      level: Number(htmlMatch[1]),
+      text: htmlMatch[3],
+      id: /\bid="([^"]+)"/.exec(htmlMatch[2])?.[1],
+    });
+  }
+
+  // 按正文出现顺序输出，保证目录顺序与阅读顺序一致
+  return headings
+    .sort((a, b) => a.index - b.index)
+    .flatMap((heading) => {
+      const text = heading.text.replace(/<[^>]+>/g, "").trim();
+      if (!text) return [];
+      // 显式 id 的标题写法固定，不参与 rehype-slug 的重名递增
+      if (heading.id) return [{ id: heading.id, text, level: heading.level }];
+      const baseId = toId(text);
+      const count = slugCounts.get(baseId) ?? 0;
+      slugCounts.set(baseId, count + 1);
+      return [
+        {
+          id: count === 0 ? baseId : `${baseId}-${count}`,
+          text,
+          level: heading.level,
+        },
+      ];
+    });
 }
 
 interface TocProps {

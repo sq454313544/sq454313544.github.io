@@ -1,0 +1,37 @@
+import { describe, expect, it } from "vitest";
+import { renderToStaticMarkup } from "react-dom/server";
+import { ResumeDocument } from "@/components/resume/ResumeDocument";
+import { profileData } from "@/data/profile";
+
+describe("build-only resume document", () => {
+  it("preserves full work history and project evidence in the downloadable document", () => {
+    const html = renderToStaticMarkup(<ResumeDocument siteUrl="https://sq454313544.github.io" />);
+    for (const experience of profileData.workExperiences) {
+      expect(html).toContain(experience.company);
+      expect(html).toContain(experience.role);
+      for (const responsibility of experience.responsibilities) {
+        expect(html).toContain(responsibility);
+      }
+    }
+    for (const project of profileData.projectHighlights) {
+      expect(html).toContain(project.title);
+      for (const detail of project.details) {
+        expect(html).toContain(detail);
+      }
+    }
+    expect(html).toContain(profileData.education[0].school);
+    expect(html).toContain(profileData.agentWorkflow.summary);
+  });
+
+  it("resolves project links to the production site without client scripts", () => {
+    const siteUrl = "https://sq454313544.github.io";
+    const html = renderToStaticMarkup(<ResumeDocument siteUrl={siteUrl} />);
+    for (const project of profileData.projectHighlights) {
+      if (project.href) expect(html).toContain(`href="${new URL(project.href, siteUrl).href}"`);
+    }
+    expect(html).toContain(`href="${siteUrl}/about"`);
+    expect(html).not.toContain("localhost");
+    expect(html).not.toContain("127.0.0.1");
+    expect(html).not.toContain("<script");
+  });
+});

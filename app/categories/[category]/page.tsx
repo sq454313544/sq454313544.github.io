@@ -16,7 +16,10 @@ export async function generateMetadata({
   params: Promise<{ category: string }>;
 }): Promise<Metadata> {
   const { category } = await params;
-  return { title: `分类: ${category}` };
+  return {
+    title: `分类: ${category}`,
+    alternates: { canonical: `/categories/${encodeURIComponent(category)}` },
+  };
 }
 
 export default async function CategoryPage({

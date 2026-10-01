@@ -42,8 +42,26 @@ jobs:
           pnpm typecheck
           pnpm test
 
-      - name: Build static site
-        run: pnpm build
+      - name: Build static site and refresh resume PDF
+        run: pnpm build:export
+
+      - name: Verify resume PDF matches current content
+        run: |
+          test -f out/resume/jin-zaiwei-resume.pdf
+          node -e '
+            const { readFileSync } = require("node:fs");
+            const pdf = readFileSync("out/resume/jin-zaiwei-resume.pdf", "latin1");
+            const pages = Number(/\/Count\s+(\d+)/.exec(pdf)?.[1] ?? 0);
+            if (pages !== 2) {
+              console.error(`Resume PDF page count is ${pages}, expected 2.`);
+              process.exit(1);
+            }
+            if (pdf.includes("localhost") || pdf.includes("127.0.0.1")) {
+              console.error("Resume PDF leaks a local address.");
+              process.exit(1);
+            }
+            console.log(`Resume PDF OK: ${pages} pages, ${pdf.length} bytes`);
+          '
 
       - name: Verify system Chrome for E2E
         run: google-chrome --version

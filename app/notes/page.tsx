@@ -6,8 +6,9 @@ import { Empty } from "@/components/primitives/states";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "学习笔记",
-  description: "技术学习、经验总结与知识分享",
+  title: "实践笔记",
+  description: "数据工程、指标治理与 AI 应用实践的学习与复盘记录。",
+  alternates: { canonical: "/notes" },
 };
 
 export default function NotesPage() {

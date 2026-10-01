@@ -54,6 +54,7 @@ export const DashboardMetaSchema = z.object({
   metrics: z.array(z.string().min(1)).min(1, "至少需要一个关键指标"),
   featured: z.boolean().default(false),
   cover: z.string().optional(),
+  statusLabel: z.string().min(1).optional(),
 }).superRefine((data, ctx) => {
   if (data.updatedAt < data.publishedAt) {
     ctx.addIssue({

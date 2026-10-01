@@ -26,6 +26,7 @@ export async function generateMetadata({
   return {
     title: note.meta.title,
     description: note.meta.description,
+    alternates: { canonical: `/notes/${slug}` },
   };
 }
 

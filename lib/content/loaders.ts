@@ -22,6 +22,20 @@ function generateSearchText(body: string): string {
     .trim();
 }
 
+/**
+ * 全文检索用的合并文本：标题与描述一并纳入。
+ *
+ * 只索引正文时，标题里的业务词（例如「批量数据同步」）搜不到文章，
+ * 而标题恰恰是作者认为最该被检索到的部分。
+ */
+function buildSearchText(title: string, description: string, body: string): string {
+  return [title, description, generateSearchText(body)]
+    .filter((part) => part.trim().length > 0)
+    .join(" \n ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 function calcReadingTime(body: string, wordsPerMinute = 300): number {
   const cleaned = body
     .replace(/```[\s\S]*?```/g, "")
@@ -57,17 +71,19 @@ export function loadContentType(type: ContentType, dir: string): ContentItem[] {
       const { data, content: body } = matter(content);
       const slug = generateSlug(file);
       const excerpt = generateExcerpt(body);
-      const searchText = generateSearchText(body);
       const readingTime = calcReadingTime(body);
 
       if (type === "note") {
         const meta = validateNoteMeta(data);
+        const searchText = buildSearchText(meta.title, meta.description, body);
         items.push({ type: "note", slug, meta, body, excerpt, searchText, readingTime });
       } else if (type === "project") {
         const meta = validateProjectMeta(data);
+        const searchText = buildSearchText(meta.title, meta.description, body);
         items.push({ type: "project", slug, meta, body, excerpt, searchText, readingTime });
       } else if (type === "dashboard") {
         const meta = validateDashboardMeta(data);
+        const searchText = buildSearchText(meta.title, meta.description, body);
         items.push({ type: "dashboard", slug, meta, body, excerpt, searchText, readingTime });
       }
     } catch (error) {

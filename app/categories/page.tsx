@@ -6,7 +6,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "分类",
-  description: "按分类浏览笔记",
+  description: "按分类浏览实践笔记",
+  alternates: { canonical: "/categories" },
 };
 
 export default function CategoriesPage() {

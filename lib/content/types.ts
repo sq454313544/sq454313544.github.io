@@ -42,6 +42,8 @@ export interface DashboardMeta {
   metrics: string[];
   featured: boolean;
   cover?: string;
+  /** 交付性质说明，例如“历史交付 · 已停维”；未填写表示当前仍在维护 */
+  statusLabel?: string;
 }
 
 export interface BaseContentItem {

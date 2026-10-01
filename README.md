@@ -161,6 +161,27 @@ NEXT_PUBLIC_SITE_URL=https://<GitHub用户名>.github.io
 
 首期不配置自定义域名，不部署 Node.js、API、数据库或登录服务。任何 GitHub 登录、仓库创建、提交、推送和部署都需要用户明确确认。
 
+## 简历 PDF
+
+`/resume/` 页面的「下载 PDF 简历」按钮指向 `public/resume/jin-zaiwei-resume.pdf`。该文件与网页版同源、两页 A4，是**构建后**才生成的独立产物，因此要用带它的命令：
+
+```powershell
+# 构建静态站并重新生成简历 PDF（推荐）
+pnpm build:export
+```
+
+`pnpm build:export` = `pnpm build` + `pnpm build:resume-pdf`，因为 `next build` 会重建 `out/`，先生成的 PDF 会被丢掉。
+
+脚本不依赖正在运行的预览服务：它直接读 `out/` 的内容喂给无头 Chrome，因此不会读到旧构建。生成前会等待打印样式与站点字体真正生效（字体缺失会回退字体、把简历撑到第三页），生成后自检：页数必须为 2、不得残留本机地址、站内链接必须指向正式站点地址，任一不通过即非零退出并且不覆盖已有文件之外的内容。
+
+可选参数（复用已在运行的预览服务）：
+
+```powershell
+node scripts/build-resume-pdf.mjs http://localhost:4173 public/resume/jin-zaiwei-resume.pdf https://sq454313544.github.io
+```
+
+简历内容或站内链接变更后需要重新生成；`pnpm test:e2e:static` 会校验 `public/` 下每个资源都已出现在 `out/` 中且大小一致。
+
 ---
 
 ## 目录结构

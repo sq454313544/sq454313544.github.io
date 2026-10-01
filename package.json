@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "pnpm content:check && next build",
+    "build": "pnpm content:check && next build && node scripts/fix-rsc-prefetch.mjs out",
+    "build:export": "pnpm build && pnpm build:resume-pdf",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
@@ -12,7 +13,8 @@
     "test:watch": "vitest",
     "test:e2e": "node ./node_modules/@playwright/test/cli.js test",
     "test:e2e:static": "node scripts/run-static-e2e.mjs",
-    "content:check": "tsx scripts/check-content.ts"
+    "content:check": "tsx scripts/check-content.ts",
+    "build:resume-pdf": "node scripts/build-resume-pdf.mjs"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",

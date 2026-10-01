@@ -18,7 +18,13 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const project = loadProjects().find((item) => item.slug === slug);
-  return project ? { title: project.meta.title, description: project.meta.description } : {};
+  return project
+    ? {
+        title: project.meta.title,
+        description: project.meta.description,
+        alternates: { canonical: `/projects/${slug}` },
+      }
+    : {};
 }
 
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {

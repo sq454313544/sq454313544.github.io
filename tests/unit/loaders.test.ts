@@ -25,6 +25,30 @@ describe("loadContentType", () => {
     expect(loadContentType("note", missingDirectory)).toEqual([]);
   });
 
+  it("indexes the title and description for full-text search", () => {
+    const directory = createTemporaryDirectory();
+    writeFileSync(
+      join(directory, "searchable-note.mdx"),
+      `---
+title: "批量数据同步的生命周期"
+description: "关于往期数据的处理方式"
+publishedAt: "2026-01-01"
+updatedAt: "2026-01-01"
+category: "warehouse"
+tags: ["sync"]
+---
+
+正文只提到某个实现细节。`,
+      "utf-8",
+    );
+
+    const [note] = loadContentType("note", directory);
+    // 标题与描述里的词必须能被检索到，否则搜索只在正文里找
+    expect(note.searchText).toContain("批量数据同步的生命周期");
+    expect(note.searchText).toContain("关于往期数据的处理方式");
+    expect(note.searchText).toContain("正文只提到某个实现细节");
+  });
+
   it("throws a file-specific error when frontmatter is invalid", () => {
     const directory = createTemporaryDirectory();
     const filePath = join(directory, "invalid-note.mdx");

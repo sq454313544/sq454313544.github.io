@@ -24,7 +24,7 @@ export function ThemeSwitch({ className }: { className?: string }) {
 
   return (
     <label className={`flex items-center gap-2 text-sm text-text-secondary ${className ?? ""}`}>
-      <span className="sr-only">主题</span>
+      <span className="hidden lg:inline whitespace-nowrap">主题</span>
       <select
         aria-label="选择主题"
         className="h-8 rounded-button border border-border bg-surface px-2 text-sm text-text-primary transition-colors duration-150 ease-standard focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"

@@ -1,13 +1,13 @@
 "use client";
 
 import { Empty } from "@/components/primitives/states";
+import { useClientSearchParams } from "@/lib/hooks/useClientSearchParams";
 import type { SearchIndexEntry } from "@/lib/search/index";
 import { search } from "@/lib/search/matcher";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 
 export function SearchResults({ index, className }: { index: SearchIndexEntry[]; className?: string }) {
-  const searchParams = useSearchParams();
+  const searchParams = useClientSearchParams();
   const query = searchParams.get("q")?.trim() ?? "";
   const results = query ? search(index, query) : [];
 

@@ -11,4 +11,28 @@ describe("extractToc", () => {
       { id: "子标题", text: "子标题", level: 3 },
     ]);
   });
+
+  it("includes explicit-anchor headings in document order", () => {
+    const items = extractToc(
+      [
+        "## 关键交付",
+        "",
+        '### 分层模型与数据资产',
+        "",
+        '<h3 id="wecom-dashboards" className="scroll-mt-24">企业微信经营看板</h3>',
+        "",
+        "正文",
+        "",
+        "## 可公开成果",
+      ].join("\n"),
+    );
+
+    expect(items.map((item) => item.id)).toEqual([
+      "关键交付",
+      "分层模型与数据资产",
+      "wecom-dashboards",
+      "可公开成果",
+    ]);
+    expect(items[2]).toEqual({ id: "wecom-dashboards", text: "企业微信经营看板", level: 3 });
+  });
 });

@@ -4,7 +4,16 @@ import { extname, join, normalize, resolve, sep } from "node:path";
 
 const directory = resolve(process.argv[2] ?? "out");
 const port = Number(process.env.PORT ?? 3000);
-const mimeTypes = { ".css": "text/css; charset=utf-8", ".html": "text/html; charset=utf-8", ".ico": "image/x-icon", ".js": "text/javascript; charset=utf-8", ".json": "application/json; charset=utf-8", ".map": "application/json; charset=utf-8", ".svg": "image/svg+xml", ".txt": "text/plain; charset=utf-8", ".xml": "application/xml; charset=utf-8", ".woff2": "font/woff2" };
+/**
+ * 默认双栈监听。
+ *
+ * 只绑 `127.0.0.1` 时，把地址写成 `localhost` 的浏览器可能先解析到 `::1`
+ * 而连不上；只绑 `::1`（`HOST=localhost` 在 Windows 上的解析结果）时，
+ * 走 IPv4 的 `127.0.0.1` 同样连不上，看起来就像页面 404。
+ * 因此默认绑 `::` 同时覆盖 IPv4 与 IPv6，需要单栈时用 HOST 覆盖。
+ */
+const host = process.env.HOST ?? "::";
+const mimeTypes = { ".css": "text/css; charset=utf-8", ".html": "text/html; charset=utf-8", ".ico": "image/x-icon", ".js": "text/javascript; charset=utf-8", ".json": "application/json; charset=utf-8", ".map": "application/json; charset=utf-8", ".svg": "image/svg+xml", ".txt": "text/plain; charset=utf-8", ".xml": "application/xml; charset=utf-8", ".woff2": "font/woff2", ".woff": "font/woff", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".webp": "image/webp", ".avif": "image/avif", ".pdf": "application/pdf" };
 
 if (!existsSync(directory)) {
   throw new Error(`Static export directory does not exist: ${directory}`);
@@ -38,6 +47,6 @@ createServer((request, response) => {
     return;
   }
   createReadStream(resolvedPath).pipe(response);
-}).listen(port, () => {
-  console.log(`Serving static export from ${directory} at http://localhost:${port}`);
+}).listen(port, host, () => {
+  console.log(`Serving static export from ${directory} at http://${host}:${port}`);
 });

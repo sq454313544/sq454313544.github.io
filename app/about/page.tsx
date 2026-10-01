@@ -4,76 +4,109 @@ import { profileData } from "@/data/profile";
 
 export const metadata: Metadata = {
   title: "关于我",
-  description: "数据产品工程师，专注于 BI 与 AI 数据应用",
+  description:
+    "金仔伟：数据工程与 AI 应用。了解我的能力、职业经历与 Agent 工作方式，查看项目案例、下载 PDF 简历或联系我。",
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {
   return (
-    <main className="mx-auto w-full max-w-4xl px-4 py-12 sm:py-16">
-      <header className="border-b border-border pb-10">
+    <main className="mx-auto w-full max-w-4xl px-4 py-10 sm:py-14">
+      <header className="border-b border-border pb-8 sm:pb-10">
         <p className="text-sm font-medium text-primary">关于我</p>
-        <h1 className="mt-3 text-h1 font-semibold leading-tight text-text-primary">{profileData.profile.name}</h1>
-        <p className="mt-3 text-xl text-text-secondary">{profileData.profile.headline}</p>
-        <div className="mt-6 max-w-3xl space-y-3">
-          {profileData.resumeSummary.map((paragraph) => (
-            <p key={paragraph} className="text-body leading-body text-text-secondary">{paragraph}</p>
+        <h1 className="mt-3 text-h1 font-semibold leading-tight text-text-primary">
+          {profileData.profile.name}
+        </h1>
+        <p className="mt-3 text-xl text-text-secondary">
+          <span className="whitespace-nowrap">数据工程与</span>{" "}
+          <span className="whitespace-nowrap">AI 应用</span>
+        </p>
+        <p className="mt-3 text-sm text-text-muted">
+          {profileData.profile.location} · {profileData.profile.availability}
+        </p>
+        <ul aria-label="联系方式" className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+          {profileData.contacts.map((contact) => (
+            <li key={contact.href}>
+              <a href={contact.href} className="font-medium text-primary hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary">
+                {contact.label}
+              </a>
+            </li>
           ))}
+        </ul>
+        <p className="mt-6 max-w-3xl text-body leading-body text-text-secondary">
+          {profileData.profile.summary}
+        </p>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <a href="/resume/jin-zaiwei-resume.pdf" download className="rounded-button bg-primary px-4 py-2.5 text-sm font-medium text-white transition-colors duration-150 ease-standard hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            下载简历
+          </a>
+          <Link href="/projects" className="rounded-button border border-border px-4 py-2.5 text-sm font-medium text-text-primary transition-colors duration-150 ease-standard hover:bg-surface-soft focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            查看项目
+          </Link>
         </div>
       </header>
 
-      <section className="py-12">
-        <h2 className="text-h2 font-semibold text-text-primary">工作经历</h2>
-        <p className="mt-1 text-text-muted">持续把数据能力做成可用的产品</p>
-        <ol className="mt-8 border-l border-border pl-6 sm:pl-8">
+      <section className="py-8 sm:py-10">
+        <h2 className="text-h2 font-semibold text-text-primary">我能做什么</h2>
+        <div className="mt-6 grid gap-5 md:grid-cols-3">
+          {profileData.skills.map((skill) => (
+            <article key={skill.title} className="rounded-card border border-border bg-surface p-5">
+              <h3 className="text-card-title font-semibold text-text-primary">{skill.title}</h3>
+              <p className="mt-3 text-sm leading-relaxed text-text-secondary">{skill.summary}</p>
+            </article>
+          ))}
+        </div>
+        <Link href="/projects" className="mt-5 inline-block text-sm font-medium text-primary hover:text-primary-hover">
+          查看数据与 AI 项目 →
+        </Link>
+      </section>
+
+      <section className="border-t border-border py-8 sm:py-10">
+        <h2 className="text-h2 font-semibold text-text-primary">职业经历</h2>
+        <ol className="mt-6 divide-y divide-border">
           {profileData.workExperiences.map((experience) => (
-            <li key={`${experience.company}-${experience.role}`} className="relative pb-10 last:pb-0">
-              <span aria-hidden="true" className="absolute -left-[1.83rem] top-1.5 h-3 w-3 rounded-full border-2 border-surface bg-primary sm:-left-[2.33rem]" />
-              <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h3 className="text-card-title font-semibold text-text-primary">{experience.role}</h3>
-                <p className="text-sm text-text-muted">{experience.period.start} — {experience.period.end ?? "至今"}</p>
+            <li key={`${experience.company}-${experience.role}`} className="py-5 first:pt-0 last:pb-0">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <h3 className="font-medium text-text-primary">
+                  {experience.company}｜{experience.role}
+                </h3>
+                <p className="text-sm text-text-muted">
+                  {experience.period.start} — {experience.period.end ?? "至今"}
+                </p>
               </div>
-              <p className="mt-1 text-sm font-medium text-text-secondary">{experience.company} · {experience.location}</p>
-              <h4 className="mt-5 text-sm font-semibold text-text-primary">核心职责</h4>
-              <ul className="mt-2 list-disc space-y-2 pl-5 text-sm leading-relaxed text-text-secondary">
-                {experience.responsibilities.map((item) => <li key={item}>{item}</li>)}
-              </ul>
-              <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-sm">
-                {experience.keyProjects.map((project) => project.href ? (
-                  <Link key={project.title} href={project.href} className="font-medium text-primary hover:text-primary-hover">{project.title} →</Link>
-                ) : (
-                  <span key={project.title} className="font-medium text-text-secondary">{project.title}</span>
-                ))}
-              </div>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {experience.stack.map((item) => <span key={item} className="rounded-tag bg-surface-soft px-2 py-1 text-tag text-text-secondary">{item}</span>)}
-              </div>
+              <p className="mt-2 text-sm leading-relaxed text-text-secondary">{experience.summary}</p>
             </li>
           ))}
         </ol>
       </section>
 
-      <section className="border-t border-border py-12">
-        <h2 className="text-h2 font-semibold text-text-primary">核心能力</h2>
-        <div className="mt-6 grid gap-x-8 gap-y-7 sm:grid-cols-2">
-          {profileData.skills.map((skill) => <article key={skill.title}><h3 className="text-card-title font-semibold text-text-primary">{skill.title}</h3><p className="mt-2 leading-relaxed text-text-secondary">{skill.boundaries}</p></article>)}
+      <section className="border-t border-border py-8 sm:py-10">
+        <h2 id="agent-workflow" className="scroll-mt-24 text-h2 font-semibold text-text-primary">
+          我的 Agent 工作方式
+        </h2>
+        <p className="mt-4 max-w-3xl text-body leading-body text-text-secondary">
+          {profileData.agentWorkflow.summary}
+        </p>
+        <article className="mt-6 rounded-card border border-border bg-surface-soft p-5 sm:p-6">
+          <h3 className="text-card-title font-semibold text-text-primary">
+            一个实例：{profileData.agentWorkflow.example.title}
+          </h3>
+          <p className="mt-3 leading-relaxed text-text-secondary">
+            {profileData.agentWorkflow.example.paragraph}
+          </p>
+        </article>
+      </section>
+
+      <section className="border-t border-border pt-8 sm:pt-10">
+        <h2 className="text-h3 font-semibold text-text-primary">教育背景</h2>
+        <div className="mt-4 space-y-3">
+          {profileData.education.map((entry) => (
+            <div key={`${entry.school}-${entry.degree}`} className="text-sm text-text-secondary">
+              <p>{entry.school}｜{entry.degree}</p>
+              <p className="mt-1 text-text-muted">{entry.period.start} — {entry.period.end}</p>
+            </div>
+          ))}
         </div>
-      </section>
-
-      <section className="border-t border-border py-12">
-        <p className="text-sm text-text-muted">工具与技术</p>
-        <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {profileData.toolsAndTech.map((group) => <article key={group.title}><h2 className="font-semibold text-text-primary">{group.title}</h2><ul className="mt-3 space-y-2 text-sm text-text-secondary">{group.items.map((item) => <li key={item}>{item}</li>)}</ul></article>)}
-        </div>
-      </section>
-
-      <section className="border-t border-border py-12">
-        <p className="text-sm text-text-muted">兴趣</p>
-        <ul className="mt-4 flex flex-wrap gap-2">{profileData.interests.map((interest) => <li key={interest} className="rounded-tag border border-border px-3 py-1 text-sm text-text-secondary">{interest}</li>)}</ul>
-      </section>
-
-      <section className="border-t border-border pt-12">
-        <p className="text-sm text-text-muted">联系方式</p>
-        {profileData.contacts.length > 0 ? <ul className="mt-4 flex flex-wrap gap-4">{profileData.contacts.map((contact) => <li key={contact.href}><a href={contact.href} className="font-medium text-primary hover:text-primary-hover">{contact.label}</a></li>)}</ul> : <p className="mt-4 text-text-secondary">公开联系方式将在个人资料完善后补充。</p>}
       </section>
     </main>
   );

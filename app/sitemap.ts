@@ -10,7 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const projects = loadProjects();
   const dashboards = loadDashboards();
 
-  const staticRoutes = ["", "/notes", "/projects", "/dashboards", "/search", "/tags", "/categories", "/about", "/resume"].map(
+  const staticRoutes = ["", "/notes", "/projects", "/dashboards", "/search", "/tags", "/categories", "/about"].map(
     (path) => ({
       url: `${BASE_URL}${path}`,
       lastModified: new Date(),

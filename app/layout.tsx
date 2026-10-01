@@ -1,22 +1,29 @@
 import type { Metadata, Viewport } from "next";
 import { Header } from "@/components/navigation/Header";
 import { Footer } from "@/components/navigation/Footer";
+import { profileData } from "@/data/profile";
 import { geistMono, geistSans } from "./fonts";
 import { ThemeProvider } from "./theme-provider";
 import "./globals.css";
 
+const SITE_DESCRIPTION =
+  "金仔伟的个人技术平台：数据工程与 AI 应用。数仓建设与数据治理、多源采集与调度、企业微信看板与报表交付，以及智能问数、知识库助手与 Agent 工作流实践。";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://sq454313544.github.io"),
   title: {
-    default: "金仔伟 · 数据产品工程师",
+    default: profileData.profile.siteIdentity,
     template: "%s | 金仔伟",
   },
-  description:
-    "金仔伟的数据产品工程师个人技术平台，涵盖 Power BI、AI 数据应用、数据工程、智能问数与工程实践。",
+  description: SITE_DESCRIPTION,
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "金仔伟 · 数据产品工程师",
-    description: "数据产品、数据工程与 AI 数据应用的个人技术平台。",
-    images: [{ url: "/og-default.svg", width: 1200, height: 630, alt: "金仔伟的数据产品工程作品集" }],
+    type: "website",
+    url: "/",
+    siteName: profileData.profile.siteIdentity,
+    title: profileData.profile.siteIdentity,
+    description: SITE_DESCRIPTION,
+    images: [{ url: "/og-default.svg", width: 1200, height: 630, alt: "金仔伟的数据工程与 AI 应用作品集" }],
   },
 };
 

@@ -16,7 +16,13 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const dashboard = loadDashboards().find((item) => item.slug === slug);
-  return dashboard ? { title: dashboard.meta.title, description: dashboard.meta.description } : {};
+  return dashboard
+    ? {
+        title: dashboard.meta.title,
+        description: dashboard.meta.description,
+        alternates: { canonical: `/dashboards/${slug}` },
+      }
+    : {};
 }
 
 export default async function DashboardPage({ params }: { params: Promise<{ slug: string }> }) {

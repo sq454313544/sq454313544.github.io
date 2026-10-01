@@ -2,6 +2,7 @@ import Image from "next/image";
 
 const covers = {
   "enterprise-qa-assistant": { src: "/covers/enterprise-qa-assistant.svg", alt: "智能问数项目的受控查询流程示意", width: 1200, height: 600 },
+  "enterprise-knowledge-assistant": { src: "/covers/enterprise-knowledge-assistant.svg", alt: "知识库助手从已发布资料到出处引用的流程示意", width: 1200, height: 600 },
   "data-warehouse-modernization": { src: "/covers/data-warehouse-modernization.svg", alt: "数据仓库分层与治理流程示意", width: 1200, height: 600 },
   "operations-process-analysis": {
     src: "/dashboards/legal-operations-overview.png",
