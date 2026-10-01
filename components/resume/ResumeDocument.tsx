@@ -21,13 +21,13 @@ export function ResumeDocument({ siteUrl, className = "" }: { siteUrl: string; c
             {profileData.contacts.map((contact) => (
               <li key={contact.href}>
                 <a
-                  href={contact.href}
+                  href={contact.label === "GitHub" ? siteUrl : contact.href}
                   className="resume-contact-link font-medium text-primary hover:text-primary-hover"
                 >
                   {contact.href.startsWith("mailto:")
                     ? `邮箱：${contact.label}`
                     : contact.label === "GitHub"
-                      ? `GitHub：${contact.href.replace(/^https?:\/\//, "")}`
+                      ? `博客：${siteUrl.replace(/^https?:\/\//, "")}`
                       : contact.label}
                 </a>
               </li>

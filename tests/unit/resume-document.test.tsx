@@ -29,7 +29,7 @@ describe("build-only resume document", () => {
   it("shows readable contact labels while preserving native clickable addresses", () => {
     const html = renderToStaticMarkup(<ResumeDocument siteUrl="https://sq454313544.github.io" />);
     expect(html).toMatch(/href="mailto:454313544@qq.com"[^>]*>邮箱：454313544@qq.com<\/a>/);
-    expect(html).toMatch(/href="https:\/\/github.com\/sq454313544"[^>]*>GitHub：github.com\/sq454313544<\/a>/);
+    expect(html).toMatch(/href="https:\/\/sq454313544.github.io"[^>]*>博客：sq454313544.github.io<\/a>/);
     expect(html).not.toContain("(mailto:");
   });
 
