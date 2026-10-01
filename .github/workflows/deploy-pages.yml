@@ -42,12 +42,19 @@ jobs:
           pnpm typecheck
           pnpm test
 
+      - name: Install Chinese fonts and PDF validation tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install --no-install-recommends -y fonts-noto-cjk poppler-utils
+          fc-match -f '%{family}\n' 'sans-serif:lang=zh-cn'
+
       - name: Build static site and refresh resume PDF
         run: pnpm build:export
 
       - name: Verify resume PDF matches current content
         run: |
           test -f out/resume/jin-zaiwei-resume.pdf
+          pdftotext -layout out/resume/jin-zaiwei-resume.pdf .agent-temp/resume-pdf-check.txt
           node -e '
             const { readFileSync } = require("node:fs");
             const pdf = readFileSync("out/resume/jin-zaiwei-resume.pdf", "latin1");
@@ -60,7 +67,14 @@ jobs:
               console.error("Resume PDF leaks a local address.");
               process.exit(1);
             }
-            console.log(`Resume PDF OK: ${pages} pages, ${pdf.length} bytes`);
+            const text = readFileSync(".agent-temp/resume-pdf-check.txt", "utf8").replace(/\s+/g, "");
+            const required = ["金仔伟", "核心能力", "工作经历", "代表项目", "教育背景"];
+            const missing = required.filter((value) => !text.includes(value));
+            if (missing.length > 0) {
+              console.error(`Resume PDF Chinese text is missing: ${missing.join(", ")}`);
+              process.exit(1);
+            }
+            console.log(`Resume PDF OK: ${pages} pages, ${pdf.length} bytes, Chinese text verified`);
           '
 
       - name: Verify system Chrome for E2E
