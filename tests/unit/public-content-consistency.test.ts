@@ -39,6 +39,9 @@ describe("公开内容口径一致性", () => {
     // 数据资产的快照月份与 BI 停维月份含义不同，不能全局替换日期。
     expect(warehouse?.details.join("")).toContain("2026-09 快照口径");
     expect(source("content/projects/data-warehouse-modernization.mdx")).toContain("2026-09 的公开快照记录");
+    const cover = source("public/covers/data-warehouse-modernization.svg");
+    expect(cover).toContain("接近 300 张表 / 视图");
+    expect(cover).not.toContain("250+");
   });
 
   it("简历、问数案例与封面均不再发布已删除的 Recall 数字", () => {
