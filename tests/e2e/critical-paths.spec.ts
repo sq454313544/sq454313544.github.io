@@ -130,6 +130,8 @@ test.describe("首页", () => {
     }
     await expect(items.nth(0).getByText("数据管道", { exact: true })).toBeVisible();
     await expect(items.nth(0).getByText("MySQL", { exact: true })).toBeVisible();
+    await expect(items.nth(5)).toContainText("2026-08 停止维护");
+    await expect(section.getByText(/2026-09 停止维护/)).toHaveCount(0);
   });
 
   test("homepage keeps knowledge base, wecom, report automation and BI entries", async ({ page }) => {
@@ -303,10 +305,17 @@ test.describe("项目", () => {
     await expect(page.getByText("暂无符合条件的项目案例")).toBeVisible();
   });
 
-  test("project detail pages, including the warehouse delivery anchors", async ({ page }) => {
+  test("project detail pages, including the warehouse delivery anchors", async ({ page, request }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto("/projects/enterprise-qa-assistant");
     await expect(page.locator("h1")).toContainText("智能问数");
+    await expect(page.getByText("项目状态", { exact: true })).toHaveCount(0);
+    await expect(page.locator("main")).not.toContainText("39.22%");
+    await expect(page.locator("main")).not.toContainText("82.35%");
+    await expect(page.locator("main")).not.toContainText("51 条");
+    const cover = await request.get("/covers/enterprise-qa-assistant.svg");
+    expect(cover.status()).toBe(200);
+    expect(await cover.text()).not.toMatch(/Recall|40%|80%/);
     // 统一阅读框架：概览 → 架构 → 工程重点 → 取舍 → 复盘
     await expect(page.getByRole("heading", { name: "概览" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "架构" })).toBeVisible();
@@ -334,9 +343,12 @@ test.describe("项目", () => {
 
     await page.goto("/projects/data-warehouse-modernization");
     await expect(page.locator("h1")).toContainText("企业数据仓库与治理");
-    // F1：历史实现与当前运行状态要区分
-    await expect(page.getByText(/历史阶段/).first()).toBeVisible();
-    await expect(page.getByText(/本机环境运行/).first()).toBeVisible();
+    // 数仓详情与简历保持服务器运行、全量刷新及增量暂未采用的同一口径
+    await expect(page.getByText(/当前在服务器运行/).first()).toBeVisible();
+    await expect(page.getByText(/因业务数据库本身情况暂未采用增量/).first()).toBeVisible();
+    await expect(page.locator("main")).not.toContainText("本机环境运行");
+    await expect(page.locator("main")).not.toContainText("后恢复");
+    await expect(page.getByText("项目状态", { exact: true })).toHaveCount(0);
     // 规模数字带快照口径，不写成实时值
     await expect(page.getByText(/2026-09 的公开快照记录/)).toBeVisible();
   });
@@ -344,6 +356,7 @@ test.describe("项目", () => {
   test("knowledge base case leads with an overview and folds the detail", async ({ page }) => {
     await page.goto("/projects/enterprise-knowledge-assistant");
     await expect(page.locator("h1")).toContainText("企业知识库助手");
+    await expect(page.getByText("项目状态", { exact: true })).toHaveCount(0);
     await expect(page.getByText("WeKnora").first()).toBeVisible();
 
     // F5：首屏可读到问题、职责、结果与阶段
@@ -449,7 +462,8 @@ test.describe("BI 与经营看板", () => {
     await expect(page.getByAltText(/案件运营总览脱敏截图/)).toBeVisible();
     await expect(page.getByAltText(/地区法院分析脱敏截图/)).toBeVisible();
     await expect(page.getByText("公开图片不包含真实客户")).toBeVisible();
-    await expect(page.getByText("该平台已于 2026-09 停止维护")).toBeVisible();
+    await expect(page.getByText("该平台已于 2026-08 停止维护")).toBeVisible();
+    await expect(page.locator("main")).not.toContainText("2026-09 停止维护");
     await expect(page.locator(".echarts-for-react, canvas")).toHaveCount(0);
 
     await page.goto("/dashboards?tool=Power%20Query");

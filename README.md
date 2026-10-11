@@ -145,7 +145,7 @@ BI 案例分析...
 
 ## 页面设计状态
 
-第一阶段功能骨架与第二轮 M1–M5、C1–C7 已完成。2026-08 数仓运行形态、智能问数分层架构与内部 Pilot 边界已经同步至首页、About、在线简历、项目案例和相关专题文章；D1 静态导出、D2 CI/CD 和 D3 首次发布已完成，下一步为 D4 线上完整验收。内容公开规则见 [`docs/content-refresh-plan.md`](./docs/content-refresh-plan.md)，总体进度见 [`docs/roadmap.md`](./docs/roadmap.md)。
+首页、关于页、简历、项目案例及相关专题文章按已确认的运行与交付口径同步维护：数仓当前在服务器运行、日常全量刷新，增量链路的设计已实现但因业务数据库本身情况暂未采用增量；Power BI 平台已于 2026-08 停止维护。网站通过 GitHub Actions 发布，变更后核对线上页面与下载的简历。内容公开规则见 [`docs/content-refresh-plan.md`](./docs/content-refresh-plan.md)，总体进度见 [`docs/roadmap.md`](./docs/roadmap.md)。
 
 ## 部署
 
@@ -163,7 +163,7 @@ NEXT_PUBLIC_SITE_URL=https://<GitHub用户名>.github.io
 
 ## 简历 PDF
 
-`/resume/` 页面的「下载 PDF 简历」按钮指向 `public/resume/jin-zaiwei-resume.pdf`。该文件与网页版同源、两页 A4，是**构建后**才生成的独立产物，因此要用带它的命令：
+首页与 `/about/` 页面的「下载简历」按钮指向 `public/resume/jin-zaiwei-resume.pdf`，`/resume/` 保留兼容跳转。该文件与网页版同源、两页 A4，是**构建后**才生成的独立产物，因此要用带它的命令：
 
 ```powershell
 # 构建静态站并重新生成简历 PDF（推荐）

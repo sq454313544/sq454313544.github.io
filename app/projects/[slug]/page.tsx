@@ -36,14 +36,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const { default: Content } = await import(`@/content/projects/${slug}.mdx`);
   const { prev, next } = getPrevNext(projects, slug);
   const related = getRelated(projects, project);
-  const statusLabels: Record<ProjectItem["meta"]["status"], string> = {
-    completed: "已完成",
-    in_progress: "进行中",
-    maintained: "维护中",
-    archived: "已归档",
-  };
   const metaItems: DetailMetaItem[] = [
-    { label: "项目状态", value: statusLabels[project.meta.status] },
     { label: "项目类型", value: PROJECT_TYPE_LABELS[project.meta.projectType] },
     { label: "技术栈", value: project.meta.techStack.join(" · ") },
     { label: "发布于", value: project.meta.publishedAt },
