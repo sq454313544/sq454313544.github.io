@@ -48,7 +48,7 @@ describe("profileData", () => {
   });
 
   it("derives the data-experience span from the actual data-role periods", () => {
-    const dataRoles = ["数据分析师", "数据专员"];
+    const dataRoles = ["数据分析师/AI应用开发", "数据专员"];
     const months = profileData.workExperiences
       .filter((experience) => dataRoles.includes(experience.role))
       .reduce((total, experience) => {
@@ -76,7 +76,7 @@ describe("profileData", () => {
       "北京途游科技有限公司",
     ]);
     expect(profileData.workExperiences.map((experience) => experience.role)).toEqual([
-      "数据分析师",
+      "数据分析师/AI应用开发",
       "数据专员",
       "游戏测试工程师",
     ]);
@@ -105,25 +105,22 @@ describe("profileData", () => {
     });
   });
 
-  it("separates the current local environment from the historical server stage", () => {
-    // F1：数仓当前只在本机环境运行、日常走全量刷新；服务器部署是历史阶段。
-    // 这三处（经历、项目成果、简介）都必须区分，不能把历史能力写成当前运行状态。
+  it("records the server runtime and why incremental refresh is not enabled", () => {
+    // 经历与项目成果均按用户确认的服务器运行、全量刷新口径表达。
     const current = profileData.workExperiences[0].responsibilities.join("");
-    expect(current).toContain("本机环境运行");
-    expect(current).toContain("全量刷新");
-    expect(current).toContain("增量链路");
-
     const warehouse = profileData.projectHighlights.find((project) =>
       project.title.startsWith("企业数据仓库与治理"),
     );
     const warehouseText = warehouse?.details.join("") ?? "";
-    expect(warehouseText).toContain("本机环境运行");
-    expect(warehouseText).toContain("历史阶段");
-
-    // 不能再说当前的“日间增量协同刷新”
-    const serialized = JSON.stringify(profileData);
-    expect(serialized).not.toContain("日间增量");
-    expect(serialized).not.toContain("已完成服务器运行环境部署");
+    for (const text of [current, warehouseText]) {
+      expect(text).toContain("当前在服务器运行");
+      expect(text).toContain("全量刷新");
+      expect(text).toContain("增量链路的设计已实现但因业务数据库本身情况暂未采用增量");
+      expect(text).not.toContain("本机环境运行");
+      expect(text).not.toContain("待恢复");
+      expect(text).not.toContain("服务器部署属历史阶段");
+    }
+    expect(JSON.stringify(profileData)).not.toContain("日间增量");
   });
 
   it("keeps every core work area reachable from the representative projects", () => {
@@ -202,13 +199,20 @@ describe("profileData", () => {
       "102 张可用表",
       "接近 300 张表 / 视图",
       "150 个 DAX 度量",
-      "51 条离线检索评估集",
-      "39.22% 提升至 82.35%",
-      "受控内部验证阶段",
       "内部验证阶段",
     ]) {
       expect(serialized).toContain(value);
     }
+
+    // 简历不再展示离线 Recall 评估句，历史平台按 2026 年 8 月停止维护。
+    for (const removed of ["51 条离线检索评估集", "39.22%", "82.35%"]) {
+      expect(serialized).not.toContain(removed);
+    }
+    const historicalBi = profileData.projectHighlights.find((project) =>
+      project.title.startsWith("Power BI 经营分析平台"),
+    );
+    expect(historicalBi?.details.join("")).toContain("2026-08 停止维护");
+    expect(historicalBi?.details.join("")).not.toContain("2026-09 停止维护");
 
     // 行业常见的 143 / 276 与内部字典的 144 / 278 快照日期、统计范围不同，
     // 公开页面不做机械替换，改用可核实的同步表数与定性规模表达

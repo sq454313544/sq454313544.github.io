@@ -9,14 +9,6 @@ import { useClientSearchParams } from "@/lib/hooks/useClientSearchParams";
 import { PROJECT_GROUPS, projectGroupOf } from "@/lib/content/project-order";
 
 const projectTypes = ["agent", "dashboard", "pipeline", "tool", "other"] as const;
-const statusLabels: Record<ProjectItem["meta"]["status"], string> = { completed: "已完成", in_progress: "进行中", maintained: "维护中", archived: "已归档" };
-
-/** 卡片上的阶段说明：区分生产使用与内部验证，不把页面更新时间当部署时间 */
-const stageLabels: Record<string, string> = {
-  "data-warehouse-modernization": "本机环境运行 · 日常全量刷新",
-  "enterprise-qa-assistant": "内部验证 · 受控 Pilot",
-  "enterprise-knowledge-assistant": "内部验证 · 正式试点验收推进中",
-};
 
 /** 每个项目的定位与本人职责，让卡片本身能说明做了什么 */
 const roleLabels: Record<string, string> = {
@@ -30,7 +22,6 @@ const roleLabels: Record<string, string> = {
 
 interface WecomSummary {
   title: string;
-  statusLabel: string;
   description: string;
   href: string;
   lines: string[];
@@ -88,9 +79,7 @@ export function ProjectList({ projects, wecom, tags, className }: { projects: Pr
               <ContentCover slug={project.slug} priority className="mb-5 aspect-[2/1]" />
               <div className="flex flex-wrap items-center gap-2">
                 <h2 className="text-card-title font-semibold leading-tight text-text-primary group-hover:text-primary">{project.meta.title}</h2>
-                <span className="rounded-tag bg-accent-bg px-2 py-0.5 text-tag text-accent-text">{statusLabels[project.meta.status]}</span>
               </div>
-              <p className="mt-2 text-auxiliary text-text-secondary">{stageLabels[project.slug] ?? PROJECT_TYPE_LABELS[project.meta.projectType]}</p>
               <p className="mt-3 text-sm text-text-secondary">{project.meta.description}</p>
               {roleLabels[project.slug] && <p className="mt-2 flex-1 text-sm text-text-muted">{roleLabels[project.slug]}</p>}
               <div className="mt-3 flex flex-wrap gap-2 text-auxiliary text-text-muted">
@@ -105,7 +94,6 @@ export function ProjectList({ projects, wecom, tags, className }: { projects: Pr
         {showWecom && wecom ? <section aria-labelledby="wecom-delivery" className="mt-5 rounded-card border border-border bg-surface p-5 shadow-card">
           <div className="flex flex-wrap items-center gap-2">
             <h2 id="wecom-delivery" className="text-card-title font-semibold leading-tight text-text-primary">{wecom.title}</h2>
-            <span className="rounded-tag bg-accent-bg px-2 py-0.5 text-tag text-accent-text">{wecom.statusLabel}</span>
             <span className="rounded-tag bg-surface-soft px-2 py-0.5 text-tag text-text-secondary">企业微信智能表格</span>
           </div>
           <p className="mt-3 text-sm leading-relaxed text-text-secondary">{wecom.description}</p>

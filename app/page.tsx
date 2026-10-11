@@ -24,22 +24,20 @@ const CURATED_NOTE_SLUGS: readonly string[] = [
   "agent-tool-calling-evaluation",
 ];
 
-/** 两个代表案例在首页卡片上展示的业务问题 / 职责 / 结果 / 阶段 */
+/** 两个代表案例在首页卡片上展示的业务问题 / 职责 / 结果 */
 const CASE_CARDS: Record<
   string,
-  { problem: string; work: string; result: string; stage: string }
+  { problem: string; work: string; result: string }
 > = {
   "data-warehouse-modernization": {
     problem: "数据来源分散在业务库、补充表与外部系统，指标口径不一致，人工取数反复。",
     work: "梳理接入范围，用 DataX 与自动采集收敛来源，dbt 分层建模，Airflow 编排刷新，并用口径注册表与数据契约固定定义。",
     result: "形成接近 300 张表 / 视图的数据资产，支撑企业微信经营看板、周月报取数与报表自动填表对账。",
-    stage: "本机环境运行 · 日常全量刷新",
   },
   "enterprise-qa-assistant": {
     problem: "业务人员取一个指标或一批明细，要跨系统、翻口径说明、找人人工取数。",
     work: "按 Kernel、Plugin、Capability、MCP 分层搭建双入口；模型只选已注册能力并输出结构化参数，取数由注册定义生成并校验后执行。",
     result: "企业微信与网页双入口的受控问数、明细查询与结果导出，带行级权限、审计日志和可回退的检索链路。",
-    stage: "受控内部验证阶段",
   },
 };
 
@@ -51,7 +49,6 @@ const MORE_DELIVERIES = [
   {
     title: "企业知识库助手",
     href: KB_HREF,
-    stage: "内部验证阶段",
     problem: "内部制度散落在文档、通知和口头约定里，员工要先找资料负责人确认。",
     work: "基于开源 WeKnora 定制员工问答与管理员发布流程，把资料版本、发布批次、撤回与新版替代纳入治理。",
     result: "回答只依据已发布资料并给出可追溯出处；资料变化后旧会话转为只读；作业系统单点登录核心链路通过真实验证。",
@@ -60,7 +57,6 @@ const MORE_DELIVERIES = [
   {
     title: "企业微信经营看板",
     href: WECOM_HREF,
-    stage: "生产使用",
     problem: "三条经营线原先靠人工导出、手工整理、手工贴表，数据到得慢且容易漏。",
     work: "把采集、指标汇总与人日粒度写入智能表格的链路自动化，并补重复键检查、失效数据处理、依赖预检与失败告警。",
     result: "立案与回款趋势、项目维度过程指标、人员过程数据三条看板定时同步，同步后按定位信息回读对账。",
@@ -69,7 +65,6 @@ const MORE_DELIVERIES = [
   {
     title: "业务报表自动化",
     href: REPORT_HREF,
-    stage: "持续运行",
     problem: "周报要跑 SQL、看结果、再一格格贴进 Word 模板，费时且容易贴错。",
     work: "把周报 SQL 结果集自动灌入 Word 模板，表头、列宽与配色按原文档反向标定，手写分析段落保留给业务。",
     result: "结构校验 + 逐格对账 + Word 真实打开复验三条全过才算可用；月报、运营日报与业务取数同链路维护口径。",
@@ -78,7 +73,6 @@ const MORE_DELIVERIES = [
   {
     title: "Power BI 经营分析平台",
     href: "/dashboards/operations-process-analysis",
-    stage: "历史交付 · 已停维",
     problem: "经营分析缺少统一模型，指标口径分散在各人手里。",
     work: "从零搭建分析平台并切换到自建数仓；重构星型模型、关系主路径与日期角色。",
     result: "统一管理 150 个 DAX 度量与 1 个计算组，交付 10 个正式看板页；平台已于 2026-09 停止维护，案例保留模型与口径设计过程。",
@@ -218,9 +212,6 @@ export default function HomePage() {
                     <span className="rounded-tag bg-accent-bg px-2 py-0.5 text-tag text-accent-text">
                       {typeLabel(project.meta)}
                     </span>
-                    <span className="rounded-tag bg-surface-soft px-2 py-0.5 text-tag text-text-secondary">
-                      {card.stage}
-                    </span>
                   </div>
                   <h3 className="mt-3 text-card-title font-semibold leading-tight text-text-primary">
                     {project.meta.title}
@@ -269,9 +260,6 @@ export default function HomePage() {
               >
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="text-card-title font-semibold text-text-primary">{item.title}</h3>
-                  <span className="rounded-tag bg-surface-soft px-2 py-0.5 text-tag text-text-secondary">
-                    {item.stage}
-                  </span>
                 </div>
                 <dl className="mt-4 flex-1 space-y-3 text-sm leading-relaxed">
                   <div>

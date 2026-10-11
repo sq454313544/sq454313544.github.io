@@ -124,10 +124,12 @@ test.describe("首页", () => {
       await expect(card.getByText("交付结果")).toBeVisible();
     }
 
-    // 真实阶段分别表达：数仓本机运行 / 问数受控内部验证
-    await expect(section.getByText("本机环境运行 · 日常全量刷新")).toBeVisible();
-    await expect(section.getByText("受控内部验证阶段")).toBeVisible();
-    await expect(section.getByText("历史交付 · 已停维")).toBeVisible();
+    // 项目卡片隐藏当前状态与阶段，保留分类和技术栈
+    for (const label of ["本机环境运行 · 日常全量刷新", "受控内部验证阶段", "内部验证阶段", "生产使用", "持续运行", "历史交付 · 已停维"]) {
+      await expect(section.getByText(label, { exact: true })).toHaveCount(0);
+    }
+    await expect(items.nth(0).getByText("数据管道", { exact: true })).toBeVisible();
+    await expect(items.nth(0).getByText("MySQL", { exact: true })).toBeVisible();
   });
 
   test("homepage keeps knowledge base, wecom, report automation and BI entries", async ({ page }) => {
@@ -262,6 +264,13 @@ test.describe("项目", () => {
     await expect(cards.nth(0)).toContainText("企业数据仓库与治理");
     await expect(cards.nth(1)).toContainText("企业智能问数助手");
     await expect(cards.nth(2)).toContainText("企业知识库助手");
+
+    // 项目列表隐藏状态徽标与阶段说明，分类和技术栈仍可见
+    for (const label of ["已完成", "进行中", "维护中", "已归档", "本机环境运行 · 日常全量刷新", "内部验证 · 受控 Pilot", "内部验证 · 正式试点验收推进中", "生产使用 · 部分验收收尾"]) {
+      await expect(page.locator("main").getByText(label, { exact: true })).toHaveCount(0);
+    }
+    await expect(cards.nth(0).getByText("数据管道", { exact: true })).toBeVisible();
+    await expect(cards.nth(0).getByText("MySQL", { exact: true })).toBeVisible();
 
     // 企业微信交付作为数仓摘要展示，不重复建详情页
     await expect(page.getByRole("heading", { name: "企业微信经营看板" })).toBeVisible();
@@ -620,6 +629,7 @@ test.describe("关于与简历下载", () => {
     for (const company of ["湖南昂承律师事务所", "长沙恒顺智慧信息科技有限公司", "北京途游科技有限公司"]) {
       await expect(main.getByRole("heading", { name: new RegExp(company) })).toBeVisible();
     }
+    await expect(main.getByRole("heading", { name: "湖南昂承律师事务所｜数据分析师/AI应用开发", exact: true })).toBeVisible();
     await expect(main.getByText(/湖南机电职业技术学院/)).toBeVisible();
     await expect(main.getByRole("heading", { name: "工具与技术" })).toHaveCount(0);
     await expect(main.getByRole("heading", { name: "我在 AI 应用里实际做了什么" })).toHaveCount(0);
