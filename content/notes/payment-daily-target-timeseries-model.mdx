@@ -1,0 +1,204 @@
+---
+title: "把月度回款目标拆到每天：我为什么选择历史占比"
+description: "从日期口径核验、历史回测到 Excel 与 CSV 交付，记录一次日目标参考线的设计取舍，并用合成例子说明权重与金额怎样分配。"
+publishedAt: "2026-11-11"
+updatedAt: "2026-11-12"
+category: "warehouse"
+tags: ["time-series", "python", "data-quality", "metrics", "backtesting"]
+draft: false
+featured: false
+---
+
+import { EChartsWrapper } from "@/components/charts/EChartsWrapper";
+
+月度回款目标定下来后，业务还需要一个每天都能看的参照：**截至今天，应该完成多少？**
+
+我围绕这个问题，先核对日期和金额口径，再比较不同的分配方法，最后交付了按日展开的目标表、计算代码和说明文档。最终采用的是最近 12 个完整月的历史日占比，生成一条目标进度参考线。
+
+> 本文图表中的权重与金额均为合成教学数据。回测表仅保留匿名聚合指标；项目过程按复核报告及最终 V1.0 交付记录整理，不包含真实目标、客户或员工信息。
+
+## 先确认：用哪个日期理解回款
+
+一笔业务可能有还款日、报款日、录入时间和审核时间。它们分别回答不同的问题，不能因为字段里都有“日期”，就放在一起统计。
+
+这次审计发现，实际还款日有较长历史，报款日是较晚补充的字段，还存在补填和跨月归属。最终形成了两条明确的口径：
+
+| 用途 | 使用的日期 | 要说明的限制 |
+| --- | --- | --- |
+| 学习历史月内分布 | 实际还款日 | 反映还款发生的节奏 |
+| 统计实际完成情况 | 报款日 | 与还款日可能存在时间差 |
+
+因此，历史回款节奏只能为目标分配提供参考，不能直接当作报款节奏的预测。我也没有把两条曲线混合，或用一条简单的平移规则替代口径确认。
+
+金额同样需要先核对。源记录拆成多行后，要辨别每行存的是重复的单据总额，还是已经分摊的金额，再决定如何去重与汇总。否则，后续模型学到的可能只是重复计数。
+
+## 用回测比较方法，给选择找依据
+
+最容易想到的办法是按自然日均分，或者只在工作日分配。我把它们作为基线，再比较历史日占比和加入星期修正的方法。
+
+回测按月向前滚动：每次只使用测试月之前的完整月份生成权重，测试月结束后，再用实际累计占比评价偏差。为了公平比较 12 个月窗口的方法，取所有候选都可计算的四个测试月作为共同测试期。
+
+主指标是**累计占比平均绝对误差**：每天的参考累计占比与实际累计占比相差多少个百分点，再取平均。数值越低，说明参考线越接近这批历史样本的累计形状。
+
+| 方法 | 共同测试期的累计占比误差 |
+| --- | ---: |
+| 自然日均分 | 约 9.9 个百分点 |
+| 历史 6 个月日占比 | 约 4.1 个百分点 |
+| 历史 12 个月日占比 | 约 4.0 个百分点 |
+| 历史 12 个月加星期修正，按规格重新归一 | 约 4.0 个百分点 |
+
+这组结果支持先采用历史日占比这个简单基线。四个测试月不足以证明 12 个月窗口最优，也不能据此推导出实际业绩会提升。交付版将 12 个月设为默认窗口，同时保留 6 个月和星期修正作为对照。
+
+## 把一个月的目标分到每天
+
+计算思路是先把历史月份变成比例，再把比例用于目标月：
+
+```text
+历史日占比 = 当日回款金额 ÷ 该月回款总额
+基础权重   = 历史月份中同一日位置的日占比平均值
+目标日权重 = 基础权重 ÷ 目标月所有基础权重之和
+每日目标   = 月度目标 × 目标日权重
+```
+
+计算平均值前，需要先补齐每个月的日历：有这一天但没有回款，应填 0；不存在的日期，例如 2 月 30 日，不参与该日位置的平均。没有可用历史时，也应明确停止计算，不能把无效值继续传下去。
+
+下面用一个完全合成的 30 天月份说明分配形状。月目标设为 1,000 元，前 10 天每天占 1%，中间 10 天每天占 3%，最后 10 天每天占 6%，全月合计 100%。这些权重仅用于演示，不是实际交付模型的输出。
+
+| 检查点 | 自然日均分的累计目标 | 合成权重的累计目标 |
+| --- | ---: | ---: |
+| 第 10 天 | 333.33 元 | 100.00 元 |
+| 第 20 天 | 666.67 元 | 400.00 元 |
+| 第 30 天 | 1,000.00 元 | 1,000.00 元 |
+
+<figure className="my-8">
+  <EChartsWrapper
+    height={300}
+    option={{
+      animation: false,
+      tooltip: { trigger: "axis" },
+      legend: { data: ["自然日均分", "合成权重"], top: 0 },
+      grid: { left: 52, right: 20, top: 48, bottom: 36 },
+      xAxis: { type: "category", boundaryGap: false, data: ["月初", "第10天", "第20天", "月底"] },
+      yAxis: { type: "value", min: 0, max: 100, axisLabel: { formatter: "{value}%" } },
+      series: [
+        { name: "自然日均分", type: "line", data: [0, 33.33, 66.67, 100], lineStyle: { type: "dashed" } },
+        { name: "合成权重", type: "line", data: [0, 10, 40, 100] },
+      ],
+    }}
+  />
+  <figcaption className="mt-2 text-center text-auxiliary text-text-muted">合成示例的累计目标占比。折线连接四个检查点，用于比较分配形状。</figcaption>
+</figure>
+
+如果历史节奏前低后高，均分线会在月初提出更高的累计要求。采用历史权重，只改变目标在时间上的分布，月度总额保持不变。分配线是否适合考核，还需要结合业务要求验证。
+
+<details className="mt-6 rounded-card border border-border p-5">
+<summary className="cursor-pointer font-semibold text-text-primary">复习练习：运行一个按“分”闭合的 Python 示例</summary>
+
+下面只练习“给定权重后怎样分配金额”，不复现内部训练与组织配置。使用 Python 标准库，保存为 `target_demo.py` 后运行 `python target_demo.py`。
+
+内部交付采用按分四舍五入后调整残差。这个教学例子采用“先取整、再按小数余数补分”，使很小的目标也能保持非负；它没有修改内部交付引擎。
+
+```python
+from decimal import Decimal, ROUND_FLOOR
+from itertools import accumulate
+
+D = Decimal
+CENT = D("0.01")
+
+
+def allocate(monthly_target: str, weights: list[Decimal]) -> list[Decimal]:
+    target = D(monthly_target)
+    if not target.is_finite() or target < 0 or target != target.quantize(CENT):
+        raise ValueError("目标必须是非负、最多两位小数的金额")
+    if not weights or any(not w.is_finite() or w < 0 for w in weights):
+        raise ValueError("权重必须是非空的非负有限数列")
+    if sum(weights) != D(1):
+        raise ValueError("权重合计必须等于 1")
+
+    total_cents = int(target * 100)
+    exact = [w * total_cents for w in weights]
+    cents = [int(v.to_integral_value(rounding=ROUND_FLOOR)) for v in exact]
+    remaining = total_cents - sum(cents)
+    # 小数余数较大的日期先补 1 分；余数相同时按日期顺序。
+    order = sorted(range(len(weights)), key=lambda i: (-(exact[i] - cents[i]), i))
+    for i in order[:remaining]:
+        cents[i] += 1
+    return [D(value) / 100 for value in cents]
+
+
+weights = [D("0.01")] * 10 + [D("0.03")] * 10 + [D("0.06")] * 10
+daily = allocate("1000.00", weights)
+progress = list(accumulate(daily, initial=D(0)))
+for day in (10, 20, 30):
+    print(f"第{day}天：累计 {progress[day]:.2f} 元")
+
+assert sum(daily) == D("1000.00") and min(daily) >= 0
+assert sum(allocate("0.00", weights)) == 0
+small = allocate("0.20", [D("0.025")] * 20 + [D("0.05")] * 10)
+assert sum(small) == D("0.20") and min(small) >= 0
+```
+
+预期输出：
+
+```text
+第10天：累计 100.00 元
+第20天：累计 400.00 元
+第30天：累计 1000.00 元
+```
+
+金额已经量化到“分”后，某天的金额比例可能与原权重略有差异。检查时要同时关注金额合计与非负性，不能只看最后一天是否凑到了月目标。
+
+</details>
+
+## 交付一张能核对的目标表
+
+最终 V1.0 使用业务确认的当月目标，为公司、部门和员工等对象生成每日目标与累计目标，并交付了 Excel、CSV、计算代码和两份面向不同读者的说明。
+
+业务人员可以先看每日明细和累计进度；技术人员可以追溯历史窗口、权重、目标配置与模型版本。各对象使用同一套日期权重，再乘以各自确认的月目标，不为了让层级汇总“看起来一致”而回写业务目标。
+
+交付检查围绕几个具体问题展开：每个对象是否日期齐全，权重是否非负且合计为 1，日目标之和是否等于该对象的月目标，月末累计是否闭合。同一份历史数据、目标配置和模型版本重新运行，输出也应一致。
+
+## 一次复核怎样改变结论
+
+研究过程中，加入星期修正的方法一度给出了更低的累计误差。复核时发现，规格要求乘上星期因子后重新归一，但实现遗漏了这一步，只把累计曲线的最后一点强制设为 100%。
+
+把结果复算出来，并不能消除这个实现偏差。按规格修正后，星期因子对日占比仍有改善，但累计占比的收益依赖窗口与测试月份，不能继续沿用原来的优势结论。
+
+这也是我在这次工作中使用 Agent 的一个具体经验：让它协助整理审计脚本、回测、图表和文档，再把重要结论逐项追溯到口径、规格与计算过程。判断模型取舍时，要说明自己依据的是哪一版结果，以及复核后改了什么。
+
+## 目前做到哪一步
+
+**当前月目标已确认，离线表格与计算包已经交付，尚未接入正式考核看板。**
+
+这条线提供目标进度参照，没有建立还款到报款的滞后预测。历史组织归属不完整，因此没有用当前组织关系回溯部门或员工的历史曲线；缺少权威逐日日历时，也没有默认把周末目标归零。
+
+对我来说，这次工作最有价值的部分是把一个模糊的分配需求，推进到了口径明确、方法可解释、结果可复算的交付物。下一步是否用于正式考核，需要基于报款口径继续验证。
+
+## 留给自己的三个问题
+
+<details className="mt-5 rounded-card border border-border p-5">
+<summary className="cursor-pointer font-semibold text-text-primary">1. 还款日的历史曲线更稳定，能直接替代报款口径吗？</summary>
+
+不能。稳定性说明还款发生时间具有可利用的分布特征，报款还有补填、处理时滞与跨月归属。应分开说明训练参考与实际完成口径，再验证迁移误差。
+
+</details>
+
+<details className="mt-5 rounded-card border border-border p-5">
+<summary className="cursor-pointer font-semibold text-text-primary">2. 权重合计为 100%，是否就证明金额分配正确？</summary>
+
+还不够。日金额要落到“分”，需要检查舍入后的总额、每天非负以及月末累计。可以把示例目标改成 0.20 元，再比较不同的残差分配方式。
+
+</details>
+
+<details className="mt-5 rounded-card border border-border p-5">
+<summary className="cursor-pointer font-semibold text-text-primary">3. 历史表没有某一天的记录，可以直接跳过吗？</summary>
+
+先判断那天是否存在。有日期但没有回款，应在完整日历上补 0；2 月 30 日这样的不存在日期，不参与该日位置的跨月平均。两种情况混在一起会改变权重。
+
+</details>
+
+相关阅读：[企业数据仓库与治理](/projects/data-warehouse-modernization/)、[SQL 聚合为什么会算多](/notes/sql-join-grain-and-deduplication/)、[一次多源采集链的自查与修复](/notes/multi-source-pipeline-self-audit/)。
+
+验证环境：Python 3.12.14。示例输出及零目标、小额目标、非法权重等输入已实际检查。
+
+2026-11-12 重写：依据复核报告和最终交付记录更新状态，改用合成图表，补充可运行练习与自测。文中练习独立于内部交付引擎。
